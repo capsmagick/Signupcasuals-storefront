@@ -1,0 +1,161 @@
+<template>
+  <div class="xl:max-w-7xl lg:max-w-4xl mx-auto pt-12 pb-6">
+    <!-- Products details -->
+    <div class="grid gap-5 pb-12" style="grid-template-columns: 60fr 40fr">
+      <div class="flex gap-4">
+        <div
+          class="preview-slide-images flex flex-col w-20 space-y-4 flex-shrink-0"
+        >
+          <div v-for="item in 4" :key="item">
+            <img src="~/assets/images/product.png" alt="" />
+          </div>
+        </div>
+        <div class="selected-image flex-1">
+          <img
+            src="~/assets/images/product.png"
+            alt=""
+            class="w-full object-cover"
+          />
+        </div>
+      </div>
+      <div class="pl-10">
+        <div class="flex items-center justify-between">
+          <div class="text-xs font-medium">HOME / SHOP</div>
+          <div class="flex items-center gap-4 text-xs text-head">
+            <button class="flex items-center font-medium">
+              <span><mdi-chevron-left :size="18" /></span>PREV
+            </button>
+            <button class="flex items-center font-medium">
+              NEXT<span><mdi-chevron-right :size="18" /></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Details -->
+        <div class="pt-10 text-head flex flex-col gap-8">
+          <div>
+            <h4 class="text-2xl">Lightweight Puffer Jacket With a Hood</h4>
+            <h3 class="text-[22px] font-medium">$249</h3>
+          </div>
+          <p class="text-sm text-justify">
+            Phasellus sed volutpat orci. Fusce eget lore mauris vehicula
+            elementum gravida nec dui. Aenean aliquam varius ipsum, non
+            ultricies tellus sodales eu. Donec dignissim viverra nunc, ut
+            aliquet magna posuere eget.
+          </p>
+          <div class="flex items-center justify-between text-sm">
+            <div class="flex items-center font-medium">
+              <div class="w-20">SIZES</div>
+
+              <div class="flex items-center gap-2">
+                <button
+                  v-for="size in sizes"
+                  :key="size"
+                  class="border border-footer px-4 py-1.5 font-normal uppercase"
+                >
+                  {{ size }}
+                </button>
+              </div>
+            </div>
+            <div
+              class="font-medium text-xs text-head border-b-2 h-full border-head"
+            >
+              SIZE GUIDE
+            </div>
+          </div>
+          <!-- product colors -->
+          <div class="flex text-sm items-center font-medium">
+            <div class="w-20">COLOR</div>
+
+            <div class="flex items-center gap-2">
+              <div
+                v-for="color in colors"
+                :key="color"
+                :class="{
+                  'ring-2 ring-head': selectedColor == color,
+                }"
+                class="h-7 w-7 rounded-full flex items-center justify-center"
+                @click="onSelectColor(color)"
+              >
+                <div
+                  class="h-5 w-5 rounded-full"
+                  :style="{ backgroundColor: color }"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <!--  -->
+          <!-- options -->
+          <div class="flex items-center gap-4">
+            <div
+              class="px-6 py-4 border border-footer text-sm flex items-center gap-4"
+            >
+              <button>-</button>
+              3
+              <button>+</button>
+            </div>
+            <button
+              class="text-sm font-medium text-white bg-head px-6 py-4 w-52"
+            >
+              ADD TO CART
+            </button>
+          </div>
+          <!--  -->
+          <!--  -->
+          <div class="flex items-center gap-6 text-head">
+            <button class="flex items-center gap-2 text-sm font-medium">
+              <mdi-heart-outline :size="18" />
+              ADD TO WISHLIST
+            </button>
+            <button class="flex items-center gap-2 text-sm font-medium">
+              <mdi-share-variant-outline :size="18" />
+              SHARE
+            </button>
+          </div>
+          <!--  -->
+          <div class="">
+            <div class="text-sm mb-2"><span class="text-second uppercase">SKU:</span> N/A</div>
+            <div class="text-sm mb-2"><span class="text-second uppercase">Categories:</span>Casual & Urban Wear, Jackets, Men</div>
+            <div class="text-sm mb-2"><span class="text-second uppercase">Tags:</span>biker, black, bomber, leather</div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div v-for="tab in tabs" :key="tab" class="text-sm uppercase">
+              <h6 class="font-medium border-b-2 cursor-pointer" @click="selectedTab = tab" :class="[ selectedTab == tab ? 'text-head border-head' : 'text-second border-transparent']">{{ tab }}</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- related products -->
+    <div class="pt-12">
+      <h5 class="text-head text-2xl font-bold mb-6">
+        <span class="font-normal">RELATED</span> PRODUCTS
+      </h5>
+      <div class="grid grid-cols-4 gap-8">
+        <ProductCard v-for="item in 4" :key="item" />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import ProductCard from "~/components/Products/Card.vue";
+export default {
+  name: "singleProductPage",
+  layout: "main",
+  components: {
+    ProductCard,
+  },
+  data() {
+    return {
+      selectedTab:"description",
+      sizes: ["xs", "s", "m", "l", "xl"],
+      colors: ["#222222", "#C93A3E", "#E4E4E4"],
+      tabs:["description","additional information","reviews"]
+    };
+  },
+};
+</script>
+
+<style></style>
