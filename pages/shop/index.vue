@@ -1,6 +1,6 @@
 <template>
     <div class="xl:max-w-7xl lg:max-w-4xl mx-auto pt-20 pb-6">
-      <h6 class="text-head text-3xl font-bold mb-4">SHOP</h6>
+      <h1 class="text-head text-3xl font-bold mb-4">SHOP</h1>
       <!-- Shop cat tab -->
       <div
         class="flex items-center gap-6 uppercase text-sm text-head font-medium"

@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-screen">
     <SiteHeader />
-    <div class="pt-[60px]">
+    <div class="pt-[72px]">
       <main>
         <nuxt />
       </main>

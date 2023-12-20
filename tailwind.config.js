@@ -14,6 +14,7 @@ module.exports = {
         ...colors,
         head:"#222",
         second:"#767676",
+        third:"#B9A16B",
         footer:"#E4E4E4"
       }
     },

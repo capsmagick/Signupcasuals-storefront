@@ -2,7 +2,7 @@
   <header class="fixed w-full bg-white block">
     <div class="xl:max-w-7xl lg:max-w-4xl mx-auto flex items-center justify-between py-4">
       <div class="flex items-center xl:gap-10 lg:gap-4">
-        <img src="~/assets/images/logo.png"/>
+        <img src="~/assets/images/logo.png" class="h-10"/>
         <!--Navigation  -->
         <nav class="flex">
           <ul class="flex items-center xl:gap-10 lg:gap-6 text-sm uppercase text-head font-medium">

@@ -43,7 +43,7 @@
       <!-- second col details -->
       <div class="pt-24 pb-16">
         <div class="grid grid-cols-12 justify-between items-center pb-8">
-          <div class="col-span-3"><img src="~/assets/images/logo.png" class="block" /></div>
+          <div class="col-span-3"><img src="~/assets/images/logo.png" class="block h-14" /></div>
           <h3 class="text-sm text-head font-medium col-span-2">COMPANY</h3>
           <h3 class="text-sm text-head font-medium col-span-2">SHOP</h3>
           <h3 class="text-sm text-head font-medium col-span-2">HELP</h3>
