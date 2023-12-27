@@ -80,7 +80,7 @@
         <div class="flex items-center">
           <input
             id="search-field"
-            class="h-full w-full border border-footer py-3 pl-3 pr-8 text-head placeholder-second focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
+            class="h-full w-full border border-footer py-3 pl-3 pr-8 text-head placeholder-second focus:border-head focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
             placeholder="Search"
             type="search"
             name="search"
