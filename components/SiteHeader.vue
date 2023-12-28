@@ -1,5 +1,5 @@
 <template>
-  <header class="fixed w-full bg-white block">
+  <header class="fixed w-full bg-white block z-40">
     <div
       class="xl:max-w-7xl lg:max-w-4xl md:max-w-3xl md:px-0 px-4 mx-auto flex items-center justify-between py-4"
     >

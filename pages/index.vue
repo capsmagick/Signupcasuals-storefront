@@ -1,19 +1,34 @@
 <template>
   <div>
-    <div class="h-80 bg-second">
-      <button class="" @click="login">login</button>
-    </div>
+    <section id="home-banner">
+      <BannerSlider />
+    </section>
+    <section id="to-categories" class="bg-fourth">
+      <TopCategories />
+    </section>
+    <section id="top-collection">
+      <TopCollection />
+    </section>
+    <section id="bottom-options">
+      <Services />
+    </section>
   </div>
 </template>
 
 <script>
-import SiteHeader from "~/components/SiteHeader.vue";
+import TopCategories from '~/components/Home/TopCategories.vue';
+import TopCollection from '~/components/Home/TopCollection.vue';
+import Services from '~/components/Home/Services.vue'
+import BannerSlider from '~/components/Home/BannerSlider.vue';
 // import Medusa from "@medusajs/medusa-js";
 export default {
   name: "IndexPage",
   layout: "main",
   components: {
-    SiteHeader,
+    TopCategories,
+    TopCollection,
+    Services,
+    BannerSlider
   },
   methods: {
     async login() {
@@ -47,3 +62,6 @@ export default {
   },
 };
 </script>
+<style>
+
+</style>
