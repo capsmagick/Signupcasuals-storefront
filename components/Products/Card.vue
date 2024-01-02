@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="relative group">
     <div>
       <img src="~/assets/images/product.png" alt="" srcset="" />
     </div>
@@ -15,12 +15,21 @@
         <img src="~/assets/images/icons/heart-small.svg" />
       </div>
     </div>
+    <button v-if="isWislist" class="invisible group-hover:visible absolute top-4 left-4 p-2 bg-white text-head rounded">
+      <MdiWindowClose :size="18"/>
+    </button>
   </div>
 </template>
 
 <script>
 export default {
   name: "ProductCard",
+  props:{
+    isWislist:{
+      type: Boolean,
+      default: false
+    }
+  }
 };
 </script>
 

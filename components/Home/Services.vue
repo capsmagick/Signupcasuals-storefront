@@ -2,7 +2,7 @@
   <div class="flex flex-col divide-y divide-footer">
     <div>
       <div class="xl:max-w-7xl lg:max-w-4xl mx-auto">
-        <div class="flex items-center justify-between py-24 px-16">
+        <div class="flex md:flex-row flex-col md:gap-0 gap-8 items-center justify-between md:py-24 py-16 px-16">
           <div class="flex flex-col items-center gap-4">
             <img src="~/assets/images/icons/shipping.svg" alt="" srcset="" />
             <div class="">
@@ -41,7 +41,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="md:block hidden">
       <div class="xl:max-w-7xl lg:max-w-4xl  px-16 mx-auto ">
         <div class="flex items-center divide-x divide-footer">
           <div class="w-1/2 py-24">

@@ -1,9 +1,9 @@
 <template>
   <footer class="bg-footer w-full">
     <div
-      class="xl:max-w-7xl lg:max-w-4xl mx-auto flex flex-col divide-y divide-[#CFCDCD]"
+      class="xl:max-w-7xl lg:max-w-4xl md:max-w-3xl mx-auto flex flex-col divide-y divide-[#CFCDCD]"
     >
-      <div class="flex items-center justify-between pt-12 pb-9 px-16">
+      <div class="md:flex hidden items-center justify-between pt-12 pb-9 px-16">
         <div class="flex items-center gap-4">
           <img src="~/assets/images/icons/shipping.svg" alt="" srcset="" />
           <div class="">
