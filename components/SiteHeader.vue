@@ -16,7 +16,7 @@
             class="flex items-center xl:gap-10 lg:gap-6 md:gap-4 text-sm uppercase text-head font-medium"
           >
             <li v-for="(link, idx) in navLinks" :key="idx">
-              <a href="#">{{ link.title }}</a>
+              <a @click="goToPage(link)">{{ link.title }}</a>
             </li>
           </ul>
         </nav>
@@ -135,6 +135,13 @@ export default {
       ],
     };
   },
+  methods:{
+    goToPage(link){
+      let val = link.value;
+      if(val == 'index') this.$router.push('/')
+      else this.$router.push(`/${link.value}`)
+    }
+  }
 };
 </script>
 
