@@ -17,7 +17,7 @@
     </section>
 
     <!-- Mobile Home -->
-    <MobileHome />
+    <MobileHome class="hidden"/>
   </div>
 </template>
 
