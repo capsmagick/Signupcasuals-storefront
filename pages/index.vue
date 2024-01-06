@@ -3,15 +3,21 @@
     <section id="home-banner">
       <BannerSlider />
     </section>
-    <section id="to-categories" class="bg-fourth">
+    <section id="to-categories" class="md:block hidden bg-fourth">
       <TopCategories />
     </section>
-    <section id="top-collection">
+    <section id="top-collection" class="md:block hidden">
       <TopCollection />
     </section>
-    <section id="bottom-options">
+    <section id="blogs" class="md:block hidden">
+      <Blogs />
+    </section>
+    <section id="bottom-options" class="md:block hidden">
       <Services />
     </section>
+
+    <!-- Mobile Home -->
+    <MobileHome />
   </div>
 </template>
 
@@ -20,6 +26,8 @@ import TopCategories from '~/components/Home/TopCategories.vue';
 import TopCollection from '~/components/Home/TopCollection.vue';
 import Services from '~/components/Home/Services.vue'
 import BannerSlider from '~/components/Home/BannerSlider.vue';
+import Blogs from '~/components/Home/Blogs.vue';
+import MobileHome from "~/components/Home/Mobile"
 // import Medusa from "@medusajs/medusa-js";
 export default {
   name: "IndexPage",
@@ -28,7 +36,9 @@ export default {
     TopCategories,
     TopCollection,
     Services,
-    BannerSlider
+    BannerSlider,
+    Blogs,
+    MobileHome
   },
   methods: {
     async login() {
