@@ -33,13 +33,13 @@
             </button>
           </template>
           <template #modal-content="{ toggleModal }">
-            <div>Hello</div>
+            <LoginRegisterForm />
           </template>
         </ReusableRightOpenNav>
         <button class="md:flex hidden">
           <img src="~/assets/images/icons/heart.svg" />
         </button>
-        <button>
+        <button @click="goToPage({link:'cart'})">
           <img src="~/assets/images/icons/shopping-bag.svg" />
         </button>
         <button class="md:flex hidden">
@@ -102,13 +102,15 @@
 </template>
 
 <script>
+import LoginRegisterForm from './LoginRegisterForm.vue';
 export default {
   name: "SiteHeader",
   components: {
     Magnify: () => import("vue-material-design-icons/Magnify.vue"),
     ChevronRight: () => import("vue-material-design-icons/ChevronRight.vue"),
     AccountOutline: () => import("vue-material-design-icons/AccountOutline.vue"),
-    ChevronDown: () => import("vue-material-design-icons/ChevronDown.vue")
+    ChevronDown: () => import("vue-material-design-icons/ChevronDown.vue"),
+    LoginRegisterForm
   },
   data() {
     return {
@@ -118,14 +120,17 @@ export default {
         {
           title: "Home",
           value: "index",
+          link:"index"
         },
         {
           title: "Shop",
           value: "shop",
+          link:"shop"
         },
         {
           title: "Collection",
           value: "collection",
+          link:"#top-collection"
         },
         {
           title: "Journal",
@@ -134,6 +139,7 @@ export default {
         {
           title: "Lookbook",
           value: "look-book",
+          link:"#look-book"
         },
         {
           title: "Pages",
@@ -144,9 +150,9 @@ export default {
   },
   methods:{
     goToPage(link){
-      let val = link.value;
+      let val = link.link;
       if(val == 'index') this.$router.push('/')
-      else this.$router.push(`/${link.value}`)
+      else this.$router.push(`/${link.link}`)
     }
   }
 };
