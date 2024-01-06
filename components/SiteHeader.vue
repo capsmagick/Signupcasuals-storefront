@@ -15,7 +15,7 @@
           <ul
             class="flex items-center xl:gap-10 lg:gap-6 md:gap-4 text-sm uppercase text-head font-medium"
           >
-            <li v-for="(link, idx) in navLinks" :key="idx">
+            <li v-for="(link, idx) in navLinks" :key="idx" class="cursor-pointer">
               <a @click="goToPage(link)">{{ link.title }}</a>
             </li>
           </ul>
@@ -26,9 +26,16 @@
         <button class="md:flex hidden">
           <img src="~/assets/images/icons/magnify.svg" />
         </button>
-        <button class="md:flex hidden">
-          <img src="~/assets/images/icons/account.svg" />
-        </button>
+        <ReusableRightOpenNav title="login" width="700px">
+          <template #modal-activator="{ toggleModal }">
+            <button class="md:flex hidden" @click="toggleModal">
+              <img src="~/assets/images/icons/account.svg" />
+            </button>
+          </template>
+          <template #modal-content="{ toggleModal }">
+            <div>Hello</div>
+          </template>
+        </ReusableRightOpenNav>
         <button class="md:flex hidden">
           <img src="~/assets/images/icons/heart.svg" />
         </button>

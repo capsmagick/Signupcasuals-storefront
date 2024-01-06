@@ -1,5 +1,5 @@
 <template>
-  <div class="relative group">
+  <div class="relative group cursor-pointer" @click="goToProductDetails">
     <div>
       <img src="~/assets/images/product.png" alt="" srcset="" />
     </div>
@@ -28,6 +28,14 @@ export default {
     isWislist:{
       type: Boolean,
       default: false
+    }
+  },
+  data(){
+    return{}
+  },
+  methods:{
+    goToProductDetails(){
+      this.$router.push("/shop/product")
     }
   }
 };

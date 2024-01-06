@@ -9,6 +9,12 @@
     <section id="top-collection" class="md:block hidden">
       <TopCollection />
     </section>
+    <section id="look-book" class="md:block hidden">
+      <LookBook />
+    </section>
+    <section id="best-sellers" class="md:block hidden">
+      <BestSellers />
+    </section>
     <section id="blogs" class="md:block hidden">
       <Blogs />
     </section>
@@ -27,6 +33,8 @@ import TopCollection from '~/components/Home/TopCollection.vue';
 import Services from '~/components/Home/Services.vue'
 import BannerSlider from '~/components/Home/BannerSlider.vue';
 import Blogs from '~/components/Home/Blogs.vue';
+import LookBook from '~/components/Home/LookBook.vue';
+import BestSellers from '~/components/Home/BestSellers.vue';
 import MobileHome from "~/components/Home/Mobile"
 // import Medusa from "@medusajs/medusa-js";
 export default {
@@ -38,7 +46,9 @@ export default {
     Services,
     BannerSlider,
     Blogs,
-    MobileHome
+    MobileHome,
+    LookBook,
+    BestSellers
   },
   methods: {
     async login() {
