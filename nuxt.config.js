@@ -1,3 +1,5 @@
+require("./config")
+
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -24,6 +26,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/axios'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -45,11 +48,10 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/',
     proxy: true ,
   },
   proxy: {
-    '/api/': { target: 'http://127.0.0.1:9000', pathRewrite: {'^/api/': ''} }
+    '/api/': { target: process.env.API_URL, pathRewrite: {'^/api/': ''} }
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
@@ -67,15 +69,9 @@ export default {
         autoprefixer: {},
       },
     },
-    // extend(config,{ isDev, isClient}){
-    //   config.module.rules.push({
-    //     test:/\.mjs$/,
-    //     include:/node_modules/,
-    //     type:"javascript/auto",
-    //     use:[
-    //       "file-loader"
-    //     ]
-    //   })
-    // }
+  },
+
+  publicRuntimeConfig:{
+    API_KEY: process.env.API_KEY
   }
 }

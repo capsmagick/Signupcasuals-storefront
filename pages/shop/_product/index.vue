@@ -6,16 +6,14 @@
         <div
           class="preview-slide-images flex flex-col w-20 space-y-4 flex-shrink-0"
         >
-          <div v-for="item in 4" :key="item">
-            <img src="~/assets/images/product.png" alt="" />
+          <div v-for="(image, idx) in product.images" :key="idx">
+            <a class="cursor-pointer" @click="onSelectImage(idx)"
+              ><img :src="image.url" alt=""
+            /></a>
           </div>
         </div>
         <div class="selected-image flex-1">
-          <img
-            src="~/assets/images/product.png"
-            alt=""
-            class="w-full object-cover"
-          />
+          <img :src="previewImage.url" alt="" class="w-full object-cover" />
         </div>
       </div>
       <div class="pl-10">
@@ -34,14 +32,11 @@
         <!-- Details -->
         <div class="pt-10 text-head flex flex-col gap-8">
           <div>
-            <h4 class="text-2xl">Lightweight Puffer Jacket With a Hood</h4>
+            <h4 class="text-2xl">{{ product.title }}</h4>
             <h3 class="text-[22px] font-medium">$249</h3>
           </div>
           <p class="text-sm text-justify">
-            Phasellus sed volutpat orci. Fusce eget lore mauris vehicula
-            elementum gravida nec dui. Aenean aliquam varius ipsum, non
-            ultricies tellus sodales eu. Donec dignissim viverra nunc, ut
-            aliquet magna posuere eget.
+            {{ product.description }}
           </p>
           <div class="flex items-center justify-between text-sm">
             <div class="flex items-center font-medium">
@@ -90,9 +85,9 @@
             <div
               class="px-6 py-4 border border-footer text-sm flex items-center gap-4"
             >
-              <button>-</button>
-              3
-              <button>+</button>
+              <button @click="onClickQty('sub')"><Minus :size="16"/></button>
+              {{ itemQty }}
+              <button @click="onClickQty('add')"><Plus :size="16"/></button>
             </div>
             <button
               class="text-sm font-medium text-white bg-head px-6 py-4 w-52"
@@ -114,14 +109,32 @@
           </div>
           <!--  -->
           <div class="">
-            <div class="text-sm mb-2"><span class="text-second uppercase">SKU:</span> N/A</div>
-            <div class="text-sm mb-2"><span class="text-second uppercase">Categories:</span>Casual & Urban Wear, Jackets, Men</div>
-            <div class="text-sm mb-2"><span class="text-second uppercase">Tags:</span>biker, black, bomber, leather</div>
+            <div class="text-sm mb-2">
+              <span class="text-second uppercase">SKU:</span> N/A
+            </div>
+            <div class="text-sm mb-2">
+              <span class="text-second uppercase">Categories:</span>Casual &
+              Urban Wear, Jackets, Men
+            </div>
+            <div class="text-sm mb-2">
+              <span class="text-second uppercase">Tags:</span>biker, black,
+              bomber, leather
+            </div>
           </div>
 
           <div class="flex items-center justify-between">
             <div v-for="tab in tabs" :key="tab" class="text-sm uppercase">
-              <h6 class="font-medium border-b-2 cursor-pointer" @click="selectedTab = tab" :class="[ selectedTab == tab ? 'text-head border-head' : 'text-second border-transparent']">{{ tab }}</h6>
+              <h6
+                class="font-medium border-b-2 cursor-pointer"
+                @click="selectedTab = tab"
+                :class="[
+                  selectedTab == tab
+                    ? 'text-head border-head'
+                    : 'text-second border-transparent',
+                ]"
+              >
+                {{ tab }}
+              </h6>
             </div>
           </div>
         </div>
@@ -146,14 +159,45 @@ export default {
   layout: "main",
   components: {
     ProductCard,
+    Plus: () => import("vue-material-design-icons/Plus.vue"),
+    Minus: () => import("vue-material-design-icons/Minus.vue")
   },
   data() {
     return {
-      selectedTab:"description",
+      selectedTab: "description",
       sizes: ["xs", "s", "m", "l", "xl"],
       colors: ["#222222", "#C93A3E", "#E4E4E4"],
-      tabs:["description","additional information","reviews"]
+      tabs: ["description", "additional information", "reviews"],
+      selectedColor: null,
+      imageIdx: 0,
+      product: {},
+      previewImage: {},
+      itemQty:1
     };
+  },
+  methods: {
+    async fetchProductsList() {
+      const { product: productId } = this.$route.params;
+      const { product } = await this.$axios.$get(
+        `/api/store/products/${productId}`
+      );
+      this.product = product;
+      this.previewImage = product.images[0]
+    },
+    onSelectImage(index = null){
+      if(!index) return;
+      this.previewImage = this.product.images[index]
+    },
+    onClickQty(val){
+      if(val == 'add') this.itemQty++;
+      if(val == 'sub'){
+        if(this.itemQty == 1) return;
+        this.itemQty--
+      }
+    }
+  },
+  mounted() {
+    this.fetchProductsList();
   },
 };
 </script>
