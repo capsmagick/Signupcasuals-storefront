@@ -42,7 +42,7 @@
           <div
             class="flex items-center justify-center gap-2 text-sm font-medium"
           >
-            <button v-for="(page, idx) in paginate.pages" @click="onSelectPage(idx)" :key="idx">{{ page }}</button>
+            <button v-for="(page, idx) in paginate.pages" @click="onSelectPage(idx)" :key="idx" :class="[checkPage(idx) ? 'bg-head text-white' : 'text-head','px-1.5 rounded']">{{ page }}</button>
           </div>
           <div
             class="text-xs text-head flex items-center font-medium justify-end"
@@ -115,12 +115,12 @@ export default {
   methods: {
     async fetchProductsList(offset = 0) {
       try {
-        const { products, count } = await this.$axios.$get(`/api/store/products?limit=${this.limit}&offset=${offset}`);
+        const { products, count, offset:dataOffset } = await this.$axios.$get(`/api/store/products?limit=${this.limit}&offset=${offset}`);
         this.products = products
 
         this.paginate.count = count;
         this.paginate.pages = Math.ceil( count/this.limit)
-        
+        this.paginate.offset = dataOffset
       } catch (error) {
         console.log(error);
       }
@@ -128,6 +128,10 @@ export default {
     async onSelectPage(page){
       const offset = this.limit * page;
       await this.fetchProductsList(offset)
+    },
+    checkPage(page){
+      const currentPage = this.limit * page;
+      if(currentPage == page) return true
     }
   },
   async mounted() {

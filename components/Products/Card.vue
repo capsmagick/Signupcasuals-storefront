@@ -41,7 +41,7 @@ export default {
   methods:{
     goToProductDetails(){
       this.$router.push(`/shop/${this.product.id}`)
-    }
+    },
   }
 };
 </script>

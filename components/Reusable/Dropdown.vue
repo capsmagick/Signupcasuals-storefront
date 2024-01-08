@@ -2,6 +2,7 @@
     <div
       class="relative inline-block text-left text-gray-800"
       :class="[widthFull ? 'w-full' : 'w-auto']"
+      v-on-clickaway="closeMenu"
     >
       <slot
         name="menu-activator"
@@ -19,21 +20,22 @@
         leave-to-class="transform opacity-0 scale-95"
       >
         <div
-          class="origin-top-center absolute mt-2 rounded-md shadow-lg text-sm border z-50"
+          class="origin-top-center absolute  shadow-lg text-xs border z-50"
           :class="[
             bottom ? 'bottom-10' : '',
             menuClass,
             overflow,
             right ? 'right-0' : 'left-0',
             setToBottom ? 'bottom-10' : '',
-            dropWidth ? dropWidth : 'w-full',
+            dropWidth,
+            dropMarginTop ? dropMarginTop : 'mt-2'
           ]"
           :style="{ width: `${width}px` }"
           :id="`dropdown-content:${id}`"
           v-if="isMenuOpen"
         >
           <div
-            class="rounded-md bg-white shadow-xs"
+            class="bg-white shadow-xs"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu"
@@ -45,9 +47,9 @@
     </div>
   </template>
   <script>
-//   import { mixin as clickaway } from "vue-clickaway";
+  import { mixin as clickaway } from "vue-clickaway";
   export default {
-    // mixins: [clickaway],
+    mixins: [clickaway],
     props: {
       id: {
         type: String | Number,
@@ -76,10 +78,10 @@
         type: Boolean,
         default: true,
       },
-      dropWidth: {
+      dropMarginTop:{
         type: String,
-        default: "w-full",
-      },
+        default: 'mt-2'
+      }
     },
     data() {
       return {

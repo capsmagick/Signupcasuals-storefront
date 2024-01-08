@@ -91,6 +91,7 @@
             </div>
             <button
               class="text-sm font-medium text-white bg-head px-6 py-4 w-52"
+              @click="addToCart"
             >
               ADD TO CART
             </button>
@@ -194,6 +195,20 @@ export default {
         if(this.itemQty == 1) return;
         this.itemQty--
       }
+    },
+    async addToCart(){
+      if(!localStorage.getItem("cartId")){
+        const { cart } = await this.$axios.$post('/api/store/carts');
+        localStorage.setItem("cartId",cart.id)
+      }
+      let cartId = localStorage.getItem("cartId")
+
+      const variant_id = this.product.variants[0].id;
+      
+      const updatedCart = await this.$axios.$post(`/api/store/carts/${cartId}/line-items`,{
+        variant_id,
+        quantity:2
+      });
     }
   },
   mounted() {

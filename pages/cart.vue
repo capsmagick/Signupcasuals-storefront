@@ -33,14 +33,16 @@
           </div>
           <!-- Products list -->
           <div
-            v-for="product in 3"
+            v-for="product in cartProducts"
             :key="product"
             class="grid text-sm text-head font-medium border-b border-footer py-7"
             style="grid-template-columns: 4fr 1fr 1fr 1fr 40px"
           >
             <div class="flex gap-7">
-              <div>
+              <div class="w-20 h-full">
+                <img v-if="product.thumbnail" :src="product.thumbnail" alt="">
                 <img
+                v-else
                   src="~/assets/images/product.png"
                   class="w-[100px]"
                   alt=""
@@ -48,7 +50,7 @@
                 />
               </div>
               <div class="flex items-center">
-                <span class="text-head text">Zessi Dresses</span>
+                <span class="text-head text">{{ product.title }}</span>
                 <span></span>
               </div>
             </div>
@@ -58,7 +60,7 @@
                 class="px-4 py-4 text-second border border-footer text-sm flex items-center gap-4"
               >
                 <button>-</button>
-                3
+                {{  product.quantity }}
                 <button>+</button>
               </div>
             </div>
@@ -384,8 +386,23 @@ export default {
           value: "confirmation",
         },
       ],
+      cartDetails:{},
+      cartProducts:[]
     };
   },
+  methods:{
+    async getCartProductList(){
+      const cartId = localStorage.getItem("cartId");
+      if(!cartId) return;
+
+      const { cart } = await this.$axios.$get(`/api/store/carts/${cartId}`)
+      this.cartDetails = cart;
+      this.cartProducts = cart.items
+    }
+  },
+  async mounted(){
+    await this.getCartProductList();
+  }
 };
 </script>
 
