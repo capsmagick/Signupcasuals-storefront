@@ -20,8 +20,12 @@
               :key="idx"
               class="cursor-pointer"
             >
-              <div v-if="link.value == 'pages'" >
-                <ReusableDropdown menuClass="w-40" :right="false" dropMarginTop="mt-[28px]">
+              <div v-if="link.value == 'pages'">
+                <ReusableDropdown
+                  menuClass="w-40"
+                  :right="false"
+                  dropMarginTop="mt-[28px]"
+                >
                   <template #menu-activator="{ toggleMenu }">
                     <button
                       class="text-sm uppercase text-head font-medium px-4"
@@ -32,12 +36,16 @@
                   </template>
                   <template #menu-content="{ toggleMenu }">
                     <div class="flex flex-col px-[20px] py-5 gap-2 capitalize">
-                      <div v-for="page in link.pages" :key="page.value">{{ page.name }}</div>
-                    </div> 
+                      <div v-for="page in link.pages" :key="page.value">
+                        {{ page.name }}
+                      </div>
+                    </div>
                   </template>
                 </ReusableDropdown>
               </div>
-              <a v-else @click="goToPage(link)" class="px-4">{{ link.title }}</a>
+              <a v-else @click="goToPage(link)" class="px-4">{{
+                link.title
+              }}</a>
             </li>
           </ul>
         </nav>
@@ -62,7 +70,12 @@
         </button>
         <button @click="goToPage({ link: 'cart' })" class="relative">
           <img src="~/assets/images/icons/shopping-bag.svg" />
-          <div v-show="cartItemCount > 0" class="absolute -right-2 -bottom-2 w-4 h-4 flex items-center justify-center bg-third text-[10px] font-medium text-white rounded-full">{{ cartItemCount }}</div>
+          <div
+            v-show="cartItemCount > 0"
+            class="absolute -right-2 -bottom-2 w-4 h-4 flex items-center justify-center bg-third text-[10px] font-medium text-white rounded-full"
+          >
+            {{ cartItemCount }}
+          </div>
         </button>
         <button class="md:flex hidden">
           <img src="~/assets/images/icons/nav-icon.svg" />
@@ -196,27 +209,36 @@ export default {
           ],
         },
       ],
+      customerCart:{}
     };
   },
-  computed:{
-    ...mapState("customer",["customerProductsCart"]),
-    cartItemCount(){
-      const cart = JSON.parse(JSON.stringify(this.customerProductsCart));
-      if(cart?.items.length) return cart.items.length
-      return 0
+  watch:{
+    customerProductsCart(v){
+      this.customerCart = JSON.parse(JSON.stringify(this.customerProductsCart))
     }
   },
+  computed: {
+    ...mapState("customer", ["customerProductsCart"]),
+    cartItemCount() {
+      return 1
+      // if (this.customerCart) {
+      //   if (this.customerCart?.items.length) return cart.items.length;
+      //   return 0
+      // }
+      // return 0;
+    },
+  },
   methods: {
-    ...mapActions("customer",["getCustomerProductCart"]),
+    ...mapActions("customer", ["getCustomerProductCart"]),
     goToPage(link) {
       let val = link.link;
       if (val == "index") this.$router.push("/");
       else this.$router.push(`/${link.link}`);
     },
   },
-  mounted(){
-    this.getCustomerProductCart()
-  }
+  mounted() {
+    this.getCustomerProductCart();
+  },
 };
 </script>
 
