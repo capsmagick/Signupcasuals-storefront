@@ -74,5 +74,5 @@ export default {
   publicRuntimeConfig:{
     API_KEY: process.env.API_KEY
   },
-  target: 'static'
+  target: 'server'
 }
