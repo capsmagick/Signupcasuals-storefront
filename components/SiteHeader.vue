@@ -55,16 +55,9 @@
         <button class="md:flex hidden">
           <img src="~/assets/images/icons/magnify.svg" />
         </button>
-        <ReusableRightOpenNav title="login" width="700px">
-          <template #modal-activator="{ toggleModal }">
-            <button class="md:flex hidden" @click="toggleModal">
-              <img src="~/assets/images/icons/account.svg" />
-            </button>
-          </template>
-          <template #modal-content="{ toggleModal }">
-            <LoginRegisterForm />
-          </template>
-        </ReusableRightOpenNav>
+        <button class="md:flex hidden" @click="goToPage({ link:'account'})">
+          <img src="~/assets/images/icons/account.svg" />
+        </button>
         <button class="md:flex hidden">
           <img src="~/assets/images/icons/heart.svg" />
         </button>
@@ -77,9 +70,16 @@
             {{ cartItemCount }}
           </div>
         </button>
-        <button class="md:flex hidden">
-          <img src="~/assets/images/icons/nav-icon.svg" />
-        </button>
+        <ReusableRightOpenNav title="login" width="700px">
+          <template #modal-activator="{ toggleModal }">
+            <button class="md:flex hidden" @click="toggleModal">
+              <img src="~/assets/images/icons/nav-icon.svg" />
+            </button>
+          </template>
+          <template #modal-content="{ toggleModal }">
+            <LoginRegisterForm />
+          </template>
+        </ReusableRightOpenNav>
       </div>
     </div>
     <!-- mobile side bar -->

@@ -44,11 +44,17 @@
 
               <div class="flex items-center gap-2">
                 <button
-                  v-for="size in sizes"
-                  :key="size"
-                  class="border border-footer px-4 py-1.5 font-normal uppercase"
+                  v-for="variant in variants"
+                  :key="variant"
+                  :class="[
+                    variant.id == selectedVariant.id
+                      ? 'bg-head text-white border-head'
+                      : 'border-footer text-head',
+                    'border px-4 py-1.5 font-normal uppercase',
+                  ]"
+                  @click="onSelectVariant(variant)"
                 >
-                  {{ size }}
+                  {{ variant.title }}
                 </button>
               </div>
             </div>
@@ -85,9 +91,9 @@
             <div
               class="px-6 py-4 border border-footer text-sm flex items-center gap-4"
             >
-              <button @click="onClickQty('sub')"><Minus :size="16"/></button>
+              <button @click="onClickQty('sub')"><Minus :size="16" /></button>
               {{ itemQty }}
-              <button @click="onClickQty('add')"><Plus :size="16"/></button>
+              <button @click="onClickQty('add')"><Plus :size="16" /></button>
             </div>
             <button
               class="text-sm font-medium text-white bg-head px-6 py-4 w-52"
@@ -161,19 +167,20 @@ export default {
   components: {
     ProductCard,
     Plus: () => import("vue-material-design-icons/Plus.vue"),
-    Minus: () => import("vue-material-design-icons/Minus.vue")
+    Minus: () => import("vue-material-design-icons/Minus.vue"),
   },
   data() {
     return {
       selectedTab: "description",
-      sizes: ["xs", "s", "m", "l", "xl"],
       colors: ["#222222", "#C93A3E", "#E4E4E4"],
       tabs: ["description", "additional information", "reviews"],
       selectedColor: null,
       imageIdx: 0,
       product: {},
       previewImage: {},
-      itemQty:1
+      itemQty: 1,
+      variants: [],
+      selectedVariant: {},
     };
   },
   methods: {
@@ -183,33 +190,43 @@ export default {
         `/api/store/products/${productId}`
       );
       this.product = product;
-      this.previewImage = product.images[0]
-    },
-    onSelectImage(index = null){
-      if(!index) return;
-      this.previewImage = this.product.images[index]
-    },
-    onClickQty(val){
-      if(val == 'add') this.itemQty++;
-      if(val == 'sub'){
-        if(this.itemQty == 1) return;
-        this.itemQty--
-      }
-    },
-    async addToCart(){
-      if(!localStorage.getItem("cartId")){
-        const { cart } = await this.$axios.$post('/api/store/carts');
-        localStorage.setItem("cartId",cart.id)
-      }
-      let cartId = localStorage.getItem("cartId")
+      this.previewImage = product.images[0];
+      this.variants = product.variants;
 
-      const variant_id = this.product.variants[0].id;
-      
-      const updatedCart = await this.$axios.$post(`/api/store/carts/${cartId}/line-items`,{
-        variant_id,
-        quantity:2
-      });
-    }
+      // Default
+      this.selectedVariant = this.variants[0];
+    },
+    onSelectImage(index = null) {
+      if (!index) return;
+      this.previewImage = this.product.images[index];
+    },
+    onSelectVariant(variant){
+      this.selectedVariant = variant
+    },
+    onClickQty(val) {
+      if (val == "add") this.itemQty++;
+      if (val == "sub") {
+        if (this.itemQty == 1) return;
+        this.itemQty--;
+      }
+    },
+    async addToCart() {
+      if (!localStorage.getItem("cartId")) {
+        const { cart } = await this.$axios.$post("/api/store/carts");
+        localStorage.setItem("cartId", cart.id);
+      }
+      let cartId = localStorage.getItem("cartId");
+
+      const variant_id = this.selectedVariant.id;
+
+      const updatedCart = await this.$axios.$post(
+        `/api/store/carts/${cartId}/line-items`,
+        {
+          variant_id,
+          quantity: 2,
+        }
+      );
+    },
   },
   mounted() {
     this.fetchProductsList();
