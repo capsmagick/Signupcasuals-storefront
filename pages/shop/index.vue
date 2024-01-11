@@ -15,7 +15,7 @@
       <aside class="w-[300px] flex-shrink-0">
         <ProductsFilter />
       </aside>
-      <div>
+      <div class="flex-1">
         <!-- head -->
         <div class="flex items-center justify-between">
           <div class="text-xs font-medium">HOME / SHOP</div>
