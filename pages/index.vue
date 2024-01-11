@@ -23,7 +23,7 @@
     </section>
 
     <!-- Mobile Home -->
-    <MobileHome class="hidden"/>
+    <MobileHome class="md:hidden block"/>
   </div>
 </template>
 

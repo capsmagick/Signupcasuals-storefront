@@ -1,5 +1,5 @@
 <template>
-  <div class="py-12">
+  <div class="pt-12">
     <h5 class="text-head text-2xl font-bold mb-6 text-center uppercase">
       <span class="font-normal">Our trendy</span> PRODUCTS
     </h5>

@@ -1,10 +1,10 @@
 <template>
   <div class="xl:max-w-7xl lg:max-w-4xl mx-auto pt-12 pb-6">
     <!-- Products details -->
-    <div class="grid gap-5 pb-12" style="grid-template-columns: 60fr 40fr">
-      <div class="flex gap-4">
+    <div class="product_detail_grid md:grid gap-5 pb-12 md:px-0 px-4" style="">
+      <div class="flex md:flex-row flex-col-reverse gap-4">
         <div
-          class="preview-slide-images flex flex-col w-20 space-y-4 flex-shrink-0"
+          class="preview-slide-images md:flex md:flex-col grid grid-cols-4 md:w-20 gap-4 flex-shrink-0"
         >
           <div v-for="(image, idx) in product.images" :key="idx">
             <a class="cursor-pointer" @click="onSelectImage(idx)"
@@ -16,8 +16,8 @@
           <img :src="previewImage.url" alt="" class="w-full object-cover" />
         </div>
       </div>
-      <div class="pl-10">
-        <div class="flex items-center justify-between">
+      <div class="md:pl-10">
+        <div class="md:flex hidden items-center justify-between">
           <div class="text-xs font-medium">HOME / SHOP</div>
           <div class="flex items-center gap-4 text-xs text-head">
             <button class="flex items-center font-medium">
