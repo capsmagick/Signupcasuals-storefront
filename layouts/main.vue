@@ -6,17 +6,25 @@
         <nuxt />
       </main>
     </div>
-    <SiteFooter />
+    <div class="hidden md:block">
+      <SiteFooter />
+    </div>
+    <div class="md:hidden block">
+      <MobileSiteFooter />
+    </div>
+    
   </div>
 </template>
 
 <script>
 import SiteHeader from "~/components/SiteHeader.vue";
 import SiteFooter from "~/components/SiteFooter.vue";
+import MobileSiteFooter from "~/components/Mobile/SiteFooter.vue"
 export default {
   components: {
     SiteHeader,
     SiteFooter,
+    MobileSiteFooter
   },
 };
 </script>

@@ -1,9 +1,11 @@
 <template>
-  <div class="xl:max-w-7xl lg:max-w-4xl mx-auto pt-20 pb-6">
-    <h1 class="text-head text-3xl font-bold mb-4">SHOP</h1>
+  <div
+    class="xl:max-w-7xl lg:max-w-4xl mx-auto md:pt-20 pt-10 pb-6 md:px-0 px-4"
+  >
+    <h1 class="md:block hidden text-head text-3xl font-bold mb-4">SHOP</h1>
     <!-- Shop cat tab -->
     <div
-      class="flex items-center gap-6 uppercase text-sm text-head font-medium"
+      class="md:flex hidden items-center gap-6 uppercase text-sm text-head font-medium"
     >
       <div>#stayhome</div>
       <div class="" v-for="(tab, idx) in categoryTabs" :key="idx">
@@ -11,20 +13,24 @@
       </div>
     </div>
     <!-- Shop items section -->
-    <div class="flex gap-14 mt-16">
-      <aside class="w-[300px] flex-shrink-0">
+    <div class="flex gap-14 md:mt-16">
+      <aside class="md:block hidden w-[300px] flex-shrink-0">
         <ProductsFilter />
       </aside>
       <div class="flex-1">
         <!-- head -->
         <div class="flex items-center justify-between">
-          <div class="text-xs font-medium">HOME / SHOP</div>
+          <div class="md:block hidden text-xs font-medium">HOME / SHOP</div>
+          <div @click="openSideFilter = !openSideFilter" class="md:hidden flex items-center gap-2 text-sm font-medium">
+            <FilterVariant :size="18" /> FILTER
+          </div>
+
           <div class="flex text-xs font-medium gap-4 divide-x-2">
             <div class="flex items-center border-b-2 border-head">
               DEFAULT SORT
               <ChevronDown />
             </div>
-            <div class="flex items-center gap-2 pl-4">
+            <div class="md:flex hidden items-center gap-2 pl-4">
               VIEW
               <span>2</span>
               <span>3</span>
@@ -32,7 +38,7 @@
             </div>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-8 pt-6">
+        <div class="grid grid-cols-2 md:gap-8 gap-4 pt-6">
           <ProductCard v-for="item in products" :product="item" :key="item" />
         </div>
         <div class="pagination-shop-list grid grid-cols-3 w-full pt-10">
@@ -42,7 +48,17 @@
           <div
             class="flex items-center justify-center gap-2 text-sm font-medium"
           >
-            <button v-for="(page, idx) in paginate.pages" @click="onSelectPage(idx)" :key="idx" :class="[checkPage(idx) ? 'bg-head text-white' : 'text-head','px-1.5 rounded']">{{ page }}</button>
+            <button
+              v-for="(page, idx) in paginate.pages"
+              @click="onSelectPage(idx)"
+              :key="idx"
+              :class="[
+                checkPage(idx) ? 'bg-head text-white' : 'text-head',
+                'px-1.5 rounded',
+              ]"
+            >
+              {{ page }}
+            </button>
           </div>
           <div
             class="text-xs text-head flex items-center font-medium justify-end"
@@ -50,6 +66,22 @@
             NEXT<span><ChevronRight :size="18" /></span>
           </div>
         </div>
+      </div>
+    </div>
+    <!-- Side Filter Mobile view -->
+    <div v-if="openSideFilter" class="fixed w-full bg-white h-screen top-0 left-0 z-50">
+      <div
+        class="flex bg-primary items-center justify-between px-6 py-5 rounded-t"
+      >
+        <h3 class="text-base text-head font-medium uppercase">Filter By</h3>
+        <button
+          class="p-1 ml-auto border-0 text-appText float-right leading-none font-semibold outline-none focus:outline-none"
+        >
+          <Close @click="openSideFilter = !openSideFilter" :size="18"/>
+        </button>
+      </div>
+      <div class="px-6 pt-6 overflow-y-auto" style="height: calc(100vh - 66px);">
+        <ProductsFilter />
       </div>
     </div>
   </div>
@@ -66,6 +98,8 @@ export default {
     ChevronRight: () => import("vue-material-design-icons/ChevronRight.vue"),
     ProductsFilter: () => import("~/components/Products/Filter.vue"),
     ProductCard,
+    FilterVariant: () => import("vue-material-design-icons/FilterVariant.vue"),
+    Close: () => import("vue-material-design-icons/Close.vue")
   },
   data() {
     return {
@@ -104,35 +138,42 @@ export default {
         },
       ],
       products: [],
-      limit:6,
-      paginate:{
-        offset:0,
-        count:0,
-        pages:0
-      }
+      limit: 6,
+      paginate: {
+        offset: 0,
+        count: 0,
+        pages: 0,
+      },
+      openSideFilter:false
     };
   },
   methods: {
     async fetchProductsList(offset = 0) {
       try {
-        const { products, count, offset:dataOffset } = await this.$axios.$get(`/api/store/products?limit=${this.limit}&offset=${offset}`);
-        this.products = products
+        const {
+          products,
+          count,
+          offset: dataOffset,
+        } = await this.$axios.$get(
+          `/api/store/products?limit=${this.limit}&offset=${offset}`
+        );
+        this.products = products;
 
         this.paginate.count = count;
-        this.paginate.pages = Math.ceil( count/this.limit)
-        this.paginate.offset = dataOffset
+        this.paginate.pages = Math.ceil(count / this.limit);
+        this.paginate.offset = dataOffset;
       } catch (error) {
         console.log(error);
       }
     },
-    async onSelectPage(page){
+    async onSelectPage(page) {
       const offset = this.limit * page;
-      await this.fetchProductsList(offset)
+      await this.fetchProductsList(offset);
     },
-    checkPage(page){
+    checkPage(page) {
       const currentPage = this.limit * page;
-      if(currentPage == page) return true
-    }
+      if (currentPage == page) return true;
+    },
   },
   async mounted() {
     this.fetchProductsList();

@@ -148,7 +148,7 @@
       </div>
     </div>
     <!-- related products -->
-    <div class="pt-12">
+    <div class="hidden md:block pt-12">
       <h5 class="text-head text-2xl font-bold mb-6">
         <span class="font-normal">RELATED</span> PRODUCTS
       </h5>
