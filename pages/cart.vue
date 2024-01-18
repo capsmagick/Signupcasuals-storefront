@@ -395,7 +395,7 @@ export default {
       const cartId = localStorage.getItem("cartId");
       if(!cartId) return;
 
-      const { cart } = await this.$axios.$get(`/api/store/carts/${cartId}`)
+      const { cart } = await this.$axios.$get(`/api/carts/${cartId}`)
       this.cartDetails = cart;
       this.cartProducts = cart.items
     }

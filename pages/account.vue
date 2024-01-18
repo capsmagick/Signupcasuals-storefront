@@ -18,7 +18,7 @@
       <!--  -->
       <div>
         <div v-if="currentNav == 'dashboard'">
-            <p class="text-head text-sm">Hello <span class="font-medium">user</span>( not <span class="font-medium">user</span>? Log Out )</p>
+            <p class="text-head text-sm">Hello <span class="font-medium">{{ user?.first_name ?? "Guest"}}</span>( not <span class="font-medium">user</span>? Log Out )</p>
             <p class="text-head text-sm pt-10">From your account dashboard you can view your recent orders, manage your shipping and billing addresses, and edit your password and account details.</p>
         </div>
         <div v-else>
@@ -57,6 +57,9 @@ export default {
   computed:{
     currentNavDetails(){
         return this.accountNav.find((e) => e.value == this.currentNav)
+    },
+    user(){
+      return this.$auth.user
     }
   }
 };

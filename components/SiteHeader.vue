@@ -36,7 +36,7 @@
                   </template>
                   <template #menu-content="{ toggleMenu }">
                     <div class="flex flex-col px-[20px] py-5 gap-2 capitalize">
-                      <div v-for="page in link.pages" :key="page.value">
+                      <div v-for="page in pages" :key="page.value">
                         {{ page.name }}
                       </div>
                     </div>
@@ -55,7 +55,7 @@
         <button class="md:flex hidden">
           <img src="~/assets/images/icons/magnify.svg" />
         </button>
-        <button class="md:flex hidden" @click="goToPage({ link:'account'})">
+        <button class="md:flex hidden" @click="goToPage({ link: 'account' })">
           <img src="~/assets/images/icons/account.svg" />
         </button>
         <button class="md:flex hidden">
@@ -77,7 +77,7 @@
             </button>
           </template>
           <template #modal-content="{ toggleModal }">
-            <LoginRegisterForm />
+            <LoginRegisterForm @loggedIn="toggleModal"/>
           </template>
         </ReusableRightOpenNav>
       </div>
@@ -90,7 +90,7 @@
     >
       <div class="h-full flex flex-col divide-y divide-footer">
         <div class="px-4 flex-1">
-          <div class="flex items-center">
+          <div v-if="mobileLink != 'collection'" class="flex items-center">
             <input
               id="search-field"
               class="h-full w-full border border-footer py-3 pl-3 pr-8 text-head placeholder-second focus:border-head focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
@@ -102,18 +102,70 @@
             <Magnify class="-ml-7 relative text-second" />
           </div>
           <div>
-            <nav class="pt-4">
+            <nav
+              v-if="mobileLink != 'pages' || mobileLink != 'collection'"
+              class="pt-4"
+            >
               <ul
                 class="flex flex-col gap-6 text-[16px] uppercase text-head font-medium"
               >
                 <li v-for="(link, idx) in navLinks" :key="idx">
-                  <a href="#" class="flex items-end">
+                  <a
+                    v-on:click="
+                      [
+                        link.value == 'pages' || 'collection'
+                          ? (mobileLink = link.value)
+                          : goToPage(link),
+                      ]
+                    "
+                    class="flex items-end"
+                  >
                     <span class="flex-1">{{ link.title }}</span>
                     <span><ChevronRight /></span>
                   </a>
                 </li>
               </ul>
             </nav>
+            <!-- Pages -->
+            <div v-if="mobileLink == 'pages'">
+              <div
+                class="flex items-center gap-2 font-medium border-b border-footer py-2"
+              >
+                <MdiChevronLeft class="cursor-pointer" @click="resetTab" />
+                PAGES
+              </div>
+              <ul class="text-sm flex flex-col gap-4 pt-4">
+                <li v-for="page in pages" :key="page.link">{{ page.name }}</li>
+              </ul>
+            </div>
+            <!-- Collections -->
+            <div v-if="mobileLink == 'collection'">
+              <div class="flex items-center gap-2 mb-4">
+                <button
+                  v-for="item in collectionTabs"
+                  :key="item"
+                  :class="[
+                    item == collectionCurrentTab
+                      ? 'bg-head text-white'
+                      : 'text-head bg-white',
+                    'px-4 py-2 text-sm font-medium uppercase rounded-md',
+                  ]"
+                >
+                  {{ item }}
+                </button>
+              </div>
+              <div
+                class="flex items-center gap-2 font-medium border-b border-footer py-2"
+              >
+                <MdiChevronLeft class="cursor-pointer" @click="resetTab" />
+                COLLECTION
+              </div>
+              <ul class="text-sm flex flex-col gap-4 pt-4">
+                <li v-for="collection in collections" :key="collection">
+                  {{ collection }}
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="px-4 pt-4 flex flex-col gap-4">
@@ -185,42 +237,58 @@ export default {
         {
           title: "Pages",
           value: "pages",
-          pages: [
-            {
-              name: "About",
-              link: "about",
-            },
-            {
-              name: "Contact Us",
-              link: "contact-us",
-            },
-            {
-              name: "Store Locator",
-              value: "store-locator",
-            },
-            {
-              name: "FAQ",
-              value: "faq",
-            },
-            {
-              name: "Coming Soon",
-              value: "coming-soon",
-            },
-          ],
         },
       ],
-      customerCart:{}
+      pages: [
+        {
+          name: "About",
+          link: "about",
+        },
+        {
+          name: "Contact Us",
+          link: "contact-us",
+        },
+        {
+          name: "Store Locator",
+          value: "store-locator",
+        },
+        {
+          name: "FAQ",
+          value: "faq",
+        },
+        {
+          name: "Coming Soon",
+          value: "coming-soon",
+        },
+      ],
+      collectionTabs: ["women", "men", "kids"],
+      collectionCurrentTab: "women",
+      collections: [
+        "New",
+        "Best Sellers",
+        "Collaborations®",
+        "Sets",
+        "DenimJackets & Coats",
+        "Overshirts",
+        "Trousers",
+        "Jeans",
+        "Dresses",
+        "Sweatshirts and Hoodies",
+        "T-shirts & Tops",
+      ],
+      customerCart: {},
+      mobileLink: "",
     };
   },
-  watch:{
-    customerProductsCart(v){
-      this.customerCart = JSON.parse(JSON.stringify(this.customerProductsCart))
-    }
+  watch: {
+    customerProductsCart(v) {
+      this.customerCart = JSON.parse(JSON.stringify(this.customerProductsCart));
+    },
   },
   computed: {
     ...mapState("customer", ["customerProductsCart"]),
     cartItemCount() {
-      return 1
+      return 1;
       // if (this.customerCart) {
       //   if (this.customerCart?.items.length) return cart.items.length;
       //   return 0
@@ -235,8 +303,18 @@ export default {
       if (val == "index") this.$router.push("/");
       else this.$router.push(`/${link.link}`);
     },
+    resetTab() {
+      this.mobileLink = "";
+    },
+    fetchUserProfile() {
+      try {
+        const { customer } = this.$axios.$get("/api/auth");
+        this.$auth.setUser(customer);
+      } catch (error) {}
+    },
   },
   mounted() {
+    this.fetchUserProfile();
     this.getCustomerProductCart();
   },
 };

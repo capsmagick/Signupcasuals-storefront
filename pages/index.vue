@@ -53,7 +53,7 @@ export default {
   methods: {
     async login() {
       try {
-        const res = await fetch("/api/store/auth", {
+        const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify( {
@@ -70,7 +70,7 @@ export default {
     },
     async fetchProducts() {
       console.log("hii ");
-      const res = await fetch("/api/store/products/prod_01HHVZNTKQQ082SS6Z5YFV4Z5H", {
+      const res = await fetch("/api/products/prod_01HHVZNTKQQ082SS6Z5YFV4Z5H", {
         method: "GET",
       });
 

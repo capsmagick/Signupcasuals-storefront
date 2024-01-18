@@ -155,7 +155,7 @@ export default {
           count,
           offset: dataOffset,
         } = await this.$axios.$get(
-          `/api/store/products?limit=${this.limit}&offset=${offset}`
+          `/api/products?limit=${this.limit}&offset=${offset}`
         );
         this.products = products;
 
