@@ -1,4 +1,5 @@
 export const state = () => {
+  customerCartId: "";
   customerProductsCart: {
   }
 };
@@ -9,20 +10,42 @@ export const mutations = {
   setCustomerProductsCart(state, payload) {
     state.customerProductsCart = payload;
   },
+  setCustomerCartId(state, payload) {
+    state.customerCartId = payload;
+  },
 };
 
 // Actions
 
 export const actions = {
   async getCustomerProductCart({ commit }, payload) {
-    const cartId = localStorage.getItem("cartId");
-    if (!cartId) {
-      const { cart } = await this.$axios.$post("/api/store/carts");
-      localStorage.setItem("cartId", cart.id);
-      commit("setCustomerProductsCart", cart);
-      return
+    try {
+      const cartId = localStorage.getItem("cartId");
+      if (!cartId) {
+        const { cart } = await this.$axios.$post("/api/carts");
+        localStorage.setItem("cartId", cart.id);
+        commit("setCustomerProductsCart", cart);
+        return;
+      }
+      // check cart exists
+      this.$axios
+        .$get(`/api/carts/${cartId}`)
+        .then((res) => {
+          const { cart } = res;
+          localStorage.setItem("cartId", cart.id);
+          commit("setCustomerCartId", cart.id);
+          commit("setCustomerProductsCart", cart);
+          return;
+        })
+        .catch(async (e) => {
+          const { cart } = await this.$axios.$post("/api/carts");
+          localStorage.setItem("cartId", cart.id);
+          commit("setCustomerCartId", cart.id);
+          commit("setCustomerProductsCart", cart);
+          return;
+        });
+    } catch (error) {
+      console.log("new ", error);
     }
-    const { cart } = await this.$axios.$get(`/api/store/carts/${cartId}`);
-    commit("setCustomerProductsCart", cart);
   },
 };

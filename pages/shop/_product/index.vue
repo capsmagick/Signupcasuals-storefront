@@ -187,7 +187,7 @@ export default {
     async fetchProductsList() {
       const { product: productId } = this.$route.params;
       const { product } = await this.$axios.$get(
-        `/api/store/products/${productId}`
+        `/api/products/${productId}`
       );
       this.product = product;
       this.previewImage = product.images[0];
@@ -212,15 +212,15 @@ export default {
     },
     async addToCart() {
       if (!localStorage.getItem("cartId")) {
-        const { cart } = await this.$axios.$post("/api/store/carts");
+        const { cart } = await this.$axios.$post("/api/carts");
         localStorage.setItem("cartId", cart.id);
       }
       let cartId = localStorage.getItem("cartId");
-
+      console.log("herere")
       const variant_id = this.selectedVariant.id;
 
       const updatedCart = await this.$axios.$post(
-        `/api/store/carts/${cartId}/line-items`,
+        `/api/carts/${cartId}/line-items`,
         {
           variant_id,
           quantity: 2,

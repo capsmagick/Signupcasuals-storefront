@@ -52,9 +52,21 @@
       </div>
       <!-- Options -->
       <div class="flex items-center xl:gap-10 lg:gap-6 md:gap-4">
-        <button class="md:flex hidden">
-          <img src="~/assets/images/icons/magnify.svg" />
-        </button>
+        <div>
+          <ReusableDropdown>
+            <template #menu-activator="{ toggleMenu }">
+              <button @click="toggleMenu" class="md:flex hidden">
+                <img src="~/assets/images/icons/magnify.svg" />
+              </button>
+            </template>
+            <template #menu-content="{ toggleMenu }">
+              <div>
+                hello
+              </div>
+            </template>
+          </ReusableDropdown>
+        </div>
+        
         <button class="md:flex hidden" @click="goToPage({ link: 'account' })">
           <img src="~/assets/images/icons/account.svg" />
         </button>

@@ -19,7 +19,7 @@
 
     <div class="py-10">
       <!-- Shopping bags -->
-      <div v-if="selectedTab == 'shopping-bag'" class="grid gap-[60px]" style="grid-template-columns: 2fr 1fr">
+      <div v-if="step == 1" class="grid gap-[60px]" style="grid-template-columns: 2fr 1fr">
         <div class="flex flex-col">
           <div
             class="grid text-sm text-head font-medium uppercase border-b border-footer py-3"
@@ -121,7 +121,8 @@
           </div>
           <button
             class="text-sm font-medium text-white bg-head px-6 py-4 flex items-center justify-center w-full"
-          >
+            @click="proceedCheckout"
+            >
             PROCEED TO CHECKOUT
           </button>
         </div>
@@ -129,7 +130,7 @@
       <!-- Shopping bags -->
 
       <!-- Checkout form -->
-      <div v-if="selectedTab == 'shipping-checkout'" class="grid gap-[60px]" style="grid-template-columns: 2fr 1fr">
+      <div v-if="step == 2" class="grid gap-[60px]" style="grid-template-columns: 2fr 1fr">
         <div>
           <h5 class="text-[16px] text-head font-medium mb-4">BILLING DETAILS</h5>
           <div>
@@ -272,7 +273,7 @@
       <!--  -->
 
       <!-- Confirmation -->
-      <div v-if="selectedTab == 'confirmation'" class="max-w-3xl flex flex-col gap-9 mx-auto">
+      <div v-if="step == 3" class="max-w-3xl flex flex-col gap-9 mx-auto">
         <div class="flex items-center justify-center flex-col">
           <div
             class="h-20 w-20 bg-third flex items-center justify-center rounded-full mb-5"
@@ -387,7 +388,8 @@ export default {
         },
       ],
       cartDetails:{},
-      cartProducts:[]
+      cartProducts:[],
+      step:1
     };
   },
   methods:{
@@ -398,6 +400,12 @@ export default {
       const { cart } = await this.$axios.$get(`/api/carts/${cartId}`)
       this.cartDetails = cart;
       this.cartProducts = cart.items
+    },
+    proceedCheckout(){
+      console.log("herer")
+      if(this.step == 1){
+        this.step = 2;
+      }
     }
   },
   async mounted(){

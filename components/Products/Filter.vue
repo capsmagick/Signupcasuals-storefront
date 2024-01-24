@@ -15,7 +15,7 @@
           :key="category"
           class="capitalize leading-8"
         >
-          {{ category }}
+          {{ category.name }}
         </li>
       </ul>
     </div>
@@ -141,7 +141,19 @@ export default {
     onSelectColor(color) {
       this.selectedColor = color;
     },
+    async getProductCategories() {
+      try {
+        const { product_categories } = await this.$axios.$get(
+          "/api/product-categories"
+        );
+        // if(!product_categories.length) this.categories = this.dummyCat
+        this.productCategories = product_categories
+      } catch (error) {}
+    },
   },
+  async mounted(){
+    await this.getProductCategories();
+  }
 };
 </script>
 
