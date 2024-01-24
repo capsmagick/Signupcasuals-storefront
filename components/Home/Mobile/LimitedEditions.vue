@@ -62,7 +62,7 @@ export default {
   methods: {
     async getLimitedEditionsProducts() {
       try {
-        const { products } = await this.$axios.$get(`/api/store/products`);
+        const { products } = await this.$axios.$get(`/api/products`);
         this.products = products;
       } catch (error) {}
     },
