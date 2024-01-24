@@ -73,7 +73,9 @@ export default {
   publicRuntimeConfig: {
     API_KEY: process.env.API_KEY,
   },
-
+  server: {
+    port: process.env.API_KEY ?? 8000 // default: 3000
+  },
   auth: {
     strategies: {
       local: {
