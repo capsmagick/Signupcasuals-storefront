@@ -223,7 +223,7 @@ export default {
         `/api/carts/${cartId}/line-items`,
         {
           variant_id,
-          quantity: 2,
+          quantity: this.itemQty,
         }
       );
     },

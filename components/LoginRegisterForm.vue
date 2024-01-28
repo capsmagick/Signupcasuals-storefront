@@ -9,7 +9,11 @@
           />
         </div>
         <div class="mb-6">
-          <FormTextField v-model="login.password" placeholder="Password" />
+          <FormTextField
+            v-model="login.password"
+            placeholder="Password"
+            :type="'password'"
+          />
         </div>
         <div class="flex items-center justify-between mb-6">
           <div class="text-second text-sm">
@@ -59,12 +63,14 @@
           <FormTextField
             v-model="customerRegister.password"
             placeholder="Password"
+            :type="'password'"
           />
         </div>
         <div class="mb-6">
           <FormTextField
             v-model="confirmPassword"
             placeholder="Confirm Password"
+            :type="'password'"
           />
         </div>
         <p class="text-second text-sm text-justify mb-6">
@@ -97,16 +103,28 @@ export default {
   methods: {
     async customerLogin() {
       try {
-        const { customer } = await this.$axios.$post("/api/auth", this.login);
-        this.$auth.setUser(customer);
-        this.$router.push("/")
-        this.$emit("loggedIn")
-      } catch (error) {}
+        const { customer } = await this.$auth.loginWith("local", {
+          data: this.login,
+        });
+        this.$alert.show({
+          title: "Logged in Successfully",
+          description: "You have successfully logged in!",
+        });
+        this.$router.push("/");
+        this.$emit("loggedIn");
+      } catch (error) {
+        console.log("er", error);
+        this.$alert.show({
+          isError: true,
+          title: "Invalid Login",
+          description: "Please enter valid credentials",
+        });
+      }
     },
     async registerCustomer() {
       try {
         const res = await this.$axios.$post(
-          "/api/store/customers",
+          "/api/customers",
           this.customerRegister
         );
         console.log(res);

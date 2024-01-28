@@ -3,7 +3,7 @@
     <div
       class="xl:max-w-7xl lg:max-w-4xl md:max-w-3xl md:px-0 px-4 mx-auto flex items-center justify-between py-4"
     >
-      <div class="md:hidden block">
+      <div class="lg:hidden block">
         <button class="" @click="showSideNav = !showSideNav">
           <img src="~/assets/images/icons/nav-icon.svg" />
         </button>
@@ -11,7 +11,7 @@
       <div class="flex items-center xl:gap-10 md:gap-4">
         <img src="~/assets/images/logo.png" class="h-10" />
         <!--Navigation  -->
-        <nav class="md:flex hidden">
+        <nav class="lg:flex hidden">
           <ul
             class="flex items-center xl:gap-6 lg:gap-4 md:gap-2 text-sm uppercase text-head font-medium"
           >
@@ -55,7 +55,7 @@
         <div>
           <ReusableDropdown>
             <template #menu-activator="{ toggleMenu }">
-              <button @click="toggleMenu" class="md:flex hidden">
+              <button @click="toggleMenu" class="lg:flex hidden">
                 <img src="~/assets/images/icons/magnify.svg" />
               </button>
             </template>
@@ -67,10 +67,10 @@
           </ReusableDropdown>
         </div>
         
-        <button class="md:flex hidden" @click="goToPage({ link: 'account' })">
+        <button class="lg:flex hidden" @click="goToPage({ link: 'account' })">
           <img src="~/assets/images/icons/account.svg" />
         </button>
-        <button class="md:flex hidden">
+        <button class="lg:flex hidden">
           <img src="~/assets/images/icons/heart.svg" />
         </button>
         <button @click="goToPage({ link: 'cart' })" class="relative">
@@ -84,7 +84,7 @@
         </button>
         <ReusableRightOpenNav title="login" width="700px">
           <template #modal-activator="{ toggleModal }">
-            <button class="md:flex hidden" @click="toggleModal">
+            <button class="lg:flex hidden" @click="toggleModal">
               <img src="~/assets/images/icons/nav-icon.svg" />
             </button>
           </template>
@@ -97,7 +97,7 @@
     <!-- mobile side bar -->
     <div
       v-if="showSideNav"
-      class="md:hidden block fixed z-30 bg-white w-full border-t py-4"
+      class="lg:hidden block fixed z-30 bg-white w-full border-t py-4"
       style="height: calc(100vh - 72px)"
     >
       <div class="h-full flex flex-col divide-y divide-footer">
@@ -130,7 +130,7 @@
                           : goToPage(link),
                       ]
                     "
-                    class="flex items-end"
+                    class="flex items-end cursor-pointer"
                   >
                     <span class="flex-1">{{ link.title }}</span>
                     <span><ChevronRight /></span>
@@ -311,6 +311,7 @@ export default {
   methods: {
     ...mapActions("customer", ["getCustomerProductCart"]),
     goToPage(link) {
+      console.log("here")
       let val = link.link;
       if (val == "index") this.$router.push("/");
       else this.$router.push(`/${link.link}`);

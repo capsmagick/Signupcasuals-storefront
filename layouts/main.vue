@@ -12,7 +12,7 @@
     <div class="md:hidden block">
       <MobileSiteFooter />
     </div>
-    
+    <Snackbar />
   </div>
 </template>
 
@@ -20,11 +20,13 @@
 import SiteHeader from "~/components/SiteHeader.vue";
 import SiteFooter from "~/components/SiteFooter.vue";
 import MobileSiteFooter from "~/components/Mobile/SiteFooter.vue"
+import Snackbar from "~/components/Utils/Snackbar.vue"
 export default {
   components: {
     SiteHeader,
     SiteFooter,
-    MobileSiteFooter
+    MobileSiteFooter,
+    Snackbar
   },
 };
 </script>

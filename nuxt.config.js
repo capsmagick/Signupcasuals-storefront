@@ -23,7 +23,7 @@ export default {
   css: ["@/assets/css/main.css"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ["~/plugins/axios","~/plugins/global"],
+  plugins: ["~/plugins/axios", "~/plugins/global", "~/plugins/alert"],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -74,37 +74,27 @@ export default {
     API_KEY: process.env.API_KEY,
   },
   server: {
-    port: process.env.API_KEY ?? 8000 // default: 3000
+    port: process.env.PORT ?? 8000, // default: 3000
   },
   auth: {
+    fetchUser: true,
     strategies: {
       local: {
         token: {
-          property: "token",
+          property: "access_token",
         },
         user: {
-          property: "user",
+          property: "customer",
         },
         endpoints: {
-          login: { url: "/auth", method: "post" },
+          login: { url: "/api/auth/token", method: "post" },
           logout: { url: "/auth", method: "delete" },
-          user: { url: "/customers/me", method: "get" },
+          user: { url: "/api/customers/me", method: "get" },
         },
       },
-      // customStrategy: {
-      //   schema: "@/schemas/custom",
-      //   token: {
-      //     property: "accessToken",
-      //   },
-      //   user: {
-      //     property: "user",
-      //   },
-      //   endpoints: {
-      //     login: { url: "/auth", method: "post" },
-      //     logout: { url: "/auth", method: "delete" },
-      //     user: { url: "/customers/me", method: "get" },
-      //   },
-      // },
     },
+    redirect:{
+      home: false
+    }
   },
 };

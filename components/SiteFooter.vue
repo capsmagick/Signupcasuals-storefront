@@ -43,14 +43,18 @@
       <!-- second col details -->
       <div class="pt-24 pb-16">
         <div class="grid grid-cols-12 justify-between items-center pb-8">
-          <div class="col-span-3"><img src="~/assets/images/logo.png" class="block h-14" /></div>
+          <div class="col-span-3">
+            <img src="~/assets/images/logo.png" class="block h-14" />
+          </div>
           <h3 class="text-sm text-head font-medium col-span-2">COMPANY</h3>
           <h3 class="text-sm text-head font-medium col-span-2">SHOP</h3>
           <h3 class="text-sm text-head font-medium col-span-2">HELP</h3>
           <h3 class="text-sm text-head font-medium col-span-2">SUBSCRIBE</h3>
         </div>
         <div class="grid grid-cols-12">
-          <div class="text-xs text-head flex flex-col gap-4 justify-start col-span-3">
+          <div
+            class="text-xs text-head flex flex-col gap-4 justify-start col-span-3"
+          >
             <p class="leading-5">
               1418 River Drive, Suite 35 Cottonhall, CA 9622 <br />
               United States
@@ -71,26 +75,27 @@
           </div>
           <div class="col-span-2">
             <ul class="flex flex-col space-y-4 text-xs">
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Careers </a></li>
-              <li><a href="#">Affiliates </a></li>
-              <li><a href="#">Blog </a></li>
-              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">New Arrivals</a></li>
+              <li><a href="#">Men </a></li>
+              <li><a href="#">Women </a></li>
+              <li><a href="#">Shop All </a></li>
             </ul>
           </div>
           <div class="col-span-2">
             <ul class="flex flex-col space-y-4 text-xs">
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Careers </a></li>
-              <li><a href="#">Affiliates </a></li>
-              <li><a href="#">Blog </a></li>
-              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">Customer Service</a></li>
+              <li><a href="#">Find a Store </a></li>
+              <li><a href="#">Legal & Privacy </a></li>
+              <li><a href="#">Contact </a></li>
+              <li><a href="#">Gift Card</a></li>
             </ul>
           </div>
 
           <div class="col-span-3 text-head">
-            <p class="text-xs leading-5">Be the first to get the latest news about trends, <br />
-              promotions, and much more!</p>
+            <p class="text-xs leading-5">
+              Be the first to get the latest news about trends, <br />
+              promotions, and much more!
+            </p>
           </div>
         </div>
       </div>
@@ -98,7 +103,7 @@
         <div>©2020 Uomo</div>
         <div class="flex gap-4">
           <span class="text-second">Language</span>
-          <span>United Kingdom  |  English</span>
+          <span>United Kingdom | English</span>
           <span class="text-second">Currency</span>
           <span>$ USD</span>
         </div>

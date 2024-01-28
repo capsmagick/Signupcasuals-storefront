@@ -1,6 +1,6 @@
 import { LocalSchema } from "~auth/runtime";
 
-export default class PaytmSchema extends LocalSchema {
+export default class CustomScheme extends LocalSchema {
   async fetchUser(endpoint) {
     if (!this.check().valid) {
       return;
