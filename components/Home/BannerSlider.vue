@@ -74,7 +74,6 @@ export default {
       setTimeout(() => {
         if (this.imgIndex == 3) this.imgIndex = 1;
         else this.imgIndex++;
-        console.log(this.imgIndex);
       }, 5000);
     },
   },

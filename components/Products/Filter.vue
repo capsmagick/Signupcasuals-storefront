@@ -147,7 +147,8 @@ export default {
           "/api/product-categories"
         );
         // if(!product_categories.length) this.categories = this.dummyCat
-        this.productCategories = product_categories
+        if(product_categories) this.productCategories = product_categories
+        
       } catch (error) {}
     },
   },

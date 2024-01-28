@@ -1,5 +1,5 @@
 <template>
-  <div class="xl:max-w-7xl lg:max-w-4xl mx-auto pt-12 pb-6">
+  <div class="xl:max-w-7xl lg:max-w-4xl mx-auto pt-12 pb-6 px-4">
     <h1 class="text-head text-3xl font-bold mb-4">CART</h1>
     <!-- Cart steps -->
     <div class="grid grid-cols-3">
@@ -19,7 +19,7 @@
 
     <div class="py-10">
       <!-- Shopping bags -->
-      <div v-if="step == 1" class="grid gap-[60px]" style="grid-template-columns: 2fr 1fr">
+      <div v-if="step == 1" class="checkout_cart_parent lg:grid flex flex-col gap-[60px] lg">
         <div class="flex flex-col">
           <div
             class="grid text-sm text-head font-medium uppercase border-b border-footer py-3"
@@ -54,7 +54,7 @@
                 <span></span>
               </div>
             </div>
-            <div class="flex items-center text-second">$99</div>
+            <div class="flex items-center text-second">{{ product.unit_price }}</div>
             <div class="flex items-center">
               <div
                 class="px-4 py-4 text-second border border-footer text-sm flex items-center gap-4"
@@ -64,7 +64,7 @@
                 <button>+</button>
               </div>
             </div>
-            <div class="flex items-center">$399</div>
+            <div class="flex items-center">{{ product.subtotal }}</div>
             <div class="flex items-center text-second">
               <mdi-window-close :size="18" />
             </div>
@@ -85,7 +85,7 @@
             </button>
           </div>
         </div>
-        <div>
+        <div v-if="cartDetails">
           <div class="border border-head px-10 pt-9 pb-4 mb-6">
             <h6 class="text-sm font-medium mb-6">CART TOTALS</h6>
             <div class="flex flex-col divide-y divide-footer">
@@ -93,7 +93,7 @@
                 class="flex py-4 gap-4 items-center text-xs font-medium text-head"
               >
                 <div class="w-1/2">SUBTOTAL</div>
-                <div class="w-1/2">$1300</div>
+                <div class="w-1/2">{{ cartDetails.subtotal }}</div>
               </div>
               <div class="flex py-4 gap-4 text-xs font-medium text-head">
                 <div class="w-1/2">SHIPPING</div>
@@ -115,7 +115,7 @@
                 class="flex py-4 gap-4 items-center text-xs font-medium text-head"
               >
                 <div class="w-1/2">TOTAL</div>
-                <div class="w-1/2">$1319</div>
+                <div class="w-1/2">{{ cartDetails.total }}</div>
               </div>
             </div>
           </div>

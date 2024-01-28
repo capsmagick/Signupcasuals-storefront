@@ -18,7 +18,9 @@
 }
 
 @media screen and (min-width: 1024px) {
-
+  .checkout_cart_parent{
+    grid-template-columns: 2fr 1fr;
+  }
 }
 
 @media screen and (min-width: 1280px) {
