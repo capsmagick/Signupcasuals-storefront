@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import SiteHeader from "~/components/SiteHeader.vue";
+import SiteHeader from "~/components/SiteHeader/index.vue";
 import SiteFooter from "~/components/SiteFooter.vue";
 import MobileSiteFooter from "~/components/Mobile/SiteFooter.vue"
 import Snackbar from "~/components/Utils/Snackbar.vue"

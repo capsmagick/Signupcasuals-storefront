@@ -1,5 +1,5 @@
 <template>
-  <header class="fixed w-full bg-white block z-40">
+  <header class="fixed w-full bg-white block z-50">
     <div
       class="xl:max-w-7xl lg:max-w-4xl md:max-w-3xl md:px-0 px-4 mx-auto flex items-center justify-between py-4"
     >
@@ -53,20 +53,12 @@
       <!-- Options -->
       <div class="flex items-center xl:gap-10 lg:gap-6 md:gap-4">
         <div>
-          <ReusableDropdown>
-            <template #menu-activator="{ toggleMenu }">
-              <button @click="toggleMenu" class="lg:flex hidden">
-                <img src="~/assets/images/icons/magnify.svg" />
-              </button>
-            </template>
-            <template #menu-content="{ toggleMenu }">
-              <div>
-                hello
-              </div>
-            </template>
-          </ReusableDropdown>
+          <button  @click="toggleSearch" class="lg:flex hidden">
+            <img v-if="!isSearchOpen" src="~/assets/images/icons/magnify.svg" />
+            <MdiWindowClose v-else />
+          </button>
         </div>
-        
+
         <button class="lg:flex hidden" @click="goToPage({ link: 'account' })">
           <img src="~/assets/images/icons/account.svg" />
         </button>
@@ -89,7 +81,7 @@
             </button>
           </template>
           <template #modal-content="{ toggleModal }">
-            <LoginRegisterForm @loggedIn="toggleModal"/>
+            <LoginRegisterForm @loggedIn="toggleModal" />
           </template>
         </ReusableRightOpenNav>
       </div>
@@ -201,12 +193,35 @@
         </div>
       </div>
     </div>
+    <transition
+      enter-active-class="transition ease-out duration-200"
+      enter-from-class="opacity-0 -translate-y-1"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 -translate-y-1"
+    >
+      <div
+        class="absolute inset-x-0 top-[72px] -z-10 bg-gray-300 bg-opacity-70 shadow-lg ring-1 ring-gray-900/5 overflow-hidden"
+        style="height: calc(100vh - 72px)"
+        v-if="isMenuOpen"
+      >
+        <div class="w-full bg-white">
+          <div
+            class="mx-auto max-w-7xl gap-x-8 gap-y-10 px-4 py-10 lg:px-4"
+          >
+            <component :is="HeaderMenuComponent"/>
+          </div>
+        </div>
+      </div>
+    </transition>
   </header>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
-import LoginRegisterForm from "./LoginRegisterForm.vue";
+import LoginRegisterForm from "../LoginRegisterForm.vue";
+import HeaderSearch from "./Search.vue";
 export default {
   name: "SiteHeader",
   components: {
@@ -216,6 +231,7 @@ export default {
       import("vue-material-design-icons/AccountOutline.vue"),
     ChevronDown: () => import("vue-material-design-icons/ChevronDown.vue"),
     LoginRegisterForm,
+    HeaderSearch
   },
   data() {
     return {
@@ -290,6 +306,9 @@ export default {
       ],
       customerCart: {},
       mobileLink: "",
+      isSearchOpen: false,
+      isMenuOpen: false,
+      HeaderMenuComponent:""
     };
   },
   watch: {
@@ -311,7 +330,7 @@ export default {
   methods: {
     ...mapActions("customer", ["getCustomerProductCart"]),
     goToPage(link) {
-      console.log("here")
+      console.log("here");
       let val = link.link;
       if (val == "index") this.$router.push("/");
       else this.$router.push(`/${link.link}`);
@@ -325,6 +344,11 @@ export default {
         this.$auth.setUser(customer);
       } catch (error) {}
     },
+    toggleSearch(){
+      this.isSearchOpen = !this.isSearchOpen;
+      this.isMenuOpen = !this.isMenuOpen
+      this.HeaderMenuComponent = "HeaderSearch"
+    }
   },
   mounted() {
     this.fetchUserProfile();
