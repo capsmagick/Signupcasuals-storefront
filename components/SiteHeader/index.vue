@@ -340,8 +340,8 @@ export default {
     },
     fetchUserProfile() {
       try {
-        const { customer } = this.$axios.$get("/api/auth");
-        this.$auth.setUser(customer);
+        // const { customer } = this.$axios.$get("/api/auth");
+        // this.$auth.setUser(customer);
       } catch (error) {}
     },
     toggleSearch(){

@@ -13,7 +13,19 @@
           </div>
         </div>
         <div class="selected-image flex-1">
-          <img :src="previewImage.url" alt="" class="w-full object-cover" />
+          <img
+            v-if="previewImage?.url"
+            :src="previewImage.url"
+            alt=""
+            class="w-full object-cover"
+          />
+          <img
+            v-else
+            src="~/assets/images/product.png"
+            class="w-full object-cover"
+            alt=""
+            srcset=""
+          />
         </div>
       </div>
       <div class="md:pl-10">
@@ -39,10 +51,10 @@
             {{ product.description }}
           </p>
           <div class="flex items-center justify-between text-sm">
-            <div class="flex items-center font-medium">
+            <div class="flex items-center font-medium gap-2">
               <div class="w-20">SIZES</div>
 
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
                 <button
                   v-for="variant in variants"
                   :key="variant"
@@ -120,12 +132,16 @@
               <span class="text-second uppercase">SKU:</span> N/A
             </div>
             <div class="text-sm mb-2">
-              <span class="text-second uppercase">Categories:</span>Casual &
-              Urban Wear, Jackets, Men
+              <span class="text-second uppercase">Categories:</span>
+              <span v-for="category in product.categories" :key="category.id">{{
+                category.name
+              }}</span>
             </div>
-            <div class="text-sm mb-2">
-              <span class="text-second uppercase">Tags:</span>biker, black,
-              bomber, leather
+            <div class="flex items-center gap-2 text-sm mb-2">
+              <span class="text-second uppercase">Tags:</span>
+              <span v-for="tag in product.tags" :key="tag.id">{{
+                tag.value
+              }}</span>
             </div>
           </div>
 
@@ -153,7 +169,7 @@
         <span class="font-normal">RELATED</span> PRODUCTS
       </h5>
       <div class="grid grid-cols-4 gap-8">
-        <ProductCard v-for="item in 4" :key="item" />
+        <ProductCard v-for="item in relatedProducts" :key="item" :product="item"/>
       </div>
     </div>
   </div>
@@ -181,27 +197,49 @@ export default {
       itemQty: 1,
       variants: [],
       selectedVariant: {},
+      relatedProducts: [],
     };
+  },
+  filters: {
+    priceAmount(price) {
+      return Math.round(price / 100);
+    },
+  },
+  computed: {
+    varientPrice() {},
   },
   methods: {
     async fetchProductsList() {
       const { product: productId } = this.$route.params;
-      const { product } = await this.$axios.$get(
-        `/api/products/${productId}`
-      );
+      const { product } = await this.$axios.$get(`/api/products/${productId}`);
       this.product = product;
       this.previewImage = product.images[0];
       this.variants = product.variants;
 
       // Default
       this.selectedVariant = this.variants[0];
+      await this.getRelatedProducts();
+    },
+    async getRelatedProducts() {
+      try {
+        if (!this.product.categories.length) return;
+        const categoryIds = this.product.categories.map((c) => c.id);
+        const url =
+          "/api/products?" +
+          "category_id[]=" +
+          categoryIds.join("&category_id[]=");
+        const { products } = await this.$axios.$get(url);
+        this.relatedProducts = products.filter((p) => p.id != this.product.id);
+      } catch (error) {
+        console.log("err", error);
+      }
     },
     onSelectImage(index = null) {
       if (!index) return;
       this.previewImage = this.product.images[index];
     },
-    onSelectVariant(variant){
-      this.selectedVariant = variant
+    onSelectVariant(variant) {
+      this.selectedVariant = variant;
     },
     onClickQty(val) {
       if (val == "add") this.itemQty++;
@@ -216,7 +254,7 @@ export default {
         localStorage.setItem("cartId", cart.id);
       }
       let cartId = localStorage.getItem("cartId");
-      console.log("herere")
+      console.log("herere");
       const variant_id = this.selectedVariant.id;
 
       const updatedCart = await this.$axios.$post(
