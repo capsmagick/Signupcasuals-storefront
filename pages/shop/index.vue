@@ -15,13 +15,16 @@
     <!-- Shop items section -->
     <div class="flex gap-14 md:mt-16">
       <aside class="md:block hidden w-[300px] flex-shrink-0">
-        <ProductsFilter />
+        <ProductsFilter @onUpdateFilter="onUpdateFilter" />
       </aside>
       <div class="flex-1">
         <!-- head -->
         <div class="flex items-center justify-between">
           <div class="md:block hidden text-xs font-medium">HOME / SHOP</div>
-          <div @click="openSideFilter = !openSideFilter" class="md:hidden flex items-center gap-2 text-sm font-medium">
+          <div
+            @click="openSideFilter = !openSideFilter"
+            class="md:hidden flex items-center gap-2 text-sm font-medium"
+          >
             <FilterVariant :size="18" /> FILTER
           </div>
 
@@ -38,10 +41,11 @@
             </div>
           </div>
         </div>
-        <div class="grid grid-cols-2 md:gap-8 gap-4 pt-6">
+        <div v-if="products && products.length" class="grid grid-cols-2 md:gap-8 gap-4 pt-6">
           <ProductCard v-for="item in products" :product="item" :key="item" />
         </div>
-        <div class="pagination-shop-list grid grid-cols-3 w-full pt-10">
+        <div v-else class="flex justify-center items-center text-lg text-head h-72">Oops!. No products found</div>
+        <div v-if="products && products.length" class="pagination-shop-list grid grid-cols-3 w-full pt-10">
           <div class="text-xs text-head flex items-center font-medium">
             <span><ChevronLeft :size="18" /></span>PREV
           </div>
@@ -69,7 +73,10 @@
       </div>
     </div>
     <!-- Side Filter Mobile view -->
-    <div v-if="openSideFilter" class="fixed w-full bg-white h-screen top-0 left-0 z-50">
+    <div
+      v-if="openSideFilter"
+      class="fixed w-full bg-white h-screen top-0 left-0 z-50"
+    >
       <div
         class="flex bg-primary items-center justify-between px-6 py-5 rounded-t"
       >
@@ -77,10 +84,10 @@
         <button
           class="p-1 ml-auto border-0 text-appText float-right leading-none font-semibold outline-none focus:outline-none"
         >
-          <Close @click="openSideFilter = !openSideFilter" :size="18"/>
+          <Close @click="openSideFilter = !openSideFilter" :size="18" />
         </button>
       </div>
-      <div class="px-6 pt-6 overflow-y-auto" style="height: calc(100vh - 66px);">
+      <div class="px-6 pt-6 overflow-y-auto" style="height: calc(100vh - 66px)">
         <ProductsFilter />
       </div>
     </div>
@@ -99,7 +106,7 @@ export default {
     ProductsFilter: () => import("~/components/Products/Filter.vue"),
     ProductCard,
     FilterVariant: () => import("vue-material-design-icons/FilterVariant.vue"),
-    Close: () => import("vue-material-design-icons/Close.vue")
+    Close: () => import("vue-material-design-icons/Close.vue"),
   },
   data() {
     return {
@@ -144,19 +151,21 @@ export default {
         count: 0,
         pages: 0,
       },
-      openSideFilter:false
+      openSideFilter: false,
+      filterQuery: null,
     };
   },
   methods: {
     async fetchProductsList(offset = 0) {
       try {
+        let url = `/api/products?limit=${this.limit}&offset=${offset}`;
+        if (this.filterQuery) url = url.concat("&", this.filterQuery);
+        console.log(url);
         const {
           products,
           count,
           offset: dataOffset,
-        } = await this.$axios.$get(
-          `/api/products?limit=${this.limit}&offset=${offset}`
-        );
+        } = await this.$axios.$get(url);
         this.products = products;
 
         this.paginate.count = count;
@@ -170,13 +179,24 @@ export default {
       const offset = this.limit * page;
       await this.fetchProductsList(offset);
     },
+    async onUpdateFilter(filters) {
+      if (filters.category && filters.category.length) {
+        this.filterQuery =
+          "category_id[]=" + filters.category.join("&category_id[]=");
+      }
+
+      // Refetch Products
+      await this.fetchProductsList();
+    },
     checkPage(page) {
       const currentPage = this.limit * page;
       if (currentPage == page) return true;
     },
   },
   async mounted() {
-    this.fetchProductsList();
+    const query = this.$route.query;
+    if(query.category) await this.onUpdateFilter({category:[query.category]})
+    else this.fetchProductsList();
   },
 };
 </script>

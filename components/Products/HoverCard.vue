@@ -28,7 +28,7 @@
     <div class="flex justify-between pt-4">
       <div>
         <div class="text-xs text-second leading-5">Dresses</div>
-        <div class="text-sm text-head leading-5">Calvin Shorts</div>
+        <div class="text-sm text-head leading-5">{{ product.title }}</div>
         <div class="text-sm text-head leading-5">60</div>
       </div>
     </div>
@@ -40,6 +40,12 @@ import HeartOutline from "vue-material-design-icons/HeartOutline.vue";
 import Eye from "vue-material-design-icons/EyeOutline.vue";
 export default {
   name: "ProductHoverCard",
+  props:{
+    product: {
+    type: Object,
+    default: {},
+  },
+  },
   components: {
     HeartOutline,
     Eye,

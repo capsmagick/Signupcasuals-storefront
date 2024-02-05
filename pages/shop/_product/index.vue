@@ -31,11 +31,20 @@
       <div class="md:pl-10">
         <div class="md:flex hidden items-center justify-between">
           <div class="text-xs font-medium">HOME / SHOP</div>
-          <div class="flex items-center gap-4 text-xs text-head">
-            <button class="flex items-center font-medium">
+          <div
+            v-if="filteredRelatedProducts && filteredRelatedProducts.length"
+            class="flex items-center gap-4 text-xs text-head"
+          >
+            <button
+              @click="selectNextOrPrev('prev')"
+              class="flex items-center font-medium"
+            >
               <span><mdi-chevron-left :size="18" /></span>PREV
             </button>
-            <button class="flex items-center font-medium">
+            <button
+              @click="selectNextOrPrev('next')"
+              class="flex items-center font-medium"
+            >
               NEXT<span><mdi-chevron-right :size="18" /></span>
             </button>
           </div>
@@ -164,12 +173,19 @@
       </div>
     </div>
     <!-- related products -->
-    <div class="hidden md:block pt-12">
+    <div
+      v-if="filteredRelatedProducts && filteredRelatedProducts.length"
+      class="hidden md:block pt-12"
+    >
       <h5 class="text-head text-2xl font-bold mb-6">
         <span class="font-normal">RELATED</span> PRODUCTS
       </h5>
       <div class="grid grid-cols-4 gap-8">
-        <ProductCard v-for="item in relatedProducts" :key="item" :product="item"/>
+        <ProductCard
+          v-for="item in filteredRelatedProducts"
+          :key="item"
+          :product="item"
+        />
       </div>
     </div>
   </div>
@@ -198,6 +214,9 @@ export default {
       variants: [],
       selectedVariant: {},
       relatedProducts: [],
+      options: [],
+      optionColor: {},
+      optionSize: {},
     };
   },
   filters: {
@@ -207,6 +226,11 @@ export default {
   },
   computed: {
     varientPrice() {},
+    filteredRelatedProducts() {
+      if (this.relatedProducts.length) {
+        return this.relatedProducts.filter((p) => p.id != this.product.id);
+      }
+    },
   },
   methods: {
     async fetchProductsList() {
@@ -218,6 +242,9 @@ export default {
 
       // Default
       this.selectedVariant = this.variants[0];
+      this.options = product.options;
+      this.optionColor = this.options.find((o) => o.title == "Color");
+
       await this.getRelatedProducts();
     },
     async getRelatedProducts() {
@@ -229,7 +256,7 @@ export default {
           "category_id[]=" +
           categoryIds.join("&category_id[]=");
         const { products } = await this.$axios.$get(url);
-        this.relatedProducts = products.filter((p) => p.id != this.product.id);
+        this.relatedProducts = products;
       } catch (error) {
         console.log("err", error);
       }
@@ -247,6 +274,34 @@ export default {
         if (this.itemQty == 1) return;
         this.itemQty--;
       }
+    },
+    async selectNextOrPrev(action) {
+      let idxOfCurrentProduct = this.relatedProducts.findIndex(
+        (p) => p.id == this.product.id
+      );
+      console.log("productId",idxOfCurrentProduct)
+      let newProduct;
+      if (action == "next") {
+        console.log("next")
+        if (idxOfCurrentProduct == this.relatedProducts.length - 1) {
+          newProduct = this.relatedProducts[0];
+        } else {
+          idxOfCurrentProduct = idxOfCurrentProduct + 1
+          newProduct = this.relatedProducts[idxOfCurrentProduct];
+        }
+      }
+      if (action == "prev") {
+        if (idxOfCurrentProduct == 0) {
+          const newLen = this.relatedProducts.length - 1
+          newProduct = this.relatedProducts[newLen];
+        } else {
+          idxOfCurrentProduct = idxOfCurrentProduct - 1
+          console.log("nn",idxOfCurrentProduct)
+          newProduct = this.relatedProducts[idxOfCurrentProduct];
+        }
+      }
+      // this.$router.replace({ path: `/shop/${newProduct.id}` }) 
+      this.$router.push( { path: `/shop/${newProduct.id}`});
     },
     async addToCart() {
       if (!localStorage.getItem("cartId")) {

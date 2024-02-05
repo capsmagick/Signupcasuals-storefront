@@ -3,16 +3,16 @@
     <h5 class="text-2xl uppercase text-center mb-8">Our top collection</h5>
     <div class="flex items-center justify-center gap-4">
       <a
-        v-for="tab in categoryTabs"
+        v-for="tab in collectionsTabs"
         href="#"
         :class="[
-          selectedTab == tab.value
+          selectedTab.handle == tab.handle
             ? 'text-head border-b-head'
             : 'text-second border-b-transparent',
           'capitalize text-sm font-medium px-2 py-2 border-b-2',
         ]"
-        :key="tab.value"
-        >{{ tab.name }}</a
+        :key="tab.handle"
+        >{{ tab.title }}</a
       >
     </div>
     <div class="pt-8 flex items-center gap-4">
@@ -24,9 +24,9 @@
       </div>
 
       <!-- prev button -->
-      <div class="grid md:grid-cols-5 grid-cols-2 gap-6 ">
-        <div v-for="item in 5" class="" :key="item">
-          <HoverCard />
+      <div v-if="collectionProducts && collectionProducts.length" class="flex justify-center  gap-6 flex-1">
+        <div v-for="item in collectionProducts" :key="item.title" class="w-1/5">
+          <HoverCard :product="item"/>
         </div>
       </div>
       <!-- prev button -->
@@ -50,16 +50,45 @@ export default {
   },
   data() {
     return {
-      categoryTabs: [
-        { name: "all", value: "all" },
-        { name: "Featured", value: "Featured" },
-        { name: "Popular", value: "popular" },
-        { name: "Sale", value: "sale" },
-        { name: "Best Rated", value: "best-rated" },
+      collectionsTabs: [
+        { title: "all", handle: "all" },
+        { title: "Featured", handle: "Featured" },
+        { title: "Popular", handle: "popular" },
+        { title: "Sale", handle: "sale" },
+        { title: "Best Rated", handle: "best-rated" },
       ],
       selectedTab: "all",
+      collectionProducts:[]
     };
   },
+  methods:{
+    async getCollections(){
+      try {
+        const { collections } = await this.$axios.$get(
+          "/api/collections"
+        );
+        this.collectionsTabs = collections
+        this.selectedTab = this.collectionsTabs[0]
+        await this.getSelectedCollectionProducts(this.selectedTab.id)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getSelectedCollectionProducts(collectionId = null){
+      try {
+        const url =
+          "/api/products?" +
+          `collection_id[]=${collectionId}`
+        const { products } = await this.$axios.$get(url);
+        this.collectionProducts = products
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  },
+  async mounted(){
+    await this.getCollections()
+  }
 };
 </script>
 

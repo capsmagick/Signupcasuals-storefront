@@ -2,34 +2,55 @@
   <div class="w-full flex flex-col gap-10">
     <div>
       <div
-        class="flex justify-between items-center text-lg font-medium text-head"
+        class="flex justify-between items-center text-lg font-medium text-head cursor-pointer"
+        @click="isShowCategories = !isShowCategories"
       >
         <span>PRODUCT CATEGORIES</span>
-        <span>
-          <ChevronUp class="text-head" />
+        <span class="transform" :class="[isShowCategories ? 'rotate-180' : '']">
+          <ChevronDown class="text-head" />
         </span>
       </div>
-      <ul class="text-sm text-head pt-6">
-        <li
-          v-for="category in productCategories"
-          :key="category"
-          class="capitalize leading-8"
+      <transition
+        leave-active-class="transition ease-in duration-100"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <ul
+          v-show="isShowCategories"
+          class="text-sm text-head pt-6 flex flex-col gap-2"
         >
-          {{ category.name }}
-        </li>
-      </ul>
+          <li
+            v-for="category in productCategories"
+            :key="category"
+            :class="[
+              filters.category.includes(category.id)
+                ? 'bg-footer bg-opacity-50'
+                : '',
+            ]"
+            class="capitalize flex items-center gap-2 leading-8 cursor-pointer px-2 py-0.5 rounded"
+            @click="onSelectCategory(category)"
+          >
+            <span class="flex-1">{{ category.name }}</span>
+            <MdiCheckboxMarkedCircleOutline
+              v-if="filters.category.includes(category.id)"
+              :size="18"
+            />
+          </li>
+        </ul>
+      </transition>
     </div>
 
     <div>
       <div
-        class="flex justify-between items-center text-lg font-medium text-head"
+        class="flex justify-between items-center text-lg font-medium text-head cursor-pointer"
+        @click="isShowColors = !isShowColors"
       >
         <span>COLOR</span>
-        <span>
+        <span class="transform" :class="[isShowColors ? 'rotate-180' : '']">
           <ChevronUp class="text-head" />
         </span>
       </div>
-      <div class="flex gap-4 flex-wrap pt-6">
+      <div v-show="isShowColors" class="flex gap-4 flex-wrap pt-6">
         <div
           v-for="color in colors"
           :key="color"
@@ -49,14 +70,15 @@
 
     <div>
       <div
-        class="flex justify-between items-center text-lg font-medium text-head"
+        class="flex justify-between items-center text-lg font-medium text-head cursor-pointer"
+        @click="isShowSizes = !isShowSizes"
       >
         <span>SIZES</span>
-        <span>
+        <span class="transform" :class="[isShowSizes ? 'rotate-180' : '']">
           <ChevronUp class="text-head" />
         </span>
       </div>
-      <div class="flex gap-4 flex-wrap pt-6">
+      <div v-show="isShowSizes" class="flex gap-4 flex-wrap pt-6">
         <button
           v-for="size in sizes"
           :key="size"
@@ -69,14 +91,15 @@
 
     <div>
       <div
-        class="flex justify-between items-center text-lg font-medium text-head"
+        class="flex justify-between items-center text-lg font-medium text-head cursor-pointer"
+        @click="isShowBrands = !isShowBrands"
       >
         <span>BRANDS</span>
-        <span>
+        <span class="transform" :class="[isShowBrands ? 'rotate-180' : '']">
           <ChevronUp class="text-head" />
         </span>
       </div>
-      <div class="pt-6">
+      <div v-show="isShowBrands" class="pt-6">
         <div class="flex items-center">
           <input
             id="search-field"
@@ -99,13 +122,17 @@ export default {
   components: {
     ChevronDown: () => import("vue-material-design-icons/ChevronDown.vue"),
     ChevronUp: () => import("vue-material-design-icons/ChevronUp.vue"),
-    Magnify: () => import("vue-material-design-icons/Magnify.vue")
+    Magnify: () => import("vue-material-design-icons/Magnify.vue"),
   },
   data() {
     return {
-      filters: {},
+      filters: {
+        category: [],
+        colors: [],
+        sizes: [],
+      },
       selectedColor: null,
-      searchBrand:null,
+      searchBrand: null,
       sizes: ["xs", "s", "m", "l", "xl", "xxl"],
       productCategories: [
         "dresses",
@@ -135,6 +162,10 @@ export default {
         "#9C7539",
         "#D29B48",
       ],
+      isShowCategories: true,
+      isShowColors: false,
+      isShowSizes: false,
+      isShowBrands: false,
     };
   },
   methods: {
@@ -144,17 +175,24 @@ export default {
     async getProductCategories() {
       try {
         const { product_categories } = await this.$axios.$get(
-          "/api/product-categories"
+          "/api/product-categories?parent_category_id=null"
         );
-        // if(!product_categories.length) this.categories = this.dummyCat
-        if(product_categories) this.productCategories = product_categories
-        
+        if (product_categories) this.productCategories = product_categories;
       } catch (error) {}
     },
+    onSelectCategory(category) {
+      if (this.filters.category.includes(category.id))
+        this.filters.category.splice(category.id, 1);
+      else this.filters.category.push(category.id);
+      this.onUpdateFilter();
+    },
+    onUpdateFilter() {
+      this.$emit("onUpdateFilter", this.filters);
+    },
   },
-  async mounted(){
+  async mounted() {
     await this.getProductCategories();
-  }
+  },
 };
 </script>
 
