@@ -66,11 +66,11 @@
           </div>
           <div class="col-span-2">
             <ul class="flex flex-col space-y-4 text-xs">
-              <li><a href="#">About Us</a></li>
+              <li><nuxt-link to="/about">About Us</nuxt-link></li>
               <li><a href="#">Careers </a></li>
               <li><a href="#">Affiliates </a></li>
               <li><a href="#">Blog </a></li>
-              <li><a href="#">Contact Us</a></li>
+              <li><nuxt-link to="/contact">Contact Us</nuxt-link></li>
             </ul>
           </div>
           <div class="col-span-2">
@@ -91,11 +91,23 @@
             </ul>
           </div>
 
-          <div class="col-span-3 text-head">
+          <div class="col-span-3 text-head flex flex-col gap-4">
             <p class="text-xs leading-5">
               Be the first to get the latest news about trends, <br />
               promotions, and much more!
             </p>
+            <div class="flex items-center gap-4 bg-white px-4 py-4 text-head">
+              <input
+                type="email"
+                name=""
+                id=""
+                placeholder="Your email address"
+                class="text-sm text-head flex-1"
+              />
+              <button class="font-medium uppercase">Join</button>
+            </div>
+            <h5 class="text-[15] text-head font-medium">Secure payments</h5>
+            <img src="~/assets/images/payments.png" />
           </div>
         </div>
       </div>

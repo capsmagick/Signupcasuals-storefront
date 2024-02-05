@@ -7,7 +7,7 @@
         CONTACT US
       </h1>
     </div>
-    <div class="bg-gray-400">aa</div>
+    <div class="hidden bg-gray-400">aa</div>
     <div
       class="xl:max-w-4xl lg:max-w-4xl mx-auto md:py-20 py-10 md:px-0 px-4"
     >
