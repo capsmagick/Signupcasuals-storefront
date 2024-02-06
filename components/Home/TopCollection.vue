@@ -2,9 +2,8 @@
   <div class="xl:max-w-7xl lg:max-w-4xl mx-auto md:py-20 pb-6 md:px-0 px-4">
     <h5 class="text-2xl uppercase text-center mb-8">Our top collection</h5>
     <div class="flex items-center justify-center gap-4">
-      <a
+      <button
         v-for="tab in collectionsTabs"
-        href="#"
         :class="[
           selectedTab.handle == tab.handle
             ? 'text-head border-b-head'
@@ -12,10 +11,11 @@
           'capitalize text-sm font-medium px-2 py-2 border-b-2',
         ]"
         :key="tab.handle"
-        >{{ tab.title }}</a
+        @click="onSelectCollection(tab)"
+        >{{ tab.title }}</button
       >
     </div>
-    <div class="pt-8 flex items-center gap-4">
+    <div v-if="collectionProducts && collectionProducts.length" class="pt-8 flex items-center gap-4">
       <!-- prev button -->
       <div class="md:block hidden">
         <button class="w-10 h-10 flex items-center justify-center bg-[#EEEEEE] rounded-full text-second">
@@ -24,7 +24,7 @@
       </div>
 
       <!-- prev button -->
-      <div v-if="collectionProducts && collectionProducts.length" class="flex justify-center  gap-6 flex-1">
+      <div  class="flex justify-center  gap-6 flex-1">
         <div v-for="item in collectionProducts" :key="item.title" class="w-1/5">
           <HoverCard :product="item"/>
         </div>
@@ -38,6 +38,7 @@
 
       <!-- prev button -->
     </div>
+    <div v-else class="text-center h-36 flex items-center justify-center"> Oops!. No products found.</div>
   </div>
 </template>
 
@@ -84,6 +85,10 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    async onSelectCollection(collection){
+      this.selectedTab = collection
+      await this.getSelectedCollectionProducts(this.selectedTab.id)
     }
   },
   async mounted(){

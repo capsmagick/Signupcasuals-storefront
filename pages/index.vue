@@ -68,17 +68,8 @@ export default {
       }
       
     },
-    async fetchProducts() {
-      console.log("hii ");
-      const res = await fetch("/api/products/prod_01HHVZNTKQQ082SS6Z5YFV4Z5H", {
-        method: "GET",
-      });
-
-      console.log(res)
-    },
   },
   mounted() {
-    this.fetchProducts();
     console.log("user", this.$auth.user)
   },
 };
