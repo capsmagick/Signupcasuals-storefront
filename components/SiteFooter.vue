@@ -83,11 +83,12 @@
           </div>
           <div class="col-span-2">
             <ul class="flex flex-col space-y-4 text-xs">
-              <li><a href="#">Customer Service</a></li>
-              <li><a href="#">Find a Store </a></li>
-              <li><a href="#">Legal & Privacy </a></li>
-              <li><a href="#">Contact </a></li>
-              <li><a href="#">Gift Card</a></li>
+              <li><nuxt-link to="/terms-conditions">Terms & Conditions</nuxt-link></li>
+              <li><nuxt-link to="/shipping-policy">Shipping Policy</nuxt-link></li>
+              <li><nuxt-link to="/exchange-cancellation-policy">Exchange & Cancellation Policy</nuxt-link></li>
+              <li><nuxt-link to="/return-refund-policy">Return & Refund Policy</nuxt-link></li>
+              <li><nuxt-link to="/privacy-policy">Privacy Policy</nuxt-link></li>
+              <li><nuxt-link to="/payments">Payments</nuxt-link></li>
             </ul>
           </div>
 

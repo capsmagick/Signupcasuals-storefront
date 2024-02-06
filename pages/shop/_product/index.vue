@@ -56,9 +56,7 @@
             <h4 class="text-2xl">{{ product.title }}</h4>
             <h3 class="text-[22px] font-medium">$249</h3>
           </div>
-          <p class="text-sm text-justify">
-            {{ product.description }}
-          </p>
+          
           <div class="flex items-center justify-between text-sm">
             <div class="flex items-center font-medium gap-2">
               <div class="w-20">SIZES</div>
@@ -169,6 +167,9 @@
               </h6>
             </div>
           </div>
+          <p class="text-sm text-justify">
+            {{ product.description }}
+          </p>
         </div>
       </div>
     </div>
