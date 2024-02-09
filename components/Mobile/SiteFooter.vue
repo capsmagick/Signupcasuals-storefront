@@ -79,7 +79,7 @@
         </div>
         <div class="flex gap-4">
           <span class="text-second">Currency</span>
-          <span>$ USD</span>
+          <span>&#8377; INR</span>
         </div>
       </div>
     </div>

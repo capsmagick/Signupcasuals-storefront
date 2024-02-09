@@ -54,7 +54,7 @@
         <div class="pt-10 text-head flex flex-col gap-8">
           <div>
             <h4 class="text-2xl">{{ product.title }}</h4>
-            <h3 class="text-[22px] font-medium">$249</h3>
+            <h3 class="text-[22px] font-medium">&#8377;249</h3>
           </div>
 
           <div class="flex items-center justify-between text-sm">

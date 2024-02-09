@@ -1,7 +1,10 @@
 <template>
   <div class="group">
     <div class="relative">
-      <img src="~/assets/images/product.png" alt="" srcset="" />
+      <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
+        <img v-if="product.thumbnail" :src="product.thumbnail" @error="imageError" class="h-full w-full object-cover object-center lg:h-full lg:w-full" />
+        <img v-else src="~/assets/images/product.png" alt="" srcset="" />
+      </div>
       <div
         class="invisible group-hover:visible flex w-full flex-col gap-4 absolute items-end right-2 justify-end top-2"
       >
@@ -50,6 +53,11 @@ export default {
     HeartOutline,
     Eye,
   },
+  methods:{
+    imageError(e){
+      e.target.src =  require('/assets/images/product.png')
+    }
+  }
 };
 </script>
 
