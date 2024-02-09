@@ -189,7 +189,7 @@ export default {
       await this.fetchProductsList();
     },
     checkPage(page) {
-      const currentPage = this.limit * page;
+      const currentPage = this.paginate.offset / this.limit;
       if (currentPage == page) return true;
     },
   },
