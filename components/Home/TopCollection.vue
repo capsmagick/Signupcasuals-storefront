@@ -18,20 +18,20 @@
     <div v-if="collectionProducts && collectionProducts.length" class="pt-8 flex items-center gap-4">
       <!-- prev button -->
       <div class="md:block hidden">
-        <button class="w-10 h-10 flex items-center justify-center bg-[#EEEEEE] rounded-full text-second">
+        <button @click="onClickPrev()" class="w-10 h-10 flex items-center justify-center bg-[#EEEEEE] rounded-full text-second">
           <MdiChevronLeft />
         </button>
       </div>
 
       <!-- prev button -->
       <div  class="flex justify-center  gap-6 flex-1">
-        <div v-for="item in collectionProducts" :key="item.title" class="w-1/5">
+        <div v-for="item in collectionProducts.slice(paginateStart, paginateEnd)" :key="item.title" class="w-1/5">
           <HoverCard :product="item"/>
         </div>
       </div>
       <!-- prev button -->
       <div class="md:block hidden">
-        <button class="w-10 h-10 flex items-center justify-center bg-[#EEEEEE] rounded-full text-second">
+        <button @click="onClickNext()" class="w-10 h-10 flex items-center justify-center bg-[#EEEEEE] rounded-full text-second">
           <MdiChevronRight />
         </button>
       </div>
@@ -59,7 +59,9 @@ export default {
         { title: "Best Rated", handle: "best-rated" },
       ],
       selectedTab: "all",
-      collectionProducts:[]
+      collectionProducts:[],
+      paginateStart:0,
+      paginateEnd:4
     };
   },
   methods:{
@@ -89,6 +91,17 @@ export default {
     async onSelectCollection(collection){
       this.selectedTab = collection
       await this.getSelectedCollectionProducts(this.selectedTab.id)
+    },
+    onClickPrev(){
+      if(this.paginateStart == 0) return;
+      this.paginateStart = this.paginateStart - 1;
+      this.paginateEnd = this.paginateEnd - 1;
+    },
+    onClickNext(){
+      console.log("On fn")
+      if(this.paginateEnd == this.collectionProducts.length) return;
+      this.paginateStart = this.paginateStart + 1;
+      this.paginateEnd = this.paginateEnd + 1;
     }
   },
   async mounted(){
