@@ -56,7 +56,7 @@
             <h4 class="text-2xl">{{ product.title }}</h4>
             <h3 class="text-[22px] font-medium">$249</h3>
           </div>
-          
+
           <div class="flex items-center justify-between text-sm">
             <div class="flex items-center font-medium gap-2">
               <div class="w-20">SIZES</div>
@@ -84,7 +84,7 @@
             </div>
           </div>
           <!-- product colors -->
-          <div class="flex text-sm items-center font-medium">
+          <div class="hidden text-sm items-center font-medium">
             <div class="w-20">COLOR</div>
 
             <div class="flex items-center gap-2">
@@ -114,12 +114,11 @@
               {{ itemQty }}
               <button @click="onClickQty('add')"><Plus :size="16" /></button>
             </div>
-            <button
-              class="text-sm font-medium text-white bg-head px-6 py-4 w-52"
+            <ReusableLoaderButton
+              label="ADD TO CART"
               @click="addToCart"
-            >
-              ADD TO CART
-            </button>
+              :loading="loading"
+            />
           </div>
           <!--  -->
           <!--  -->
@@ -218,6 +217,7 @@ export default {
       options: [],
       optionColor: {},
       optionSize: {},
+      loading: false,
     };
   },
   filters: {
@@ -280,46 +280,57 @@ export default {
       let idxOfCurrentProduct = this.relatedProducts.findIndex(
         (p) => p.id == this.product.id
       );
-      console.log("productId",idxOfCurrentProduct)
+      console.log("productId", idxOfCurrentProduct);
       let newProduct;
       if (action == "next") {
-        console.log("next")
+        console.log("next");
         if (idxOfCurrentProduct == this.relatedProducts.length - 1) {
           newProduct = this.relatedProducts[0];
         } else {
-          idxOfCurrentProduct = idxOfCurrentProduct + 1
+          idxOfCurrentProduct = idxOfCurrentProduct + 1;
           newProduct = this.relatedProducts[idxOfCurrentProduct];
         }
       }
       if (action == "prev") {
         if (idxOfCurrentProduct == 0) {
-          const newLen = this.relatedProducts.length - 1
+          const newLen = this.relatedProducts.length - 1;
           newProduct = this.relatedProducts[newLen];
         } else {
-          idxOfCurrentProduct = idxOfCurrentProduct - 1
-          console.log("nn",idxOfCurrentProduct)
+          idxOfCurrentProduct = idxOfCurrentProduct - 1;
+          console.log("nn", idxOfCurrentProduct);
           newProduct = this.relatedProducts[idxOfCurrentProduct];
         }
       }
-      // this.$router.replace({ path: `/shop/${newProduct.id}` }) 
-      this.$router.push( { path: `/shop/${newProduct.id}`});
+      // this.$router.replace({ path: `/shop/${newProduct.id}` })
+      this.$router.push({ path: `/shop/${newProduct.id}` });
     },
     async addToCart() {
-      if (!localStorage.getItem("cartId")) {
-        const { cart } = await this.$axios.$post("/api/carts");
-        localStorage.setItem("cartId", cart.id);
-      }
-      let cartId = localStorage.getItem("cartId");
-      console.log("herere");
-      const variant_id = this.selectedVariant.id;
-
-      const updatedCart = await this.$axios.$post(
-        `/api/carts/${cartId}/line-items`,
-        {
-          variant_id,
-          quantity: this.itemQty,
+      try {
+        this.loading = true;
+        if (!localStorage.getItem("cartId")) {
+          const { cart } = await this.$axios.$post("/api/carts");
+          localStorage.setItem("cartId", cart.id);
         }
-      );
+        let cartId = localStorage.getItem("cartId");
+        console.log("herere");
+        const variant_id = this.selectedVariant.id;
+
+        const updatedCart = await this.$axios.$post(
+          `/api/carts/${cartId}/line-items`,
+          {
+            variant_id,
+            quantity: this.itemQty,
+          }
+        );
+
+        this.$alert.show({
+          title: "Successfully Added",
+          description: "Your Product has been added to cart successfully!",
+        });
+      } catch (error) {
+      } finally {
+        this.loading = false;
+      }
     },
   },
   mounted() {
