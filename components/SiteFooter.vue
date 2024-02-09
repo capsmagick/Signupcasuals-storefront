@@ -69,9 +69,8 @@
           <div class="col-span-2">
             <ul class="flex flex-col space-y-4 text-xs">
               <li><nuxt-link to="/about">About Us</nuxt-link></li>
-              <li><a href="#">Careers </a></li>
-              <li><a href="#">Affiliates </a></li>
-              <li><a href="#">Blog </a></li>
+              <li><nuxt-link to="/privacy-policy">Privacy Policy</nuxt-link></li>
+              <li><nuxt-link to="/payments">Payments</nuxt-link></li>
               <li><nuxt-link to="/contact">Contact Us</nuxt-link></li>
             </ul>
           </div>
@@ -89,8 +88,7 @@
               <li><nuxt-link to="/shipping-policy">Shipping Policy</nuxt-link></li>
               <li><nuxt-link to="/exchange-cancellation-policy">Exchange & Cancellation Policy</nuxt-link></li>
               <li><nuxt-link to="/return-refund-policy">Return & Refund Policy</nuxt-link></li>
-              <li><nuxt-link to="/privacy-policy">Privacy Policy</nuxt-link></li>
-              <li><nuxt-link to="/payments">Payments</nuxt-link></li>
+              
             </ul>
           </div>
 

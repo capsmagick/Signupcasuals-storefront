@@ -36,7 +36,14 @@
                   </template>
                   <template #menu-content="{ toggleMenu }">
                     <div class="flex flex-col px-[20px] py-5 gap-2 capitalize">
-                      <div v-for="page in pages" :key="page.value">
+                      <div
+                        v-for="page in pages"
+                        :key="page.link"
+                        @click="
+                          toggleMenu();
+                          goToPage(page);
+                        "
+                      >
                         {{ page.name }}
                       </div>
                     </div>
@@ -53,7 +60,7 @@
       <!-- Options -->
       <div class="flex items-center xl:gap-10 lg:gap-6 md:gap-4">
         <div>
-          <button  @click="toggleSearch" class="lg:flex hidden">
+          <button @click="toggleSearch" class="lg:flex hidden">
             <img v-if="!isSearchOpen" src="~/assets/images/icons/magnify.svg" />
             <MdiWindowClose v-else />
           </button>
@@ -106,10 +113,7 @@
             <Magnify class="-ml-7 relative text-second" />
           </div>
           <div>
-            <nav
-              v-if="mobileLink != 'pages' || mobileLink != 'collection'"
-              class="pt-4"
-            >
+            <nav v-if="!mobileLink" class="pt-4">
               <ul
                 class="flex flex-col gap-6 text-[16px] uppercase text-head font-medium"
               >
@@ -117,7 +121,7 @@
                   <a
                     v-on:click="
                       [
-                        link.value == 'pages' || 'collection'
+                        link.value == 'pages' || link.value == 'collection'
                           ? (mobileLink = link.value)
                           : goToPage(link),
                       ]
@@ -186,7 +190,7 @@
           <div class="flex items-center">
             <div class="w-1/3 text-second">Currency</div>
             <div class="flex-1 flex gap-2 text-head">
-              Usd
+              &#8377; INR
               <ChevronDown />
             </div>
           </div>
@@ -207,10 +211,8 @@
         v-if="isMenuOpen"
       >
         <div class="w-full bg-white">
-          <div
-            class="mx-auto max-w-7xl gap-x-8 gap-y-10 px-4 py-10 lg:px-4"
-          >
-            <component :is="HeaderMenuComponent"/>
+          <div class="mx-auto max-w-7xl gap-x-8 gap-y-10 px-4 py-10 lg:px-4">
+            <component :is="HeaderMenuComponent" />
           </div>
         </div>
       </div>
@@ -231,7 +233,7 @@ export default {
       import("vue-material-design-icons/AccountOutline.vue"),
     ChevronDown: () => import("vue-material-design-icons/ChevronDown.vue"),
     LoginRegisterForm,
-    HeaderSearch
+    HeaderSearch,
   },
   data() {
     return {
@@ -273,20 +275,16 @@ export default {
           link: "about",
         },
         {
+          name: "Privacy Policy",
+          link: "privacy-policy",
+        },
+        {
+          name: "Payments",
+          link: "payments",
+        },
+        {
           name: "Contact Us",
-          link: "contact-us",
-        },
-        {
-          name: "Store Locator",
-          value: "store-locator",
-        },
-        {
-          name: "FAQ",
-          value: "faq",
-        },
-        {
-          name: "Coming Soon",
-          value: "coming-soon",
+          link: "contact",
         },
       ],
       collectionTabs: ["women", "men", "kids"],
@@ -308,7 +306,7 @@ export default {
       mobileLink: "",
       isSearchOpen: false,
       isMenuOpen: false,
-      HeaderMenuComponent:""
+      HeaderMenuComponent: "",
     };
   },
   watch: {
@@ -329,11 +327,21 @@ export default {
   },
   methods: {
     ...mapActions("customer", ["getCustomerProductCart"]),
+    async getProductCategories() {
+      try {
+        const { product_categories } = await this.$axios.$get(
+          "/api/product-categories?parent_category_id=null"
+        );
+        if (!product_categories.length) this.categories = this.dummyCat;
+        else this.categories = product_categories;
+      } catch (error) {}
+    },
     goToPage(link) {
       console.log("here");
       let val = link.link;
       if (val == "index") this.$router.push("/");
       else this.$router.push(`/${link.link}`);
+      this.showSideNav = false;
     },
     resetTab() {
       this.mobileLink = "";
@@ -344,15 +352,16 @@ export default {
         // this.$auth.setUser(customer);
       } catch (error) {}
     },
-    toggleSearch(){
+    toggleSearch() {
       this.isSearchOpen = !this.isSearchOpen;
-      this.isMenuOpen = !this.isMenuOpen
-      this.HeaderMenuComponent = "HeaderSearch"
-    }
+      this.isMenuOpen = !this.isMenuOpen;
+      this.HeaderMenuComponent = "HeaderSearch";
+    },
   },
   mounted() {
     this.fetchUserProfile();
     this.getCustomerProductCart();
+    this.getProductCategories()
   },
 };
 </script>
