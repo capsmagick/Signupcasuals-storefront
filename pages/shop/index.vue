@@ -41,11 +41,22 @@
             </div>
           </div>
         </div>
-        <div v-if="products && products.length" class="grid grid-cols-2 md:gap-8 gap-4 pt-6">
+        <div
+          v-if="products && products.length"
+          class="grid grid-cols-2 md:gap-8 gap-4 pt-6"
+        >
           <ProductCard v-for="item in products" :product="item" :key="item" />
         </div>
-        <div v-else class="flex justify-center items-center text-lg text-head h-72">Oops!. No products found</div>
-        <div v-if="products && products.length" class="pagination-shop-list grid grid-cols-3 w-full pt-10">
+        <div
+          v-else
+          class="flex justify-center items-center text-lg text-head h-72"
+        >
+          Oops!. No products found
+        </div>
+        <div
+          v-if="products && products.length"
+          class="pagination-shop-list grid grid-cols-3 w-full pt-10"
+        >
           <div class="text-xs text-head flex items-center font-medium">
             <span><ChevronLeft :size="18" /></span>PREV
           </div>
@@ -152,7 +163,10 @@ export default {
         pages: 0,
       },
       openSideFilter: false,
-      filterQuery: null,
+      filters:{
+        category:[]
+      },
+      filterQuery: String,
     };
   },
   methods: {
@@ -180,13 +194,37 @@ export default {
       await this.fetchProductsList(offset);
     },
     async onUpdateFilter(filters) {
-      if (filters.category && filters.category.length) {
-        this.filterQuery =
-          "category_id[]=" + filters.category.join("&category_id[]=");
-      }
+      try {
+        if (filters.category && filters.category.length) {
+          this.filters.category = [...filters.category]
+          // check for child category
+          for (const category of filters.category) {
+            
+            const { product_category } = await this.$axios.$get(
+              `/api/product-categories/${category}`
+            );
+            this.createCategoryQuery(product_category);
+          }
+          console.log("here");
+          this.filterQuery =
+            "category_id[]=" + this.filters.category.join("&category_id[]=");
+        }
 
-      // Refetch Products
-      await this.fetchProductsList();
+        // Refetch Products
+        await this.fetchProductsList();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    createCategoryQuery(parent_category) {
+      if(parent_category.id) this.filters.category.push(parent_category.id)
+      if (
+        parent_category.category_children &&
+        parent_category.category_children.length
+      )
+        parent_category.category_children.forEach((e) =>
+          this.createCategoryQuery(e)
+        );
     },
     checkPage(page) {
       const currentPage = this.paginate.offset / this.limit;
@@ -195,7 +233,8 @@ export default {
   },
   async mounted() {
     const query = this.$route.query;
-    if(query.category) await this.onUpdateFilter({category:[query.category]})
+    if (query.category)
+      await this.onUpdateFilter({ category: [query.category] });
     else this.fetchProductsList();
   },
 };

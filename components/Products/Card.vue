@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex flex-col group cursor-pointer" @click="goToProductDetails">
-    <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-      <img v-if="product.thumbnail" :src="product.thumbnail" @error="imageError" class="h-full w-full object-cover object-center lg:h-full lg:w-full" />
+    <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80 h-72">
+      <img v-if="product.thumbnail" :src="product.thumbnail" @error="imageError" class="h-full w-full object-cover object-center" />
       <img v-else src="~/assets/images/product.png" alt="" srcset="" />
     </div>
     <div class="flex justify-between pt-4">
