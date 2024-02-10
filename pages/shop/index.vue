@@ -41,20 +41,31 @@
             </div>
           </div>
         </div>
-        <div
-          v-if="products && products.length"
-          class="grid grid-cols-2 md:gap-8 gap-4 pt-6"
-        >
-          <ProductCard v-for="item in products" :product="item" :key="item" />
+
+        <div v-if="!loading">
+          <div
+            v-if="products && products.length"
+            class="grid grid-cols-2 md:gap-8 gap-4 pt-6"
+          >
+            <ProductCard v-for="item in products" :product="item" :key="item" />
+          </div>
+          <div
+            v-else
+            class="flex justify-center items-center text-lg text-head h-72"
+          >
+            Oops!. No products found
+          </div>
         </div>
+        <div v-else>
+          <div
+            class="grid grid-cols-2 md:gap-8 gap-4 pt-6"
+          >
+          <SkeletonCardLoader v-for="item in 6" :key="item"/>
+          </div>
+          </div>
+
         <div
-          v-else
-          class="flex justify-center items-center text-lg text-head h-72"
-        >
-          Oops!. No products found
-        </div>
-        <div
-          v-if="products && products.length"
+          v-if="!loading && products && products.length"
           class="pagination-shop-list grid grid-cols-3 w-full pt-10"
         >
           <div class="text-xs text-head flex items-center font-medium">
@@ -107,6 +118,7 @@
 
 <script>
 import ProductCard from "~/components/Products/Card.vue";
+import SkeletonCardLoader from "~/components/Loader/SkeletonCardLoader.vue";
 export default {
   name: "shop-list",
   layout: "main",
@@ -118,6 +130,7 @@ export default {
     ProductCard,
     FilterVariant: () => import("vue-material-design-icons/FilterVariant.vue"),
     Close: () => import("vue-material-design-icons/Close.vue"),
+    SkeletonCardLoader
   },
   data() {
     return {
@@ -163,15 +176,17 @@ export default {
         pages: 0,
       },
       openSideFilter: false,
-      filters:{
-        category:[]
+      filters: {
+        category: [],
       },
-      filterQuery: String,
+      filterQuery: null,
+      loading: false,
     };
   },
   methods: {
     async fetchProductsList(offset = 0) {
       try {
+        this.loading = true
         let url = `/api/products?limit=${this.limit}&offset=${offset}`;
         if (this.filterQuery) url = url.concat("&", this.filterQuery);
         console.log(url);
@@ -187,6 +202,10 @@ export default {
         this.paginate.offset = dataOffset;
       } catch (error) {
         console.log(error);
+      }finally{
+        setTimeout(() => {
+          this.loading = false
+        }, 2000)
       }
     },
     async onSelectPage(page) {
@@ -195,19 +214,20 @@ export default {
     },
     async onUpdateFilter(filters) {
       try {
-        if (filters.category && filters.category.length) {
-          this.filters.category = [...filters.category]
-          // check for child category
-          for (const category of filters.category) {
-            
-            const { product_category } = await this.$axios.$get(
-              `/api/product-categories/${category}`
-            );
-            this.createCategoryQuery(product_category);
+        if (filters) {
+          if (filters.category && filters.category.length) {
+            this.filters.category = [...filters.category];
+            // check for child category
+            for (const category of filters.category) {
+              const { product_category } = await this.$axios.$get(
+                `/api/product-categories/${category}`
+              );
+              this.createCategoryQuery(product_category);
+            }
+            console.log;
+            this.filterQuery =
+              "category_id[]=" + this.filters.category.join("&category_id[]=");
           }
-          console.log("here");
-          this.filterQuery =
-            "category_id[]=" + this.filters.category.join("&category_id[]=");
         }
 
         // Refetch Products
@@ -217,7 +237,7 @@ export default {
       }
     },
     createCategoryQuery(parent_category) {
-      if(parent_category.id) this.filters.category.push(parent_category.id)
+      if (parent_category.id) this.filters.category.push(parent_category.id);
       if (
         parent_category.category_children &&
         parent_category.category_children.length

@@ -15,12 +15,20 @@
         >{{ tab.title }}</button
       >
     </div>
-    <div v-if="collectionProducts && collectionProducts.length" class="pt-8 flex items-center gap-4">
+    <div v-if="loading"  class="pt-8 flex justify-center  gap-6 flex-1">
+      <div class="block w-10 h-10"></div>
+      <div v-for="item in 5" :key="item.title" class="w-1/5">
+        <SkeletonCardLoader />
+      </div>
+      <div class="block w-10 h-10"></div>
+    </div>
+    <div v-if="!loading && collectionProducts && collectionProducts.length" class="pt-8 flex items-center gap-4">
       <!-- prev button -->
-      <div class="md:block hidden">
-        <button @click="onClickPrev()" class="w-10 h-10 flex items-center justify-center bg-[#EEEEEE] rounded-full text-second">
+      <div  class="md:block hidden">
+        <button v-if="hideButtons" @click="onClickPrev()" class="w-10 h-10 flex items-center justify-center bg-[#EEEEEE] rounded-full text-second">
           <MdiChevronLeft />
         </button>
+        <div v-else class="block w-10 h-10"></div>
       </div>
 
       <!-- prev button -->
@@ -30,10 +38,11 @@
         </div>
       </div>
       <!-- prev button -->
-      <div class="md:block hidden">
-        <button @click="onClickNext()" class="w-10 h-10 flex items-center justify-center bg-[#EEEEEE] rounded-full text-second">
+      <div  class="md:block hidden">
+        <button v-if="hideButtons" @click="onClickNext()" class="w-10 h-10 flex items-center justify-center bg-[#EEEEEE] rounded-full text-second">
           <MdiChevronRight />
         </button>
+        <div v-else class="block w-10 h-10"></div>
       </div>
 
       <!-- prev button -->
@@ -44,10 +53,12 @@
 
 <script>
 import HoverCard from "../Products/HoverCard.vue";
+import SkeletonCardLoader from "../Loader/SkeletonCardLoader.vue";
 export default {
   name: "HomeTopCollection",
   components: {
     HoverCard,
+    SkeletonCardLoader
   },
   data() {
     return {
@@ -61,8 +72,15 @@ export default {
       selectedTab: "all",
       collectionProducts:[],
       paginateStart:0,
-      paginateEnd:4
+      paginateEnd:5,
+      loading: true
     };
+  },
+  computed:{
+    hideButtons(){
+      if(this.collectionProducts.length < 5) false
+      else true
+    }
   },
   methods:{
     async getCollections(){
@@ -79,6 +97,7 @@ export default {
     },
     async getSelectedCollectionProducts(collectionId = null){
       try {
+        this.loading = true
         const url =
           "/api/products?" +
           `collection_id[]=${collectionId}`
@@ -86,6 +105,8 @@ export default {
         this.collectionProducts = products
       } catch (error) {
         console.log(error)
+      }finally{
+        this.loading = false
       }
     },
     async onSelectCollection(collection){
