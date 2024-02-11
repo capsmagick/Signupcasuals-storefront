@@ -29,10 +29,33 @@
           </div>
 
           <div class="flex text-xs font-medium gap-4 divide-x-2">
-            <div class="flex items-center border-b-2 border-head">
-              DEFAULT SORT
-              <ChevronDown />
-            </div>
+            <ReusableDropdown :right="true">
+              <template #menu-activator="{ toggleMenu }">
+                <button
+                  class="flex items-center justify-end border-b-2 border-head w-32"
+                  @click="toggleMenu"
+                >
+                  {{ filters.sort ? filters.sort : "DEFAULT SORT" }}
+                  <ChevronDown />
+                </button>
+              </template>
+              <template #menu-content="{ toggleMenu }">
+                <div class="flex flex-col px-[20px] py-2 gap-2 capitalize">
+                  <div
+                    v-for="sort in sorts"
+                    :key="sort.value"
+                    @click="
+                      toggleMenu();
+                      onUpdateFilter({ sort: sort.value });
+                    "
+                    class="cursor-pointer"
+                  >
+                    {{ sort.name }}
+                  </div>
+                </div>
+              </template>
+            </ReusableDropdown>
+
             <div class="md:flex hidden items-center gap-2 pl-4">
               VIEW
               <span>2</span>
@@ -57,12 +80,10 @@
           </div>
         </div>
         <div v-else>
-          <div
-            class="grid grid-cols-2 md:gap-8 gap-4 pt-6"
-          >
-          <SkeletonCardLoader v-for="item in 6" :key="item"/>
+          <div class="grid grid-cols-2 md:gap-8 gap-4 pt-6">
+            <SkeletonCardLoader v-for="item in 6" :key="item" />
           </div>
-          </div>
+        </div>
 
         <div
           v-if="!loading && products && products.length"
@@ -130,7 +151,7 @@ export default {
     ProductCard,
     FilterVariant: () => import("vue-material-design-icons/FilterVariant.vue"),
     Close: () => import("vue-material-design-icons/Close.vue"),
-    SkeletonCardLoader
+    SkeletonCardLoader,
   },
   data() {
     return {
@@ -178,15 +199,22 @@ export default {
       openSideFilter: false,
       filters: {
         category: [],
+        sort: "",
       },
-      filterQuery: null,
+      filterQuery: "",
       loading: false,
+      sorts: [
+        {
+          name: "Name",
+          value: "title",
+        },
+      ],
     };
   },
   methods: {
     async fetchProductsList(offset = 0) {
       try {
-        this.loading = true
+        this.loading = true;
         let url = `/api/products?limit=${this.limit}&offset=${offset}`;
         if (this.filterQuery) url = url.concat("&", this.filterQuery);
         console.log(url);
@@ -202,10 +230,10 @@ export default {
         this.paginate.offset = dataOffset;
       } catch (error) {
         console.log(error);
-      }finally{
+      } finally {
         setTimeout(() => {
-          this.loading = false
-        }, 2000)
+          this.loading = false;
+        }, 2000);
       }
     },
     async onSelectPage(page) {
@@ -224,14 +252,22 @@ export default {
               );
               this.createCategoryQuery(product_category);
             }
-            console.log;
+          }
+          if (filters.sort) {
+            this.filters.sort = filters.sort;
+          }
+
+          if (this.filters.category && this.filters.category.length) {
             this.filterQuery =
               "category_id[]=" + this.filters.category.join("&category_id[]=");
           }
+          if (this.filters.sort)
+            this.filterQuery = `${this.filterQuery}order=${filters.sort}`;
+
+          await this.fetchProductsList();
         }
 
         // Refetch Products
-        await this.fetchProductsList();
       } catch (error) {
         console.log(error);
       }

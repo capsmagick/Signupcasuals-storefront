@@ -30,7 +30,7 @@
       </div>
       <div class="md:pl-10">
         <div class="md:flex hidden items-center justify-between">
-          <div class="text-xs font-medium">HOME / SHOP</div>
+          <div class="text-xs font-medium">HOME / SHOP <span v-if="product.title" class="uppercase">/ {{ product.title }}</span></div>
           <div
             v-if="filteredRelatedProducts && filteredRelatedProducts.length"
             class="flex items-center gap-4 text-xs text-head"
@@ -182,7 +182,7 @@
       </h5>
       <div class="grid grid-cols-4 gap-8">
         <ProductCard
-          v-for="item in filteredRelatedProducts"
+          v-for="item in filteredRelatedProducts.slice(0, 4)"
           :key="item"
           :product="item"
         />
@@ -308,7 +308,9 @@ export default {
       try {
         this.loading = true;
         if (!localStorage.getItem("cartId")) {
-          const { cart } = await this.$axios.$post("/api/carts");
+          const { cart } = await this.$axios.$post("/api/carts",{
+            country_code: "in"
+          });
           localStorage.setItem("cartId", cart.id);
         }
         let cartId = localStorage.getItem("cartId");

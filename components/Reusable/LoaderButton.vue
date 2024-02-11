@@ -2,7 +2,8 @@
   <button
     :type="type"
     :disabled="disabled || loading"
-    class="text-sm font-medium text-white bg-head px-6 py-4 w-52 flex items-center justify-center gap-2"
+    class="text-sm font-medium text-white bg-head px-6 py-4 flex items-center justify-center gap-2"
+    :class="{width}"
     @click="onClick"
   >
     <span>{{ label }}</span>
@@ -46,6 +47,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    width:{
+      type: String, 
+      default:"w-52"
+    }
   },
   methods: {
     onClick() {

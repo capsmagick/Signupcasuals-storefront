@@ -2,6 +2,8 @@ export const state = () => {
   customerCartId: "";
   customerProductsCart: {
   }
+  region: {
+  }
 };
 
 // Mutations
@@ -13,6 +15,9 @@ export const mutations = {
   setCustomerCartId(state, payload) {
     state.customerCartId = payload;
   },
+  setRegion(state, payload) {
+    state.region = payload;
+  },
 };
 
 // Actions
@@ -22,7 +27,15 @@ export const actions = {
     try {
       const cartId = localStorage.getItem("cartId");
       if (!cartId) {
-        const { cart } = await this.$axios.$post("/api/carts");
+        const { regions } = await this.$axios.$get("/api/regions");
+        if (!regions.length) return;
+        let selectedRegion;
+        selectedRegion = regions.find((v) => v.name == "India");
+        if (!selectedRegion) selectedRegion = regions[0];
+        commit("setRegion", selectedRegion);
+        const { cart } = await this.$axios.$post("/api/carts", {
+          region_id: selectedRegion.id,
+        });
         localStorage.setItem("cartId", cart.id);
         commit("setCustomerProductsCart", cart);
         return;
@@ -38,7 +51,15 @@ export const actions = {
           return;
         })
         .catch(async (e) => {
-          const { cart } = await this.$axios.$post("/api/carts");
+          const { regions } = await this.$axios.$get("/api/regions");
+          if (!regions.length) return;
+          let selectedRegion;
+          selectedRegion = regions.find((v) => v.name == "India");
+          if (!selectedRegion) selectedRegion = regions[0];
+          commit("setRegion", selectedRegion);
+          const { cart } = await this.$axios.$post("/api/carts",{
+            region_id: selectedRegion.id,
+          });
           localStorage.setItem("cartId", cart.id);
           commit("setCustomerCartId", cart.id);
           commit("setCustomerProductsCart", cart);
@@ -47,5 +68,15 @@ export const actions = {
     } catch (error) {
       console.log("new ", error);
     }
+  },
+  async getRegions({ commit }, payload) {
+    try {
+      const { regions } = await this.$axios.$get("/api/regions");
+      if (!regions.length) return;
+      let selectedRegion;
+      selectedRegion = regions.find((v) => v.name == "India");
+      if (!selectedRegion) selectedRegion = regions[0];
+      commit("setRegion", selectedRegion);
+    } catch (error) {}
   },
 };

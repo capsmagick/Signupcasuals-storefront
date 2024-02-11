@@ -326,7 +326,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions("customer", ["getCustomerProductCart"]),
+    ...mapActions("customer", ["getCustomerProductCart","getRegions"]),
     async getProductCategories() {
       try {
         const { product_categories } = await this.$axios.$get(
@@ -362,6 +362,7 @@ export default {
     this.fetchUserProfile();
     this.getCustomerProductCart();
     this.getProductCategories()
+    this.getRegions();
   },
 };
 </script>
