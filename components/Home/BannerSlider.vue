@@ -1,7 +1,7 @@
 <template>
   <div class="home-banner relative">
     <div class="banner-images h-full">
-      <img src="~/assets/images/banner.png" class="h-full" alt="" srcset="" />
+      <img src="~/assets/images/banner.png" class="h-full md:object-none object-cover" alt="" srcset="" />
     </div>
     <!-- Banner text -->
     <div
