@@ -15,7 +15,7 @@
     <section id="best-sellers" class="md:block hidden">
       <BestSellers />
     </section>
-    <section id="blogs" class="md:block hidden">
+    <section id="blogs" class="hidden">
       <Blogs />
     </section>
     <section id="bottom-options" class="md:block hidden">

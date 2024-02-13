@@ -3,7 +3,7 @@
     :type="type"
     :disabled="disabled || loading"
     class="text-sm font-medium text-white bg-head px-6 py-4 flex items-center justify-center gap-2"
-    :class="{width}"
+    :class="[width]"
     @click="onClick"
   >
     <span>{{ label }}</span>

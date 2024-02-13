@@ -6,16 +6,26 @@
         <!-- prev button -->
         <div class="flex flex-1 justify-center gap-4">
           <div
-            v-for="lookBook in lookBooks.slice(0,4)"
+            v-for="lookBook in lookBooks.slice(0, 4)"
             class="relative w-1/4 overflow-hidden cursor-pointer"
             :key="lookBook.name"
             @click="onClickProduct(lookBook)"
           >
-          <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80 h-64">
-              <img v-if="lookBook.thumbnail" :src="lookBook.thumbnail" alt="" srcset="" class="h-full w-full object-cover object-center lg:h-full lg:w-full">
+            <div
+              class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80 h-64"
+            >
+              <img
+                v-if="lookBook.thumbnail"
+                :src="lookBook.thumbnail"
+                alt=""
+                srcset=""
+                class="h-full w-full object-cover object-center lg:h-full lg:w-full"
+              />
               <img v-else src="~/assets/images/product.png" alt="" srcset="" />
             </div>
-            <div class="absolute bottom-0 bg-footer w-full px-4 py-2 text-head rounded-b-md">
+            <div
+              class="absolute bottom-0 bg-footer w-full px-4 py-2 text-head rounded-b-md"
+            >
               <h6 class="text-lg">{{ lookBook.title }}</h6>
               <!-- <div v-if="lookBook.categories && lookBook.categories.length" class="flex items-center gap-1 flex-nowrap">
                 <span v-for="category in lookBook.categories"  :key="category.id"> {{ category.name }}</span>
@@ -41,18 +51,26 @@ export default {
     async fetchLookBook() {
       try {
         const { product_tags } = await this.$axios.$get("/api/product-tags");
-        const lookBookTag = (product_tags ?? []).find(
-          (t) => t.value.toLowerCase() == "lookbook"
+        let lookBookTag = (product_tags ?? []).filter(
+          (t) => {
+            let val = new String(t.value);
+            val = val.toString();
+            if(val.includes('LB')) return t
+          }
         );
-        if (lookBookTag) await this.getLookBookProducts(lookBookTag.id);
+        
+        lookBookTag = lookBookTag.map((v) => v.id)
+
+        if (lookBookTag) await this.getLookBookProducts(lookBookTag);
       } catch (error) {
         console.log(error);
       }
     },
-    async getLookBookProducts(tagId = null) {
+    async getLookBookProducts(tags = []) {
       try {
+        let url = "tags[]=" + tags.join("&category_id[]=");
         const { products } = await this.$axios.$get(
-          `/api/products?tags[]=${tagId}`
+          `/api/products?${url}`
         );
 
         if (products && products.length) this.lookBooks = products;
@@ -61,7 +79,7 @@ export default {
       }
     },
     onClickProduct(lookBook){
-      this.$router.push(`/shop/${lookBook.id}`) 
+      this.$router.push(`/shop/${lookBook.id}`)
     }
   },
   async mounted() {

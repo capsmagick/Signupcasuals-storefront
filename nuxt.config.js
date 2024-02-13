@@ -23,7 +23,7 @@ export default {
   css: ["@/assets/css/main.css"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ["~/plugins/axios", "~/plugins/global", "~/plugins/alert"],
+  plugins: ["~/plugins/axios", "~/plugins/global", "~/plugins/alert","~/plugins/vee-validate.js"],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
