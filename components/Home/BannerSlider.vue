@@ -25,7 +25,7 @@
         <span>NEXT</span>
       </button>
     </div>
-    <div class="absolute right-16 top-[50%] transform -translate-y-[50%]">
+    <div class="sm:block hidden absolute right-16 top-[50%] transform -translate-y-[50%]">
         <ul class="flex flex-col gap-4 md:gap-6 items-center">
             <li><img src="~/assets/images/icons/facebook.svg" alt="" srcset=""></li>
             <li><img src="~/assets/images/icons/twitter.svg" alt="" srcset=""></li>
