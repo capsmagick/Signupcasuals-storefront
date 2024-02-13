@@ -11,7 +11,7 @@
         {{ selectedBanner.title }}
       </h1>
       <p class="text-base">{{ selectedBanner.description }}</p>
-      <button class="text-lg font-medium border-b border-head pb-1 pt-4">
+      <button @click="onClickDiscover" class="text-lg font-medium border-b border-head pb-1 pt-4">
         Discover Now
       </button>
     </div>
@@ -76,6 +76,9 @@ export default {
         else this.imgIndex++;
       }, 5000);
     },
+    onClickDiscover(){
+      this.$router.push("/shop")
+    }
   },
   mounted() {
     this.bannerSlider();

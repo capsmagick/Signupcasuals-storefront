@@ -47,7 +47,7 @@
       >
         <span>COLOR</span>
         <span class="transform" :class="[isShowColors ? 'rotate-180' : '']">
-          <ChevronUp class="text-head" />
+          <ChevronDown class="text-head" />
         </span>
       </div>
       <div v-show="isShowColors" class="flex gap-4 flex-wrap pt-6">
@@ -75,7 +75,7 @@
       >
         <span>SIZES</span>
         <span class="transform" :class="[isShowSizes ? 'rotate-180' : '']">
-          <ChevronUp class="text-head" />
+          <ChevronDown class="text-head" />
         </span>
       </div>
       <div v-show="isShowSizes" class="flex gap-4 flex-wrap pt-6">
@@ -96,7 +96,7 @@
       >
         <span>BRANDS</span>
         <span class="transform" :class="[isShowBrands ? 'rotate-180' : '']">
-          <ChevronUp class="text-head" />
+          <ChevronDown class="text-head" />
         </span>
       </div>
       <div v-show="isShowBrands" class="pt-6">
@@ -182,7 +182,7 @@ export default {
     },
     onSelectCategory(category) {
       if (this.filters.category.includes(category.id))
-        this.filters.category.splice(category.id, 1);
+        this.filters.category = this.filters.category.filter((v) => v !== category.id)
       else this.filters.category.push(category.id);
       this.onUpdateFilter();
     },
