@@ -18,7 +18,7 @@
             <li
               v-for="(link, idx) in navLinks"
               :key="idx"
-              class="cursor-pointer"
+              class="cursor-pointer relative group"
             >
               <div v-if="link.value == 'pages'">
                 <ReusableDropdown
@@ -53,6 +53,7 @@
               <a v-else @click="goToPage(link)" class="px-4">{{
                 link.title
               }}</a>
+              <span class="absolute -bottom-3 left-0 w-0 h-0.5 bg-head transition-all group-hover:w-full "></span>
             </li>
           </ul>
         </nav>
@@ -251,22 +252,24 @@ export default {
           link: "shop",
         },
         {
-          title: "Collection",
-          value: "collection",
-          link: "#top-collection",
+          title: "Men",
+          value: "Men",
+          link: "shop?handle=men",
         },
         {
-          title: "Journal",
-          value: "journal",
+          title: "Women",
+          value: "Women",
+          link: "shop?handle=women",
         },
         {
-          title: "Lookbook",
-          value: "look-book",
-          link: "#look-book",
+          title: "Kids",
+          value: "Kids",
+          link: "shop?handle=kids",
         },
         {
-          title: "Pages",
-          value: "pages",
+          title: "Accessories",
+          value: "Accessories",
+          link:"shop?handle=accessories"
         },
       ],
       pages: [

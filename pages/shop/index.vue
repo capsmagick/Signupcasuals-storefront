@@ -15,7 +15,11 @@
     <!-- Shop items section -->
     <div class="flex gap-14 md:mt-16">
       <aside class="md:block hidden w-[300px] flex-shrink-0">
-        <ProductsFilter @onUpdateFilter="onUpdateFilter" />
+        <ProductsFilter
+          :storeCategories="storeCategories"
+          :childCategories="childCategories"
+          @onUpdateFilter="onUpdateFilter"
+        />
       </aside>
       <div class="flex-1">
         <!-- head -->
@@ -138,6 +142,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import ProductCard from "~/components/Products/Card.vue";
 import SkeletonCardLoader from "~/components/Loader/SkeletonCardLoader.vue";
 export default {
@@ -209,15 +214,34 @@ export default {
           value: "title",
         },
       ],
+      handle: null,
+      category: null,
+      storeCategories: [],
+      parentCategory: {},
+      childCategories: [],
     };
   },
+  watch: {
+    "$route.query": {
+      async handler(to, from) {
+        if (to.handle) this.handle = to.handle;
+        else this.handle = null;
+        await this.fetchStoreCategories();
+        await this.handleProductsListing();
+      },
+    },
+  },
+  computed: {
+    ...mapState("store", ["categories"]),
+  },
   methods: {
+    ...mapActions("store", ["fetchStoreCategories"]),
     async fetchProductsList(offset = 0) {
       try {
         this.loading = true;
         let url = `/api/products?limit=${this.limit}&offset=${offset}`;
+
         if (this.filterQuery) url = url.concat("&", this.filterQuery);
-        console.log(url);
         const {
           products,
           count,
@@ -243,31 +267,14 @@ export default {
     async onUpdateFilter(filters) {
       try {
         if (filters) {
-          if (filters.category && filters.category.length) {
-            this.filters.category = [...filters.category];
-            // check for child category
-            for (const category of filters.category) {
-              const { product_category } = await this.$axios.$get(
-                `/api/product-categories/${category}`
-              );
-              this.createCategoryQuery(product_category);
-            }
-          }
           if (filters.sort) {
             this.filters.sort = filters.sort;
-          }
-
-          if (this.filters.category && this.filters.category.length) {
-            this.filterQuery =
-              "category_id[]=" + this.filters.category.join("&category_id[]=");
           }
           if (this.filters.sort)
             this.filterQuery = `${this.filterQuery}order=${filters.sort}`;
 
           await this.fetchProductsList();
         }
-
-        // Refetch Products
       } catch (error) {
         console.log(error);
       }
@@ -286,12 +293,114 @@ export default {
       const currentPage = this.paginate.offset / this.limit;
       if (currentPage == page) return true;
     },
+    async handleProductsListing() {
+      const query = this.$route.query;
+      if (query && Object.keys(query).length) this.handleFilters();
+      else await this.fetchProductsList();
+    },
+    async handleFilters() {
+      const query = this.$route.query;
+      const { handle, category } = query;
+      this.handle = handle;
+      this.category = category;
+
+      if (this.handle) {
+        this.parentCategory = this.storeCategories.find(
+          (c) => c.handle == this.handle
+        );
+        this.childCategories = this.parentCategory.category_children;
+      }
+      if (this.handle && !this.category) this.fetchMainHandle();
+      else if (this.handle && this.category) this.fetchHandleAndCategories();
+      else if (!this.handle && this.category) this.fetchCategories();
+    },
+    fetchMainHandle() {
+      let handle = {};
+      let url = "";
+      if (this.handle) {
+        url = url.concat(`category_id[]=${this.parentCategory.id}`);
+
+        // Handle Sub cat Ids
+        const handleChildCat = (cat) => {
+          url = url.concat(`&category_id[]=${cat.id}`);
+          if (cat.category_children && cat.category_children)
+            cat.category_children.forEach((c) => handleChildCat(c));
+        };
+
+        if (
+          this.parentCategory.category_children &&
+          this.parentCategory.category_children.length
+        )
+          this.parentCategory.category_children.forEach((c) =>
+            handleChildCat(c)
+          );
+        // url = url.concat(`&category_id[]=${handle.id}`);
+      }
+
+      this.filterQuery = url;
+
+      this.fetchProductsList();
+    },
+    async fetchHandleAndCategories() {
+      let queryCats = this.category.split("_");
+      console.log(this.childCategories);
+
+      const childCategoriesId = [];
+
+      if (this.childCategories && this.childCategories.length) {
+        this.childCategories.forEach((c) => {
+          if (c.category_children && c.category_children.length) {
+            c.category_children.forEach((v) => {
+              if (queryCats.includes(v.handle)) childCategoriesId.push(v.id);
+            });
+          }
+        });
+
+        this.filterQuery =
+          "category_id[]=" + childCategoriesId.join("&category_id[]=");
+
+        await this.fetchProductsList();
+      }
+    },
+    async fetchCategories() {
+      const queryCat = this.category.split("_");
+      const categoriesId = [];
+
+      const handleSubCat = (cat) => {
+        if (cat && cat.length) {
+          cat.forEach((c) => {
+            categoriesId.push(c.id);
+            if (c.category_children && c.category_children.length)
+              handleSubCat(c.category_children);
+          });
+        }
+      };
+
+      this.storeCategories.forEach((p) => {
+        if (queryCat.includes(p.handle)) {
+          categoriesId.push(p.id);
+
+          if (p.category_children && p.category_children.length)
+            handleSubCat(p.category_children);
+        }
+      });
+
+      await this.fetchProductsList();
+    },
+    async fetchStoreCategories() {
+      try {
+        const { product_categories } = await this.$axios.$get(
+          "/api/product-categories?parent_category_id=null&include_descendants_tree=true"
+        );
+        this.storeCategories = product_categories;
+      } catch (error) {
+        console.log("shop:", error);
+      }
+    },
   },
   async mounted() {
-    const query = this.$route.query;
-    if (query.category)
-      await this.onUpdateFilter({ category: [query.category] });
-    else this.fetchProductsList();
+    await this.fetchStoreCategories();
+    await this.handleProductsListing();
   },
 };
 </script>

@@ -19,22 +19,71 @@
           v-show="isShowCategories"
           class="text-sm text-head pt-6 flex flex-col gap-2"
         >
-          <li
-            v-for="category in productCategories"
-            :key="category"
-            :class="[
-              filters.category.includes(category.id)
-                ? 'bg-footer bg-opacity-50'
-                : '',
-            ]"
-            class="capitalize flex items-center gap-2 leading-8 cursor-pointer px-2 py-0.5 rounded"
-            @click="onSelectCategory(category)"
-          >
-            <span class="flex-1">{{ category.name }}</span>
-            <MdiCheckboxMarkedCircleOutline
-              v-if="filters.category.includes(category.id)"
-              :size="18"
-            />
+          <li v-for="category in filteredCategories" :key="category">
+            <div
+              v-if="category.isParent"
+              :class="[
+                filters.category.includes(category.handle)
+                  ? 'bg-footer bg-opacity-50'
+                  : '',
+              ]"
+              class="capitalize flex items-center gap-2 leading-8 cursor-pointer px-2 py-0.5 rounded"
+              @click="onSelectCategory(category)"
+            >
+              <span class="flex-1">{{ category.name }}</span>
+              <MdiCheckboxMarkedCircleOutline
+                v-if="filters.category.includes(category.handle)"
+                :size="18"
+              />
+            </div>
+            <div
+              v-else
+              class="capitalize flex flex-col gap-2 leading-8 cursor-pointer px-2 py-0.5 rounded"
+            >
+              <div
+                class="flex items-center justify-between"
+                @click="toggleSubCat(category)"
+              >
+                {{ category.name }}
+                <span
+                  class="transform"
+                  :class="[!category.fold ? 'rotate-180' : '']"
+                >
+                  <ChevronDown class="text-head" />
+                </span>
+              </div>
+
+              <div v-show="!category.fold">
+                <ul
+                  v-if="
+                    category.category_children &&
+                    category.category_children.length
+                  "
+                  class="pl-4 flex flex-col gap-2"
+                >
+                  <li
+                    v-for="child in category.category_children"
+                    :key="child.id"
+                  >
+                    <div
+                      :class="[
+                        filters.category.includes(child.handle)
+                          ? 'bg-footer bg-opacity-50'
+                          : '',
+                      ]"
+                      class="capitalize flex items-center gap-2 leading-8 cursor-pointer px-2 py-0.5 rounded"
+                      @click="onSelectCategory(child)"
+                    >
+                      <span class="flex-1">{{ child.name }}</span>
+                      <MdiCheckboxMarkedCircleOutline
+                        v-if="filters.category.includes(child.handle)"
+                        :size="18"
+                      />
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </li>
         </ul>
       </transition>
@@ -42,7 +91,7 @@
 
     <div>
       <div
-        class="flex justify-between items-center text-lg font-medium text-head cursor-pointer"
+        class="hidden justify-between items-center text-lg font-medium text-head cursor-pointer"
         @click="isShowColors = !isShowColors"
       >
         <span>COLOR</span>
@@ -70,7 +119,7 @@
 
     <div>
       <div
-        class="flex justify-between items-center text-lg font-medium text-head cursor-pointer"
+        class="hidden justify-between items-center text-lg font-medium text-head cursor-pointer"
         @click="isShowSizes = !isShowSizes"
       >
         <span>SIZES</span>
@@ -91,7 +140,7 @@
 
     <div>
       <div
-        class="flex justify-between items-center text-lg font-medium text-head cursor-pointer"
+        class="hidden justify-between items-center text-lg font-medium text-head cursor-pointer"
         @click="isShowBrands = !isShowBrands"
       >
         <span>BRANDS</span>
@@ -119,6 +168,16 @@
 <script>
 export default {
   name: "ProductsFilter",
+  props: {
+    storeCategories: {
+      type: Array,
+      default: () => [],
+    },
+    childCategories: {
+      type: Array,
+      default: () => [],
+    },
+  },
   components: {
     ChevronDown: () => import("vue-material-design-icons/ChevronDown.vue"),
     ChevronUp: () => import("vue-material-design-icons/ChevronUp.vue"),
@@ -168,30 +227,65 @@ export default {
       isShowBrands: false,
     };
   },
+  computed: {
+    filteredCategories() {
+      const { handle } = this.$route.query;
+
+      if (!handle) {
+        const categories = this.storeCategories;
+        categories.forEach((v) => {
+          v["isParent"] = true;
+        });
+
+        return categories;
+      }
+
+      const categories = this.childCategories;
+      categories.forEach((v) => {
+        v["fold"] = false;
+      });
+
+      return categories;
+    },
+  },
   methods: {
     onSelectColor(color) {
       this.selectedColor = color;
     },
-    async getProductCategories() {
-      try {
-        const { product_categories } = await this.$axios.$get(
-          "/api/product-categories?parent_category_id=null"
-        );
-        if (product_categories) this.productCategories = product_categories;
-      } catch (error) {}
-    },
     onSelectCategory(category) {
-      if (this.filters.category.includes(category.id))
-        this.filters.category = this.filters.category.filter((v) => v !== category.id)
-      else this.filters.category.push(category.id);
+      if (this.filters.category.includes(category.handle))
+        this.filters.category = this.filters.category.filter(
+          (v) => v !== category.handle
+        );
+      else this.filters.category.push(category.handle);
       this.onUpdateFilter();
     },
     onUpdateFilter() {
-      this.$emit("onUpdateFilter", this.filters);
+      let catQuery = "";
+      console.log(this.filters.category);
+      if (this.filters.category && this.filters.category.length) {
+        catQuery = this.filters.category.join("_");
+        this.$router.push({
+          query: { ...this.$route.query, category: catQuery },
+        });
+      } else {
+        this.$router.push({
+          query: { ...this.$route.query },
+        });
+      }
+
+      // this.$emit("onUpdateFilter", this.filters);
+    },
+    toggleSubCat(cat) {
+      cat = {
+        ...cat,
+        fold: !cat.fold,
+      };
     },
   },
   async mounted() {
-    await this.getProductCategories();
+    const { handle, category } = this.$route.query;
+    if (category) this.filters.category = category.split("_");
   },
 };
 </script>
