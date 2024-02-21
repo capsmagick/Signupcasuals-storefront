@@ -1,8 +1,15 @@
 <template>
   <div class="group">
     <div class="relative">
-      <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-        <img v-if="product.thumbnail" :src="product.thumbnail" @error="imageError" class="h-full w-full object-cover object-center lg:h-full lg:w-full" />
+      <div
+        class="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80"
+      >
+        <img
+          v-if="product.thumbnail"
+          :src="product.thumbnail"
+          @error="imageError"
+          class="h-full w-full object-cover object-center lg:h-full lg:w-full"
+        />
         <img v-else src="~/assets/images/product.png" alt="" srcset="" />
       </div>
       <div
@@ -32,7 +39,9 @@
       <div>
         <div class="text-xs text-second leading-5">Dresses</div>
         <div class="text-sm text-head leading-5">{{ product.title }}</div>
-        <div class="text-sm text-head leading-5">60</div>
+        <div v-if="getProductPrice" class="text-sm text-head leading-5">
+          {{ getProductPrice.amount | priceAmount }}
+        </div>
       </div>
     </div>
   </div>
@@ -43,21 +52,42 @@ import HeartOutline from "vue-material-design-icons/HeartOutline.vue";
 import Eye from "vue-material-design-icons/EyeOutline.vue";
 export default {
   name: "ProductHoverCard",
-  props:{
+  props: {
     product: {
-    type: Object,
-    default: {},
-  },
+      type: Object,
+      default: {},
+    },
   },
   components: {
     HeartOutline,
     Eye,
   },
-  methods:{
-    imageError(e){
-      e.target.src =  require('/assets/images/product.png')
-    }
-  }
+  filters: {
+    priceAmount(price) {
+      const amount = Math.round(price / 100);
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "inr",
+      }).format(amount);
+    },
+  },
+  computed: {
+    getProductPrice() {
+      if (
+        this.product &&
+        this.product.variants &&
+        this.product.variants.length
+      ) {
+        const variant = this.product.variants[0];
+        return variant.prices[0];
+      }
+    },
+  },
+  methods: {
+    imageError(e) {
+      e.target.src = require("/assets/images/product.png");
+    },
+  },
 };
 </script>
 

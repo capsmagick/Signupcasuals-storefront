@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+.footer-links li a {
+  position: relative;
+}
+
+.footer-links li a::after {
+  position: absolute;
+  content: "";
+  display: block;
+  width: 0;
+  background: #222;
+  left: 0;
+  height: 2px;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.footer-links li:hover a::after {
+  width: 100%;
+}
+
 @media screen and (min-width: 480px) {
 }
 
@@ -12,19 +33,19 @@
 }
 
 @media screen and (min-width: 768px) {
-  .product_detail_grid{
-    grid-template-columns: 60fr 40fr
+  .product_detail_grid {
+    grid-template-columns: 60fr 40fr;
   }
 }
 
 @media screen and (min-width: 1024px) {
-  .checkout_cart_parent{
+  .checkout_cart_parent {
     grid-template-columns: 2fr 1fr;
   }
 }
 
 @media screen and (min-width: 1280px) {
-    .account {
-        grid-template-columns: 350px 1fr;
-      }
+  .account {
+    grid-template-columns: 350px 1fr;
+  }
 }

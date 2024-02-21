@@ -18,7 +18,7 @@
       <div class="flex">
         <div class="w-1/2">
           <h3 class="text-lg text-head font-medium mb-4">COMPANY</h3>
-          <ul class="flex flex-col space-y-4 text-sm">
+          <ul class="footer-links flex flex-col space-y-4 text-sm">
             <li><nuxt-link to="/about">About Us</nuxt-link></li>
               <li><nuxt-link to="/privacy-policy">Privacy Policy</nuxt-link></li>
               <li><nuxt-link to="/payments">Payments</nuxt-link></li>
@@ -27,7 +27,7 @@
         </div>
         <div class="w-1/2">
           <h3 class="text-lg text-head font-medium mb-4">SHOP</h3>
-          <ul class="flex flex-col space-y-4 text-sm">
+          <ul class="footer-links flex flex-col space-y-4 text-sm">
             <li><a href="#">New Arrivals</a></li>
             <li><a href="#">Men </a></li>
             <li><a href="#">Women </a></li>
@@ -38,7 +38,7 @@
       <!--  -->
       <div>
         <h3 class="text-lg text-head font-medium mb-4">HELP</h3>
-        <ul class="flex flex-col space-y-4 text-sm">
+        <ul class="footer-links flex flex-col space-y-4 text-sm">
           <li><nuxt-link to="/terms-conditions">Terms & Conditions</nuxt-link></li>
               <li><nuxt-link to="/shipping-policy">Shipping Policy</nuxt-link></li>
               <li><nuxt-link to="/exchange-cancellation-policy">Exchange & Cancellation Policy</nuxt-link></li>
@@ -89,4 +89,6 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+
+</style>

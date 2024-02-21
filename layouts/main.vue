@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import SiteHeader from "~/components/SiteHeader/index.vue";
 import SiteFooter from "~/components/SiteFooter.vue";
 import MobileSiteFooter from "~/components/Mobile/SiteFooter.vue"
@@ -28,6 +29,15 @@ export default {
     MobileSiteFooter,
     Snackbar
   },
+  data(){
+    return{}
+  },
+  methods:{
+    ...mapActions("store",["fetchStoreCategories"])
+  },
+  async mounted(){
+    await this.fetchStoreCategories();
+  }
 };
 </script>
 

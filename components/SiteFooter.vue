@@ -57,25 +57,27 @@
           >
             <p class="leading-5">
               SignUp Casuals, Ground floor,<br />
-            City centre, Thrissur<br />
-            Kerala-680001<br />
-            India<br />
+              City centre, Thrissur<br />
+              Kerala-680001<br />
+              India<br />
             </p>
             <p class="leading-5">
-            support@signupcasuals.com<br />
-            +91 9562889921
+              support@signupcasuals.com<br />
+              +91 9562889921
             </p>
           </div>
           <div class="col-span-2">
-            <ul class="flex flex-col space-y-4 text-xs">
+            <ul class="footer-links flex flex-col space-y-4 text-xs">
               <li><nuxt-link to="/about">About Us</nuxt-link></li>
-              <li><nuxt-link to="/privacy-policy">Privacy Policy</nuxt-link></li>
+              <li>
+                <nuxt-link to="/privacy-policy">Privacy Policy</nuxt-link>
+              </li>
               <li><nuxt-link to="/payments">Payments</nuxt-link></li>
               <li><nuxt-link to="/contact">Contact Us</nuxt-link></li>
             </ul>
           </div>
           <div class="col-span-2">
-            <ul class="flex flex-col space-y-4 text-xs">
+            <ul class="footer-links flex flex-col space-y-4 text-xs">
               <li><a href="#">New Arrivals</a></li>
               <li><a href="#">Men </a></li>
               <li><a href="#">Women </a></li>
@@ -83,12 +85,23 @@
             </ul>
           </div>
           <div class="col-span-2">
-            <ul class="flex flex-col space-y-4 text-xs">
-              <li><nuxt-link to="/terms-conditions">Terms & Conditions</nuxt-link></li>
-              <li><nuxt-link to="/shipping-policy">Shipping Policy</nuxt-link></li>
-              <li><nuxt-link to="/exchange-cancellation-policy">Exchange & Cancellation Policy</nuxt-link></li>
-              <li><nuxt-link to="/return-refund-policy">Return & Refund Policy</nuxt-link></li>
-              
+            <ul class="footer-links flex flex-col space-y-4 text-xs">
+              <li>
+                <nuxt-link to="/terms-conditions">Terms & Conditions</nuxt-link>
+              </li>
+              <li>
+                <nuxt-link to="/shipping-policy">Shipping Policy</nuxt-link>
+              </li>
+              <li>
+                <nuxt-link to="/exchange-cancellation-policy"
+                  >Exchange & Cancellation Policy</nuxt-link
+                >
+              </li>
+              <li>
+                <nuxt-link to="/return-refund-policy"
+                  >Return & Refund Policy</nuxt-link
+                >
+              </li>
             </ul>
           </div>
 
@@ -113,7 +126,7 @@
         </div>
       </div>
       <div class="pt-8 pb-6 flex items-center justify-between text-xs">
-        <div>©SignUp Casuals  and powered by Knowbin Technologies Pvt Ltd.</div>
+        <div>©SignUp Casuals and powered by Knowbin Technologies Pvt Ltd.</div>
         <div class="flex gap-4">
           <span class="text-second">Language</span>
           <span>United Kingdom | English</span>
@@ -129,4 +142,5 @@
 export default {};
 </script>
 
-<style></style>
+<style>
+</style>

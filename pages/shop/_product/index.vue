@@ -226,7 +226,9 @@ export default {
     },
   },
   computed: {
-    varientPrice() {},
+    varientPrice() {
+      const price = this.selectedVariant.prices[0];
+    },
     filteredRelatedProducts() {
       if (this.relatedProducts.length) {
         return this.relatedProducts.filter((p) => p.id != this.product.id);
