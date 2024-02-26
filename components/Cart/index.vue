@@ -46,7 +46,7 @@
             <button @click="updateLineItem(product, 'add')">+</button>
           </div>
         </div>
-        <div class="flex items-center">&#8377;{{ product.subtotal | priceAmount }}</div>
+        <div class="flex items-center">{{ product.subtotal | priceAmount }}</div>
         <div class="flex items-center text-second">
           <mdi-window-close @click="deleteLineItem(product)" :size="18" />
         </div>
@@ -73,7 +73,7 @@
             class="flex py-4 gap-4 items-center text-xs font-medium text-head"
           >
             <div class="w-1/2">SUBTOTAL</div>
-            <div class="w-1/2">&#8377;{{ cartDetails.subtotal | priceAmount }}</div>
+            <div class="w-1/2">{{ cartDetails.subtotal | priceAmount }}</div>
           </div>
           <div class="flex py-4 gap-4 text-xs font-medium text-head">
             <div class="w-1/2">SHIPPING</div>
@@ -88,20 +88,21 @@
           <div
             class="flex py-4 gap-4 items-center text-xs font-medium text-head"
           >
-            <div class="w-1/2">VAT</div>
-            <div class="w-1/2">$19</div>
+            <div class="w-1/2">TAX</div>
+            <div class="w-1/2">{{ cartDetails.tax_total | priceAmount }}</div>
           </div>
           <div
             class="flex py-4 gap-4 items-center text-xs font-medium text-head"
           >
             <div class="w-1/2">TOTAL</div>
-            <div class="w-1/2">&#8377;{{ cartDetails.total | priceAmount }}</div>
+            <div class="w-1/2">{{ cartDetails.total | priceAmount }}</div>
           </div>
         </div>
       </div>
       <div class="flex">
         <ReusableLoaderButton
           label="PROCEED TO CHECKOUT"
+          :width="'w-full'"
           @click="gotToCheckout"
         />
       </div>
@@ -120,7 +121,11 @@ export default {
   },
   filters: {
     priceAmount(price) {
-      return Math.round(price / 100);
+        const amount = Math.round(price / 100);
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "inr",
+      }).format(amount);
     },
   },
   methods: {

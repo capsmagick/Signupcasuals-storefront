@@ -30,7 +30,12 @@
       </div>
       <div class="md:pl-10">
         <div class="md:flex hidden items-center justify-between">
-          <div class="text-xs font-medium">HOME / SHOP <span v-if="product.title" class="uppercase">/ {{ product.title }}</span></div>
+          <div class="text-xs font-medium">
+            HOME / SHOP
+            <span v-if="product.title" class="uppercase"
+              >/ {{ product.title }}</span
+            >
+          </div>
           <div
             v-if="filteredRelatedProducts && filteredRelatedProducts.length"
             class="flex items-center gap-4 text-xs text-head"
@@ -54,7 +59,7 @@
         <div class="pt-10 text-head flex flex-col gap-8">
           <div>
             <h4 class="text-2xl">{{ product.title }}</h4>
-            <h3 class="text-[22px] font-medium">&#8377;249</h3>
+            <h3 class="text-[22px] font-medium">{{ variantPrice }}</h3>
           </div>
 
           <div class="flex items-center justify-between text-sm">
@@ -64,7 +69,7 @@
               <div class="flex items-center gap-2 flex-wrap">
                 <button
                   v-for="variant in variants"
-                  :key="variant"
+                  :key="variant.id"
                   :class="[
                     variant.id == selectedVariant.id
                       ? 'bg-head text-white border-head'
@@ -183,7 +188,7 @@
       <div class="grid grid-cols-4 gap-8">
         <ProductCard
           v-for="item in filteredRelatedProducts.slice(0, 4)"
-          :key="item"
+          :key="item.id"
           :product="item"
         />
       </div>
@@ -193,6 +198,7 @@
 
 <script>
 import ProductCard from "~/components/Products/Card.vue";
+import { mapActions} from "vuex";
 export default {
   name: "singleProductPage",
   layout: "main",
@@ -226,8 +232,16 @@ export default {
     },
   },
   computed: {
-    varientPrice() {
-      const price = this.selectedVariant.prices[0];
+    variantPrice() {
+      let amount;
+      if (this.selectedVariant.prices && this.selectedVariant.prices.length) {
+        const price = this.selectedVariant.prices[0];
+        amount = price.amount ? Math.round(price.amount / 100) : 0;
+      } else amount = 0;
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "inr",
+      }).format(amount);
     },
     filteredRelatedProducts() {
       if (this.relatedProducts.length) {
@@ -236,6 +250,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions("customer", ["getCustomerProductCart"]),
     async fetchProductsList() {
       const { product: productId } = this.$route.params;
       const { product } = await this.$axios.$get(`/api/products/${productId}`);
@@ -265,7 +280,8 @@ export default {
       }
     },
     onSelectImage(index = null) {
-      if (!index) return;
+      console.log(index)
+      // if (!index) return;
       this.previewImage = this.product.images[index];
     },
     onSelectVariant(variant) {
@@ -310,13 +326,13 @@ export default {
       try {
         this.loading = true;
         if (!localStorage.getItem("cartId")) {
-          const { cart } = await this.$axios.$post("/api/carts",{
-            country_code: "in"
+          const { cart } = await this.$axios.$post("/api/carts", {
+            country_code: "in",
           });
           localStorage.setItem("cartId", cart.id);
         }
         let cartId = localStorage.getItem("cartId");
-        console.log("herere");
+
         const variant_id = this.selectedVariant.id;
 
         const updatedCart = await this.$axios.$post(
@@ -326,6 +342,8 @@ export default {
             quantity: this.itemQty,
           }
         );
+
+        this.getCustomerProductCart()
 
         this.$alert.show({
           title: "Successfully Added",

@@ -69,7 +69,7 @@
       <div
         class="pt-4 pb-6 border-t border-[#CFCDCD] flex flex-col gap-4 text-sm"
       >
-        <div>©2020 Uomo</div>
+        <div>©SignUp Casuals  &nbsp; &nbsp;Powered by Knowbin Technologies Pvt Ltd</div>
         <div class="flex gap-4">
           <span class="text-second">Language</span>
           <span>United Kingdom | English</span>

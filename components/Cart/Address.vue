@@ -63,7 +63,10 @@
       </div>
     </div>
     <div>
-      <div class="border border-head px-10 pt-9 pb-4 mb-6">
+      <div
+        v-if="cart.items && cart.items.length"
+        class="border border-head px-10 pt-9 pb-4 mb-6"
+      >
         <h6 class="text-sm font-medium mb-6">YOUR ORDER</h6>
         <div class="flex flex-col divide-y divide-footer">
           <div
@@ -74,29 +77,34 @@
           </div>
           <div class="flex flex-col py-4 gap-4 text-xs font-medium text-head">
             <div
+              v-for="item in cart.items"
+              :key="item.id"
               class="flex flex-1 items-center justify-between text-xs text-second"
             >
-              <div class="">Zessi Dresses x2</div>
-              <div class="">$32.50</div>
-            </div>
-            <div
-              class="flex flex-1 items-center justify-between text-xs text-second"
-            >
-              <div class="">Zessi Dresses x2</div>
-              <div class="">$32.50</div>
+              <div class="flex items-center">
+                <span>{{ item.title }}</span>
+                &nbsp; x{{ item.quantity }}
+              </div>
+              <div class="">{{ item.total | priceAmount }}</div>
             </div>
           </div>
           <div
             class="flex py-4 gap-4 items-center justify-between text-xs font-medium text-head"
           >
-            <div class="">VAT</div>
-            <div class="">$19</div>
+            <div class="">SUB TOTAL</div>
+            <div class="">{{ cart.subtotal | priceAmount }}</div>
+          </div>
+          <div
+            class="flex py-4 gap-4 items-center justify-between text-xs font-medium text-head"
+          >
+            <div class="">TAX</div>
+            <div class="">{{ cart.tax_total | priceAmount }}</div>
           </div>
           <div
             class="flex py-4 gap-4 items-center justify-between text-xs font-medium text-head"
           >
             <div class="">TOTAL</div>
-            <div class="">$1319</div>
+            <div class="">{{ cart.total | priceAmount }}</div>
           </div>
         </div>
       </div>
@@ -150,6 +158,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "cartAddress",
   data() {
@@ -159,13 +168,28 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapState("customer", ["customerProductsCart"]),
+    cart() {
+      return this.customerProductsCart;
+    },
+  },
+  filters: {
+    priceAmount(price) {
+      const amount = Math.round(price / 100);
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "inr",
+      }).format(amount);
+    },
+  },
   methods: {
     async updateShippingAddress() {
       try {
         const cartId = localStorage.getItem("cartId");
         if (!cartId) return;
-        await this.$axios.$post(`/api/carts/${cartId}`,{
-            shipping_address: this.shipping_address
+        await this.$axios.$post(`/api/carts/${cartId}`, {
+          shipping_address: this.shipping_address,
         });
       } catch (error) {}
     },

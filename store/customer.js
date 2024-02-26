@@ -80,3 +80,11 @@ export const actions = {
     } catch (error) {}
   },
 };
+
+// Getters
+
+export const getters = {
+  getCustomerCart(state){
+    return state.customerProductsCart ? state.customerProductsCart : {}
+  }
+}

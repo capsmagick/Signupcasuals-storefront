@@ -172,7 +172,7 @@ export default {
     $route: {
       handler(v) {
         const query = v.query;
-        if (query.step) this.step = v.query;
+        if (query.step) this.step = query.step;
       },
     },
   },
