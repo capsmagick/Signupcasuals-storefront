@@ -6,12 +6,14 @@
           <img src="~/assets/images/logo.png" class="block h-14" />
         </div>
         <p class="leading-5">
-          1418 River Drive, Suite 35 Cottonhall, CA 9622 <br />
-          United States
+          SignUp Casuals, Ground floor,<br />
+          City centre, Thrissur<br />
+          Kerala-680001<br />
+          India<br />
         </p>
         <p class="leading-5">
-          sale@uomo.com<br />
-          +1 246-345-0695
+          support@signupcasuals.com<br />
+          +91 9562889921
         </p>
       </div>
       <!--  -->
