@@ -145,6 +145,7 @@
 import { mapState, mapActions } from "vuex";
 import ProductCard from "~/components/Products/Card.vue";
 import SkeletonCardLoader from "~/components/Loader/SkeletonCardLoader.vue";
+import axios from "~/plugins/axios";
 export default {
   name: "shop-list",
   layout: "main",
@@ -223,12 +224,12 @@ export default {
   },
   watch: {
     "$route.query": {
-      async handler(to, from) {
-        if (to.handle) this.handle = to.handle;
-        else this.handle = null;
-        await this.fetchStoreCategories();
-        await this.handleProductsListing();
-      },
+      // async handler(to, from) {
+      //   if (to.handle) this.handle = to.handle;
+      //   else this.handle = null;
+      //   await this.fetchStoreCategories();
+      //   await this.handleProductsListing();
+      // },
     },
   },
   computed: {
@@ -363,29 +364,30 @@ export default {
       }
     },
     async fetchCategories() {
-      const queryCat = this.category.split("_");
-      const categoriesId = [];
+      // const queryCat = this.category.split("_");
+      // const categoriesId = [];
 
-      const handleSubCat = (cat) => {
-        if (cat && cat.length) {
-          cat.forEach((c) => {
-            categoriesId.push(c.id);
-            if (c.category_children && c.category_children.length)
-              handleSubCat(c.category_children);
-          });
-        }
-      };
+      // const handleSubCat = (cat) => {
+      //   if (cat && cat.length) {
+      //     cat.forEach((c) => {
+      //       categoriesId.push(c.id);
+      //       if (c.category_children && c.category_children.length)
+      //         handleSubCat(c.category_children);
+      //     });
+      //   }
+      // };
 
-      this.storeCategories.forEach((p) => {
-        if (queryCat.includes(p.handle)) {
-          categoriesId.push(p.id);
+      // this.storeCategories.forEach((p) => {
+      //   if (queryCat.includes(p.handle)) {
+      //     categoriesId.push(p.id);
 
-          if (p.category_children && p.category_children.length)
-            handleSubCat(p.category_children);
-        }
-      });
+      //     if (p.category_children && p.category_children.length)
+      //       handleSubCat(p.category_children);
+      //   }
+      // });
 
-      await this.fetchProductsList();
+      // await this.fetchProductsList();
+      const { data } = await this.$api.get("/customer/category/");
     },
     async fetchStoreCategories() {
       try {
@@ -397,10 +399,23 @@ export default {
         console.log("shop:", error);
       }
     },
+    async fetchProducts() {
+      try {
+        const res = await this.$api.get("/customer/product/");
+        this.products = Array.isArray(res.data?.results)
+          ? res.data.results
+          : [];
+      } catch (error) {
+        console.log("products:", error);
+        this.products = [];
+      }
+    },
   },
   async mounted() {
-    await this.fetchStoreCategories();
-    await this.handleProductsListing();
+    // await this.fetchStoreCategories();
+    // await this.handleProductsListing();
+    await this.fetchCategories()
+    await this.fetchProducts();
   },
 };
 </script>

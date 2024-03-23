@@ -45,12 +45,11 @@ export default {
   methods: {
     async getProductCategories() {
       try {
-        const { product_categories } = await this.$axios.$get(
-          "/api/product-categories?parent_category_id=null"
-        );
-        if(!product_categories.length) this.categories = this.dummyCat
-        else this.categories = product_categories
-      } catch (error) {}
+        const { data } = await this.$api.get("/customer/category/")
+        this.categories = Array.isArray(data?.results) ? data.results : this.dummyCat
+      } catch (error) {
+        console.log("top-categories:fetch-cat:", error)
+      }
     },
     onSelectCategory(category){
       this.$router.push(`/shop?category=${category.id}`)

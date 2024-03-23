@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div v-if="isShowLogin">
+    <div v-if="!isLoggedIn && isShowLogin">
       <form action="" @submit.prevent>
         <div class="mb-6">
           <FormTextField
-            v-model="login.email"
+            v-model="login.username"
             placeholder="Username or email address *"
           />
         </div>
@@ -39,9 +39,33 @@
       </form>
     </div>
     <!-- Create Account Form -->
-    <div v-else>
+    <div v-if="!isLoggedIn && !isShowLogin">
       <ValidationObserver v-slot="{ invalid }">
         <form @submit.prevent>
+          <div class="mb-6">
+            <FormTextField
+              v-model="customerRegister.username"
+              placeholder="Username"
+              rules="required|string"
+            />
+          </div>
+          <div class="mb-6">
+            <FormTextField
+              v-model="customerRegister.password"
+              placeholder="Password"
+              :type="'password'"
+              rules="required|min:4"
+              vid="password"
+            />
+          </div>
+          <div class="mb-6">
+            <FormTextField
+              v-model="confirmPassword"
+              placeholder="Confirm Password"
+              :type="'password'"
+              rules="required|confirmed:password"
+            />
+          </div>
           <div class="mb-6">
             <FormTextField
               v-model="customerRegister.first_name"
@@ -65,23 +89,7 @@
               rules="required|email"
             />
           </div>
-          <div class="mb-6">
-            <FormTextField
-              v-model="customerRegister.password"
-              placeholder="Password"
-              :type="'password'"
-              rules="required|min:4"
-              vid="password"
-            />
-          </div>
-          <div class="mb-6">
-            <FormTextField
-              v-model="confirmPassword"
-              placeholder="Confirm Password"
-              :type="'password'"
-              rules="required|confirmed:password"
-            />
-          </div>
+
           <p class="text-second text-sm text-justify mb-6">
             Your personal data will be used to support your experience
             throughout this website, to manage access to your account, and for
@@ -98,32 +106,54 @@
         </form>
       </ValidationObserver>
     </div>
+    <div v-if="isLoggedIn">
+      <ReusableLoaderButton label="LOG OUT" @click="logOut" width="w-full" />
+    </div>
   </div>
 </template>
 
 <script>
+import axios from "~/plugins/axios";
+import { mapMutations, mapState } from "vuex";
 export default {
   name: "LoginRegisterForm",
   data() {
     return {
       isShowLogin: true,
       customerRegister: {},
-      login: {},
+      login: {
+        username: "pachalam",
+        password: "1234567",
+      },
       confirmPassword: null,
       loading: false,
     };
   },
+  computed: {
+    ...mapState(["isLoggedIn"]),
+  },
   methods: {
+    // ...mapMutations("user", ["setAccess"]),
+    ...mapMutations(["setLoggedIn","setAccess"]),
     async customerLogin() {
       try {
-        const { customer } = await this.$auth.loginWith("local", {
-          data: this.login,
+        const { data } = await this.$api.post("/account/token/user/login/", {
+          ...this.login,
         });
+
+        const tokensString = data.tokens;
+        const validJsonString = tokensString.replace(/'/g, '"');
+        const tokenObj = JSON.parse(validJsonString);
+        const { refresh, access } = tokenObj;
+
+        localStorage.setItem("refresh", refresh);
+        this.setAccess(access);
+        this.setLoggedIn(true);
         this.$alert.show({
           title: "Logged in Successfully",
           description: "You have successfully logged in!",
         });
-        this.$router.push("/");
+        // this.$router.push("/");
         this.$emit("loggedIn");
       } catch (error) {
         console.log("er", error);
@@ -137,19 +167,36 @@ export default {
     async registerCustomer() {
       try {
         this.loading = true;
-        const res = await this.$axios.$post(
-          "/api/customers",
+
+        const res = this.$api.post(
+          "/account/user/sign-up/",
           this.customerRegister
         );
-        
+
+        // const res = await this.$axios.$post(
+        //   "/api/customers",
+        //   this.customerRegister
+        // );
+
         this.$alert.show({
           title: "Yasss, account created.",
-          description: "Your account have been created successfully. Please login with your email and password!",
+          description:
+            "Your account have been created successfully. Please login with your email and password!",
         });
       } catch (error) {
       } finally {
         this.loading = false;
         this.isShowLogin = true;
+      }
+    },
+    async logOut() {
+      try {
+        await this.$api.post("/account/user/logout/");
+        localStorage.removeItem("refresh");
+        this.setLoggedIn(false);
+        this.setAccess("");
+      } catch (error) {
+        console.log(error);
       }
     },
   },

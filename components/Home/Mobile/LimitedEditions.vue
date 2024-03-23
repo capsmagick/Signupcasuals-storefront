@@ -84,7 +84,7 @@ export default {
     },
   },
   mounted() {
-    this.getLimitedEditionsProducts();
+    // this.getLimitedEditionsProducts();
   },
 };
 </script>

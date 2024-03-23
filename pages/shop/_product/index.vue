@@ -198,7 +198,7 @@
 
 <script>
 import ProductCard from "~/components/Products/Card.vue";
-import { mapActions} from "vuex";
+import { mapActions } from "vuex";
 export default {
   name: "singleProductPage",
   layout: "main",
@@ -280,7 +280,7 @@ export default {
       }
     },
     onSelectImage(index = null) {
-      console.log(index)
+      console.log(index);
       // if (!index) return;
       this.previewImage = this.product.images[index];
     },
@@ -325,25 +325,16 @@ export default {
     async addToCart() {
       try {
         this.loading = true;
-        if (!localStorage.getItem("cartId")) {
-          const { cart } = await this.$axios.$post("/api/carts", {
-            country_code: "in",
-          });
-          localStorage.setItem("cartId", cart.id);
-        }
-        let cartId = localStorage.getItem("cartId");
-
-        const variant_id = this.selectedVariant.id;
-
-        const updatedCart = await this.$axios.$post(
-          `/api/carts/${cartId}/line-items`,
+        const updatedCart = await this.$api.post(
+          "/customer/cart/add-to-cart/",
           {
-            variant_id,
+            product_variant: 0,
             quantity: this.itemQty,
+            price: "-96765407",
           }
         );
-
-        this.getCustomerProductCart()
+        
+        this.getCustomerProductCart();
 
         this.$alert.show({
           title: "Successfully Added",

@@ -23,7 +23,7 @@ export default {
   css: ["@/assets/css/main.css"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ["~/plugins/axios", "~/plugins/global", "~/plugins/alert","~/plugins/vee-validate.js"],
+  plugins: [ "~/plugins/global", "~/plugins/alert","~/plugins/vee-validate.js","~/plugins/axios.js"],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -46,13 +46,6 @@ export default {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
     proxy: true,
   },
-  proxy: {
-    "/api/": {
-      target: `${process.env.API_URL}/store`,
-      pathRewrite: { "^/api/": "" },
-    },
-  },
-
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
@@ -76,25 +69,25 @@ export default {
   server: {
     port: process.env.PORT ?? 8000, // default: 3000
   },
-  auth: {
-    fetchUser: true,
-    strategies: {
-      local: {
-        token: {
-          property: "access_token",
-        },
-        user: {
-          property: "customer",
-        },
-        endpoints: {
-          login: { url: "/api/auth/token", method: "post" },
-          logout: { url: "/auth", method: "delete" },
-          user: { url: "/api/customers/me", method: "get" },
-        },
-      },
-    },
-    redirect:{
-      home: false
-    }
-  },
+  // auth: {
+  //   fetchUser: true,
+  //   strategies: {
+  //     local: {
+  //       token: {
+  //         property: "access_token",
+  //       },
+  //       user: {
+  //         property: "customer",
+  //       },
+  //       endpoints: {
+  //         login: { url: "/account/token/user/login/", method: "post" },
+  //         logout: { url: "/auth", method: "delete" },
+  //         user: { url: "/api/customers/me", method: "get" },
+  //       },
+  //     },
+  //   },
+  //   redirect:{
+  //     home: false
+  //   }
+  // },
 };

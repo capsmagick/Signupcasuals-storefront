@@ -23,6 +23,7 @@ import SiteFooter from "~/components/SiteFooter.vue";
 import MobileSiteFooter from "~/components/Mobile/SiteFooter.vue"
 import Snackbar from "~/components/Utils/Snackbar.vue"
 export default {
+  middleware: 'verify-auth',
   components: {
     SiteHeader,
     SiteFooter,

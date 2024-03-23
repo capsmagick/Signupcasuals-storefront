@@ -53,7 +53,9 @@
               <a v-else @click="goToPage(link)" class="px-4">{{
                 link.title
               }}</a>
-              <span class="absolute -bottom-3 left-0 w-0 h-0.5 bg-head transition-all group-hover:w-full "></span>
+              <span
+                class="absolute -bottom-3 left-0 w-0 h-0.5 bg-head transition-all group-hover:w-full"
+              ></span>
             </li>
           </ul>
         </nav>
@@ -222,7 +224,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 import LoginRegisterForm from "../LoginRegisterForm.vue";
 import HeaderSearch from "./Search.vue";
 export default {
@@ -269,7 +271,7 @@ export default {
         {
           title: "Accessories",
           value: "Accessories",
-          link:"shop?handle=accessories"
+          link: "shop?handle=accessories",
         },
       ],
       pages: [
@@ -312,31 +314,25 @@ export default {
       HeaderMenuComponent: "",
     };
   },
-  watch: {
-    customerProductsCart(v) {
-      this.customerCart = JSON.parse(JSON.stringify(this.customerProductsCart));
-    },
-  },
   computed: {
     ...mapState("customer", ["customerProductsCart"]),
+    ...mapGetters("customer", ["getCustomerCart"]),
     cartItemCount() {
-      return 1;
-      // if (this.customerCart) {
-      //   if (this.customerCart?.items.length) return cart.items.length;
-      //   return 0
-      // }
-      // return 0;
+      if (
+        this.customerCart &&
+        this.customerCart.items &&
+        this.customerCart.items.length
+      ) {
+        return this.customerCart.items.length;
+      }
+      return 0;
     },
   },
   methods: {
-    ...mapActions("customer", ["getCustomerProductCart","getRegions"]),
+    ...mapActions("customer", ["getCustomerProductCart", "getRegions"]),
     async getProductCategories() {
       try {
-        const { product_categories } = await this.$axios.$get(
-          "/api/product-categories?parent_category_id=null"
-        );
-        if (!product_categories.length) this.categories = this.dummyCat;
-        else this.categories = product_categories;
+        
       } catch (error) {}
     },
     goToPage(link) {
@@ -361,11 +357,20 @@ export default {
       this.HeaderMenuComponent = "HeaderSearch";
     },
   },
+  watch: {
+    customerProductsCart(v) {
+      console.log("watch:", v)
+      this.customerCart = JSON.parse(JSON.stringify(v));
+    },
+  },
   mounted() {
-    this.fetchUserProfile();
-    this.getCustomerProductCart();
-    this.getProductCategories()
-    this.getRegions();
+    // this.fetchUserProfile();
+    // this.getCustomerProductCart();
+    // this.getProductCategories();
+    // this.getRegions();
+    // this.customerCart = JSON.parse(
+    //   JSON.stringify(this.getCustomerCart)
+    // );
   },
 };
 </script>

@@ -30,12 +30,12 @@
             />
           </div>
           <div class="flex items-center">
-            <span class="text-head text">{{ product.title  }}</span>
+            <span class="text-head text">{{ product.title }}</span>
             <span></span>
           </div>
         </div>
         <div class="flex items-center text-second">
-            &#8377;{{ product.unit_price | priceAmount }}
+          &#8377;{{ product.unit_price | priceAmount }}
         </div>
         <div class="flex items-center">
           <div
@@ -46,7 +46,9 @@
             <button @click="updateLineItem(product, 'add')">+</button>
           </div>
         </div>
-        <div class="flex items-center">{{ product.subtotal | priceAmount }}</div>
+        <div class="flex items-center">
+          {{ product.subtotal | priceAmount }}
+        </div>
         <div class="flex items-center text-second">
           <mdi-window-close @click="deleteLineItem(product)" :size="18" />
         </div>
@@ -121,7 +123,7 @@ export default {
   },
   filters: {
     priceAmount(price) {
-        const amount = Math.round(price / 100);
+      const amount = Math.round(price / 100);
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "inr",
@@ -130,12 +132,9 @@ export default {
   },
   methods: {
     async getCartProductList() {
-      const cartId = localStorage.getItem("cartId");
-      if (!cartId) return;
-
-      const { cart } = await this.$axios.$get(`/api/carts/${cartId}`);
-      this.cartDetails = cart;
-      this.cartProducts = cart.items;
+      const { data } = await this.$api.get("/customer/cart/user-cart/");
+      this.cartDetails = data;
+      this.cartProducts = data.items;
     },
     async updateLineItem(lineItem, action) {
       try {

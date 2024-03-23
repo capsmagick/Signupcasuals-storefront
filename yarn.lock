@@ -11019,6 +11019,11 @@
   "resolved" "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz"
   "version" "1.1.2"
 
+"vee-validate@^3.4.15":
+  "integrity" "sha512-qEtvq9X2N7l5pjBe/6YGrrIBHxJA4KTrb3QrER3qzM7fzkH730m8LyVWMIzM47l//618nlUa7VvTdMFTRKr8tQ=="
+  "resolved" "https://registry.npmjs.org/vee-validate/-/vee-validate-3.4.15.tgz"
+  "version" "3.4.15"
+
 "vm-browserify@^1.0.1":
   "integrity" "sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ=="
   "resolved" "https://registry.npmjs.org/vm-browserify/-/vm-browserify-1.1.2.tgz"
@@ -11116,7 +11121,7 @@
   "resolved" "https://registry.npmjs.org/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz"
   "version" "1.9.1"
 
-"vue@*", "vue@^2.0.0", "vue@^2.6.0", "vue@^2.7.10":
+"vue@*", "vue@^2.0.0", "vue@^2.5.18", "vue@^2.6.0", "vue@^2.7.10":
   "integrity" "sha512-a29fsXd2G0KMRqIFTpRgpSbWaNBK3lpCTOLuGLEDnlHWdjB8fwl6zyYZ8xCrqkJdatwZb4mGHiEfJjnw0Q6AwQ=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-2.7.15.tgz"
   "version" "2.7.15"
