@@ -32,8 +32,8 @@
         <div class="md:flex hidden items-center justify-between">
           <div class="text-xs font-medium">
             HOME / SHOP
-            <span v-if="product.title" class="uppercase"
-              >/ {{ product.title }}</span
+            <span v-if="product.name" class="uppercase"
+              >/ {{ product.name }}</span
             >
           </div>
           <div
@@ -59,7 +59,9 @@
         <div class="pt-10 text-head flex flex-col gap-8">
           <div>
             <h4 class="text-2xl">{{ product.title }}</h4>
-            <h3 class="text-[22px] font-medium">{{ variantPrice }}</h3>
+            <h3 class="text-[22px] font-medium">
+              {{ product.selling_price | variantPrice }}
+            </h3>
           </div>
 
           <div class="flex items-center justify-between text-sm">
@@ -232,29 +234,31 @@ export default {
     },
   },
   computed: {
-    variantPrice() {
-      let amount;
-      if (this.selectedVariant.prices && this.selectedVariant.prices.length) {
-        const price = this.selectedVariant.prices[0];
-        amount = price.amount ? Math.round(price.amount / 100) : 0;
-      } else amount = 0;
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "inr",
-      }).format(amount);
-    },
     filteredRelatedProducts() {
       if (this.relatedProducts.length) {
         return this.relatedProducts.filter((p) => p.id != this.product.id);
       }
     },
   },
+  filters: {
+    variantPrice(price) {
+      console.log("price", price);
+      let amount;
+      if (price) {
+        amount = Math.round(price / 100);
+      } else amount = 0;
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "inr",
+      }).format(amount);
+    },
+  },
   methods: {
     ...mapActions("customer", ["getCustomerProductCart"]),
     async fetchProductsList() {
       const { product: productId } = this.$route.params;
-      const { product } = await this.$axios.$get(`/api/products/${productId}`);
-      this.product = product;
+      const { data } = await this.$api.get(`/customer/product/${productId}/`);
+      this.product = data;
       this.previewImage = product.images[0];
       this.variants = product.variants;
 
@@ -325,15 +329,12 @@ export default {
     async addToCart() {
       try {
         this.loading = true;
-        const updatedCart = await this.$api.post(
-          "/customer/cart/add-to-cart/",
-          {
-            product_variant: 0,
-            quantity: this.itemQty,
-            price: "-96765407",
-          }
-        );
-        
+        await this.$api.post("/customer/cart/add-to-cart/", {
+          product_variant: this.product.id,
+          quantity: this.itemQty,
+          price: this.product.selling_price,
+        });
+
         this.getCustomerProductCart();
 
         this.$alert.show({

@@ -13,14 +13,14 @@
       </div>
       <!-- Products list -->
       <div
-        v-for="product in cartProducts"
-        :key="product"
+        v-for="item in cartProducts"
+        :key="item"
         class="grid text-sm text-head font-medium border-b border-footer py-7"
         style="grid-template-columns: 4fr 1fr 1fr 1fr 40px"
       >
         <div class="flex gap-7">
           <div class="w-20 h-full">
-            <img v-if="product.thumbnail" :src="product.thumbnail" alt="" />
+            <img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
             <img
               v-else
               src="~/assets/images/product.png"
@@ -30,27 +30,29 @@
             />
           </div>
           <div class="flex items-center">
-            <span class="text-head text">{{ product.title }}</span>
+            <span class="text-head text">{{
+              item.product_variant.product.name
+            }}</span>
             <span></span>
           </div>
         </div>
         <div class="flex items-center text-second">
-          &#8377;{{ product.unit_price | priceAmount }}
+          {{ item.product_variant.selling_price | priceAmount }}
         </div>
         <div class="flex items-center">
           <div
             class="px-4 py-4 text-second border border-footer text-sm flex items-center gap-4"
           >
-            <button @click="updateLineItem(product, 'remove')">-</button>
-            {{ product.quantity }}
-            <button @click="updateLineItem(product, 'add')">+</button>
+            <button @click="updateLineItem(item, 'remove')">-</button>
+            {{ item.quantity }}
+            <button @click="updateLineItem(item, 'add')">+</button>
           </div>
         </div>
         <div class="flex items-center">
-          {{ product.subtotal | priceAmount }}
+          {{ item.total_amount | priceAmount }}
         </div>
         <div class="flex items-center text-second">
-          <mdi-window-close @click="deleteLineItem(product)" :size="18" />
+          <mdi-window-close @click="deleteLineItem(item)" :size="18" />
         </div>
       </div>
 
@@ -75,7 +77,7 @@
             class="flex py-4 gap-4 items-center text-xs font-medium text-head"
           >
             <div class="w-1/2">SUBTOTAL</div>
-            <div class="w-1/2">{{ cartDetails.subtotal | priceAmount }}</div>
+            <div class="w-1/2">{{ cartDetails.total_amount | priceAmount }}</div>
           </div>
           <div class="flex py-4 gap-4 text-xs font-medium text-head">
             <div class="w-1/2">SHIPPING</div>
@@ -97,7 +99,7 @@
             class="flex py-4 gap-4 items-center text-xs font-medium text-head"
           >
             <div class="w-1/2">TOTAL</div>
-            <div class="w-1/2">{{ cartDetails.total | priceAmount }}</div>
+            <div class="w-1/2">{{ cartDetails.total_amount | priceAmount }}</div>
           </div>
         </div>
       </div>
@@ -137,13 +139,22 @@ export default {
       this.cartProducts = data.items;
     },
     async updateLineItem(lineItem, action) {
+      console.log("Lineitem:", lineItem)
       try {
         let qty;
-        if (action == "add") qty = lineItem.quantity + 1;
-        if (action == "remove") qty = lineItem.quantity - 1;
-        const updatedCart = await this.$axios.$post(
-          `/api/carts/${this.cartDetails.id}/line-items/${lineItem.id}`,
+        if (action == "add") qty = 1;
+        if (action == "remove") {
+          if (lineItem.quantity - 1 == 0) {
+            await this.deleteLineItem(lineItem);
+            return;
+          } else {
+            qty = -1;
+          }
+        }
+        const updatedCart = await this.$api.post(
+          `/customer/cart/update-cart-product/`,
           {
+            product_variant: lineItem.product_variant.id,
             quantity: qty,
           }
         );
@@ -155,8 +166,8 @@ export default {
     },
     async deleteLineItem(lineItem) {
       try {
-        const updatedCart = await this.$axios.$delete(
-          `/api/carts/${this.cartDetails.id}/line-items/${lineItem.id}`
+        const updatedCart = await this.$api.delete(
+          `/customer/cart/${lineItem.id}/remove-cart/`
         );
         await this.getCartProductList();
       } catch (error) {}

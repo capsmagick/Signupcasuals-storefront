@@ -40,6 +40,21 @@
 <script>
 export default {
   name: "AccountAddress",
+  data(){
+    return{
+      addresses:[]
+    }
+  },
+  methods:{
+    async getCustomerAddresses(){
+      try {
+        const { data } = await this.$api.get("/account/user-address/");
+        console.log("address",)
+      } catch (error) {
+        
+      }
+    }
+  }
 };
 </script>
 

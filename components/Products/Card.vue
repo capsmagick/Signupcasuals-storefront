@@ -18,14 +18,21 @@
       <div>
         <div class="text-xs text-second leading-5">Dresses</div>
         <div class="text-sm text-head leading-5">
-          {{ product.title }}
+          {{ product.name }}
         </div>
-        <div v-if="getProductPrice" class="text-sm text-head leading-5">
-          {{ getProductPrice.amount | priceAmount }}
+        <div v-if="variant.selling_price" class="text-sm text-head leading-5">
+          {{ variant.selling_price | priceAmount }}
         </div>
       </div>
       <div>
-        <img src="~/assets/images/icons/heart-small.svg" />
+        <button type="button" @click.stop="addTowishList">
+          <MdiHeartOutline
+            v-if="!variant.wish_listed"
+            :size="20"
+            class="text-second"
+          />
+          <Heart v-else :size="20" class="text-red-500" />
+        </button>
       </div>
     </div>
     <button
@@ -41,6 +48,10 @@
 export default {
   name: "ProductCard",
   props: {
+    variant: {
+      type: Object,
+      default: () => {},
+    },
     product: {
       type: Object,
       default: {},
@@ -49,6 +60,9 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  components: {
+    Heart: () => import("vue-material-design-icons/Heart.vue"),
   },
   data() {
     return {};
@@ -62,24 +76,28 @@ export default {
       }).format(amount);
     },
   },
-  computed: {
-    getProductPrice() {
-      if (
-        this.product &&
-        this.product.variants &&
-        this.product.variants.length
-      ) {
-        const variant = this.product.variants[0];
-        return variant.prices[0];
-      }
-    },
-  },
+  computed: {},
   methods: {
     goToProductDetails() {
-      this.$router.push(`/shop/${this.product.id}`);
+      this.$router.push(`/shop/${this.variant.id}`);
     },
     imageError(e) {
       e.target.src = require("/assets/images/product.png");
+    },
+    async addTowishList() {
+      try {
+        if (!this.variant.wish_listed) {
+          await this.$api.post(`/customer/wishlist/add-to-wishlist/`, {
+            product_variant: this.variant.id,
+          });
+        } else {
+          await this.$api.delete(
+            `/customer/wishlist/${this.variant.id}/remove-wishlist/`
+          );
+        }
+      } catch (error) {
+        console.log("card-wishlist:", error);
+      }
     },
   },
 };

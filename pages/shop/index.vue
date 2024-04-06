@@ -74,7 +74,7 @@
             v-if="products && products.length"
             class="grid grid-cols-2 md:gap-8 gap-4 pt-6"
           >
-            <ProductCard v-for="item in products" :product="item" :key="item" />
+            <ProductCard v-for="item in products" :product="item.product" :variant="item" :key="item" />
           </div>
           <div
             v-else
@@ -405,6 +405,8 @@ export default {
         this.products = Array.isArray(res.data?.results)
           ? res.data.results
           : [];
+
+          console.log("pro:", this.products)
       } catch (error) {
         console.log("products:", error);
         this.products = [];

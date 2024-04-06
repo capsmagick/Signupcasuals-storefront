@@ -2,8 +2,10 @@ export const state = () => {
   customerCartId: "";
   customerProductsCart: {
   }
+  customerCartItems: [];
   region: {
   }
+  wishList: [];
 };
 
 // Mutations
@@ -18,6 +20,12 @@ export const mutations = {
   setRegion(state, payload) {
     state.region = payload;
   },
+  setWishlist(state, payload) {
+    state.region = payload;
+  },
+  setCustomerCartItems(state, payload) {
+    state.customerCartItems = payload;
+  },
 };
 
 // Actions
@@ -25,46 +33,9 @@ export const mutations = {
 export const actions = {
   async getCustomerProductCart({ commit }, payload) {
     try {
-      const cartId = localStorage.getItem("cartId");
-      if (!cartId) {
-        const { regions } = await this.$axios.$get("/api/regions");
-        if (!regions.length) return;
-        let selectedRegion;
-        selectedRegion = regions.find((v) => v.name == "India");
-        if (!selectedRegion) selectedRegion = regions[0];
-        commit("setRegion", selectedRegion);
-        const { cart } = await this.$axios.$post("/api/carts", {
-          region_id: selectedRegion.id,
-        });
-        localStorage.setItem("cartId", cart.id);
-        commit("setCustomerProductsCart", cart);
-        return;
-      }
+      const { data } = await this.$api.get("/customer/cart/user-cart/");
+      commit("setCustomerCartItems", data.items);
       // check cart exists
-      this.$axios
-        .$get(`/api/carts/${cartId}`)
-        .then((res) => {
-          const { cart } = res;
-          localStorage.setItem("cartId", cart.id);
-          commit("setCustomerCartId", cart.id);
-          commit("setCustomerProductsCart", cart);
-          return;
-        })
-        .catch(async (e) => {
-          const { regions } = await this.$axios.$get("/api/regions");
-          if (!regions.length) return;
-          let selectedRegion;
-          selectedRegion = regions.find((v) => v.name == "India");
-          if (!selectedRegion) selectedRegion = regions[0];
-          commit("setRegion", selectedRegion);
-          const { cart } = await this.$axios.$post("/api/carts",{
-            region_id: selectedRegion.id,
-          });
-          localStorage.setItem("cartId", cart.id);
-          commit("setCustomerCartId", cart.id);
-          commit("setCustomerProductsCart", cart);
-          return;
-        });
     } catch (error) {
       console.log("new ", error);
     }
@@ -84,7 +55,7 @@ export const actions = {
 // Getters
 
 export const getters = {
-  getCustomerCart(state){
-    return state.customerProductsCart ? state.customerProductsCart : {}
-  }
-}
+  getCustomerCart(state) {
+    return state.customerProductsCart ? state.customerProductsCart : {};
+  },
+};

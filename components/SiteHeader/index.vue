@@ -72,7 +72,7 @@
         <button class="lg:flex hidden" @click="goToPage({ link: 'account' })">
           <img src="~/assets/images/icons/account.svg" />
         </button>
-        <button class="lg:flex hidden">
+        <button v-show="isLoggedIn" class="lg:flex hidden">
           <img src="~/assets/images/icons/heart.svg" />
         </button>
         <button @click="goToPage({ link: 'cart' })" class="relative">
@@ -132,7 +132,9 @@
                     class="flex items-end cursor-pointer"
                   >
                     <span class="flex-1">{{ link.title }}</span>
-                    <span><ChevronRight /></span>
+                    <span>
+                      <ChevronRight />
+                    </span>
                   </a>
                 </li>
               </ul>
@@ -224,7 +226,7 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapActions, mapGetters, mapMutations } from "vuex";
 import LoginRegisterForm from "../LoginRegisterForm.vue";
 import HeaderSearch from "./Search.vue";
 export default {
@@ -315,24 +317,23 @@ export default {
     };
   },
   computed: {
-    ...mapState("customer", ["customerProductsCart"]),
+    ...mapState(["isLoggedIn"]),
+    ...mapState("customer", ["customerProductsCart", "customerCartItems"]),
     ...mapGetters("customer", ["getCustomerCart"]),
     cartItemCount() {
-      if (
-        this.customerCart &&
-        this.customerCart.items &&
-        this.customerCart.items.length
-      ) {
-        return this.customerCart.items.length;
+      if (this.customerCartItems && this.customerCartItems.length) {
+        return this.customerCartItems.length;
       }
       return 0;
     },
   },
+  watch: {
+  },
   methods: {
     ...mapActions("customer", ["getCustomerProductCart", "getRegions"]),
+    ...mapMutations("customer", ["setCustomerCartItems"]),
     async getProductCategories() {
       try {
-        
       } catch (error) {}
     },
     goToPage(link) {
@@ -356,21 +357,34 @@ export default {
       this.isMenuOpen = !this.isMenuOpen;
       this.HeaderMenuComponent = "HeaderSearch";
     },
-  },
-  watch: {
-    customerProductsCart(v) {
-      console.log("watch:", v)
-      this.customerCart = JSON.parse(JSON.stringify(v));
+    async getWishList() {
+      try {
+        if (this.isLoggedIn) {
+          const { data } = await this.$api.get("/customer/wishlist/");
+          // this.products = Array.isArray(data?.results) ? data.results : []
+          const wishlist = (data?.results ?? []).map((w) => w.product_variant);
+        }
+      } catch (a) {
+        console.log("header:wishlist:", a);
+      }
+    },
+    async fetchCustomerCart() {
+      try {
+        const { data } = await this.$api.get("/customer/cart/user-cart/");
+        await this.setCustomerCartItems(data.items);
+      } catch (error) {}
     },
   },
-  mounted() {
+  async mounted() {
     // this.fetchUserProfile();
-    // this.getCustomerProductCart();
+    // await this.getCustomerProductCart();
     // this.getProductCategories();
     // this.getRegions();
     // this.customerCart = JSON.parse(
     //   JSON.stringify(this.getCustomerCart)
     // );
+    this.fetchCustomerCart();
+    this.getWishList();
   },
 };
 </script>

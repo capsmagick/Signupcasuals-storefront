@@ -7,44 +7,55 @@
           <div class="flex items-center gap-4">
             <div class="w-1/2">
               <FormTextField
-                placeholder="First Name"
-                v-model="shipping_address.first_name"
+                placeholder="Full name"
+                v-model="shipping_address.full_name"
               />
             </div>
             <div class="w-1/2">
               <FormTextField
-                placeholder="Last Name"
-                v-model="shipping_address.last_name"
+                placeholder="Contact Number"
+                v-model="shipping_address.contact_number"
               />
             </div>
           </div>
           <FormTextField
             placeholder="Address 1"
-            v-model="shipping_address.address_1"
+            v-model="shipping_address.address_line_1"
           />
           <FormTextField
             placeholder="Address 2"
-            v-model="shipping_address.address_2"
+            v-model="shipping_address.address_line_2"
           />
           <FormTextField
-            placeholder="Company name (Optional)"
-            v-model="shipping_address.company"
+            placeholder="Land mark"
+            v-model="shipping_address.land_mark"
           />
           <FormTextField
-            placeholder="Town / City*"
-            v-model="shipping_address.city"
+            placeholder="district *"
+            v-model="shipping_address.district"
           />
           <FormTextField
-            placeholder="Province *"
-            v-model="shipping_address.province"
+            placeholder="state *"
+            v-model="shipping_address.state"
           />
           <FormTextField
-            placeholder="Postcode / ZIP *"
-            v-model="shipping_address.postal_code"
+            placeholder="country *"
+            v-model="shipping_address.country"
           />
           <FormTextField
-            placeholder="Phone *"
-            v-model="shipping_address.phone"
+            placeholder="Pin code *"
+            v-model="shipping_address.pin_code"
+          />
+
+          <ReusableSelectableMenu
+            :placeholder="'Address type'"
+            :items="addressTypes"
+            :itemText="'name'"
+            :itemValue="'value'"
+            :selected="shipping_address.address_type"
+            v-model="shipping_address.address_type"
+            :search="false"
+            class="w-full"
           />
           <!-- <FormTextField
             placeholder="Your Mail"
@@ -166,13 +177,24 @@ export default {
       shipping_address: {
         country_code: "in",
       },
+      addressTypes: [
+        {
+          name: "Shipping",
+          value: "Shipping",
+        },
+        {
+          name: "Billing",
+          value: "Billing",
+        },
+      ],
+      cart: [],
     };
   },
   computed: {
-    ...mapState("customer", ["customerProductsCart"]),
-    cart() {
-      return this.customerProductsCart;
-    },
+    // ...mapState("customer", ["customerProductsCart"]),
+    // cart() {
+    //   return this.customerProductsCart;
+    // },
   },
   filters: {
     priceAmount(price) {
@@ -186,10 +208,12 @@ export default {
   methods: {
     async updateShippingAddress() {
       try {
-        const cartId = localStorage.getItem("cartId");
-        if (!cartId) return;
-        await this.$axios.$post(`/api/carts/${cartId}`, {
-          shipping_address: this.shipping_address,
+        const { data } = await this.$api.post(
+          "/account/user-address/create_record/",
+          this.shipping_address
+        );
+        await this.$api.post("/orders/placeorder/place-order/", {
+          address: data.id,
         });
       } catch (error) {}
     },
