@@ -122,8 +122,8 @@ export default {
       isShowLogin: true,
       customerRegister: {},
       login: {
-        username: "pachalam",
-        password: "1234567",
+        username: "",
+        password: "",
       },
       confirmPassword: null,
       loading: false,
