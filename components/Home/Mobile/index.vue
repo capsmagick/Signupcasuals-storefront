@@ -76,7 +76,7 @@
         </button>
       </div>
     </div>
-    <TrendyProducts />
+    <!-- <TrendyProducts /> -->
     <!-- Other offers -->
     <div class="flex flex-col gap-4 py-4">
       <div

@@ -1,5 +1,5 @@
 <template>
-  <header class="fixed w-full bg-white block z-50">
+  <header class="fixed w-full bg-white block z-50" id="site-header">
     <div
       class="xl:max-w-7xl lg:max-w-4xl md:max-w-3xl md:px-0 px-4 mx-auto flex items-center justify-between py-4"
     >
@@ -20,43 +20,24 @@
               :key="idx"
               class="cursor-pointer relative group"
             >
-              <div v-if="link.value == 'pages'">
-                <ReusableDropdown
-                  menuClass="w-40"
-                  :right="false"
-                  dropMarginTop="mt-[28px]"
-                >
-                  <template #menu-activator="{ toggleMenu }">
-                    <button
-                      class="text-sm uppercase text-head font-medium px-4"
-                      @click="toggleMenu"
-                    >
-                      {{ link.title }}
-                    </button>
-                  </template>
-                  <template #menu-content="{ toggleMenu }">
-                    <div class="flex flex-col px-[20px] py-5 gap-2 capitalize">
-                      <div
-                        v-for="page in pages"
-                        :key="page.link"
-                        @click="
-                          toggleMenu();
-                          goToPage(page);
-                        "
-                      >
-                        {{ page.name }}
-                      </div>
-                    </div>
-                  </template>
-                </ReusableDropdown>
-              </div>
-              <a v-else @click="goToPage(link)" class="px-4">{{
-                link.title
-              }}</a>
+              <a @click="goToPage(link)" class="px-4">{{ link.title }}</a>
               <span
                 class="absolute -bottom-3 left-0 w-0 h-0.5 bg-head transition-all group-hover:w-full"
               ></span>
             </li>
+            <!-- Dynamic Menu's -->
+            <template v-if="dynamicMainMenu && dynamicMainMenu.length">
+              <li
+                v-for="(link, idx) in dynamicMainMenu"
+                :key="idx"
+                class="cursor-pointer relative group"
+              >
+                <a @click="gotToUrl(link)" class="px-4">{{ link.name }}</a>
+                <span
+                  class="absolute -bottom-3 left-0 w-0 h-0.5 bg-head transition-all group-hover:w-full"
+                ></span>
+              </li>
+            </template>
           </ul>
         </nav>
       </div>
@@ -72,7 +53,11 @@
         <button class="lg:flex hidden" @click="goToPage({ link: 'account' })">
           <img src="~/assets/images/icons/account.svg" />
         </button>
-        <button v-show="isLoggedIn" class="lg:flex hidden">
+        <button
+          v-show="isLoggedIn"
+          @click="goToPage({ link: 'account?page=wishlist' })"
+          class="lg:flex hidden"
+        >
           <img src="~/assets/images/icons/heart.svg" />
         </button>
         <button @click="goToPage({ link: 'cart' })" class="relative">
@@ -255,26 +240,6 @@ export default {
           value: "shop",
           link: "shop",
         },
-        {
-          title: "Men",
-          value: "Men",
-          link: "shop?handle=men",
-        },
-        {
-          title: "Women",
-          value: "Women",
-          link: "shop?handle=women",
-        },
-        {
-          title: "Kids",
-          value: "Kids",
-          link: "shop?handle=kids",
-        },
-        {
-          title: "Accessories",
-          value: "Accessories",
-          link: "shop?handle=accessories",
-        },
       ],
       pages: [
         {
@@ -314,10 +279,11 @@ export default {
       isSearchOpen: false,
       isMenuOpen: false,
       HeaderMenuComponent: "",
+      dynamicMainMenu: [],
     };
   },
   computed: {
-    ...mapState(["isLoggedIn"]),
+    ...mapState(["isLoggedIn", "dynamicMenu"]),
     ...mapState("customer", ["customerProductsCart", "customerCartItems"]),
     ...mapGetters("customer", ["getCustomerCart"]),
     cartItemCount() {
@@ -328,6 +294,9 @@ export default {
     },
   },
   watch: {
+    dynamicMenu(newVal) {
+      this.dynamicMainMenu = JSON.parse(JSON.stringify(newVal));
+    },
   },
   methods: {
     ...mapActions("customer", ["getCustomerProductCart", "getRegions"]),
@@ -342,6 +311,11 @@ export default {
       if (val == "index") this.$router.push("/");
       else this.$router.push(`/${link.link}`);
       this.showSideNav = false;
+    },
+    gotToUrl(link) {
+      if (Object.keys(link).length && link.handle) {
+        this.$router.push(`shop?handle=${link.handle}`);
+      }
     },
     resetTab() {
       this.mobileLink = "";
@@ -370,8 +344,10 @@ export default {
     },
     async fetchCustomerCart() {
       try {
-        const { data } = await this.$api.get("/customer/cart/user-cart/");
-        await this.setCustomerCartItems(data.items);
+        if (this.isLoggedIn) {
+          const { data } = await this.$api.get("/customer/cart/user-cart/");
+          await this.setCustomerCartItems(data.items);
+        }
       } catch (error) {}
     },
   },
@@ -383,6 +359,7 @@ export default {
     // this.customerCart = JSON.parse(
     //   JSON.stringify(this.getCustomerCart)
     // );
+    this.dynamicMainMenu = JSON.parse(JSON.stringify(this.dynamicMenu));
     this.fetchCustomerCart();
     this.getWishList();
   },

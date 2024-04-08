@@ -20,30 +20,30 @@
 import { mapActions } from "vuex";
 import SiteHeader from "~/components/SiteHeader/index.vue";
 import SiteFooter from "~/components/SiteFooter.vue";
-import MobileSiteFooter from "~/components/Mobile/SiteFooter.vue"
-import Snackbar from "~/components/Utils/Snackbar.vue"
+import MobileSiteFooter from "~/components/Mobile/SiteFooter.vue";
+import Snackbar from "~/components/Utils/Snackbar.vue";
 export default {
-  middleware: 'verify-auth',
+  middleware: "verify-auth",
   components: {
     SiteHeader,
     SiteFooter,
     MobileSiteFooter,
-    Snackbar
+    Snackbar,
   },
-  data(){
-    return{}
+  data() {
+    return {};
   },
-  methods:{
-    ...mapActions("store",["fetchStoreCategories"])
+  methods: {
+    ...mapActions("store", ["fetchStoreCategories"]),
   },
-  async mounted(){
+  async mounted() {
     await this.fetchStoreCategories();
-  }
+        }
 };
 </script>
 
 <style>
 body {
-  font-family: 'Jost', sans-serif;
+  font-family: "Jost", sans-serif;
 }
 </style>

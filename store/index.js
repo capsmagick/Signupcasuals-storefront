@@ -7,6 +7,8 @@ export const state = () => ({
   },
   access: "",
   isLoggedIn: false,
+  user: {},
+  dynamicMenu:[]
 });
 
 export const actions = () => {};
@@ -33,4 +35,10 @@ export const mutations = {
   setLoggedIn(state, payload) {
     state.isLoggedIn = payload;
   },
+  setUser(state, payload) {
+    state.user = payload;
+  },
+  setDynamicMenu(state, payload){
+    state.dynamicMenu = payload
+  }
 };

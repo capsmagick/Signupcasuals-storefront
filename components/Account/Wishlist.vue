@@ -1,9 +1,12 @@
 <template>
   <div>
-    <div class="grid grid-cols-3 gap-6">
+    <div v-if="products && products.length" class="grid grid-cols-3 gap-6">
       <div v-for="product in products" :key="product" class="">
-        <ProductCard :isWislist="true" :product="product.product_variant.product" :variant="product.product_variant" />
+        <ProductCard :isWislist="true" :product="product.product_variant.product" :variant="product.product_variant" @refresh-products="getUserWishlist"/>
       </div>
+    </div>
+    <div v-else class="flex h-20 justify-center items-center">
+      Oops. no products in your wishlist.
     </div>
   </div>
 </template>

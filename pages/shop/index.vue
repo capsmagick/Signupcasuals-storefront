@@ -1,6 +1,7 @@
 <template>
   <div
     class="xl:max-w-7xl lg:max-w-4xl md:max-w-3xl mx-auto md:pt-20 pt-10 pb-6 md:px-0 px-4"
+    ref="intersection"
   >
     <h1 class="md:block hidden text-head text-3xl font-bold mb-4">SHOP</h1>
     <!-- Shop cat tab -->
@@ -74,7 +75,13 @@
             v-if="products && products.length"
             class="grid grid-cols-2 md:gap-8 gap-4 pt-6"
           >
-            <ProductCard v-for="item in products" :product="item.product" :variant="item" :key="item" />
+            <ProductCard
+              v-for="item in products"
+              :product="item.product"
+              :variant="item"
+              :key="item"
+              @refresh-products="fetchProducts"
+            />
           </div>
           <div
             v-else
@@ -88,36 +95,9 @@
             <SkeletonCardLoader v-for="item in 6" :key="item" />
           </div>
         </div>
-
-        <div
-          v-if="!loading && products && products.length"
-          class="pagination-shop-list grid grid-cols-3 w-full pt-10"
-        >
-          <div class="text-xs text-head flex items-center font-medium">
-            <span><ChevronLeft :size="18" /></span>PREV
-          </div>
-          <div
-            class="flex items-center justify-center gap-2 text-sm font-medium"
-          >
-            <button
-              v-for="(page, idx) in paginate.pages"
-              @click="onSelectPage(idx)"
-              :key="idx"
-              :class="[
-                checkPage(idx) ? 'bg-head text-white' : 'text-head',
-                'px-1.5 rounded',
-              ]"
-            >
-              {{ page }}
-            </button>
-          </div>
-          <div
-            class="text-xs text-head flex items-center font-medium justify-end"
-          >
-            NEXT<span><ChevronRight :size="18" /></span>
-          </div>
-        </div>
       </div>
+      <!-- Observer -->
+     
     </div>
     <!-- Side Filter Mobile view -->
     <div
@@ -221,16 +201,6 @@ export default {
       parentCategory: {},
       childCategories: [],
     };
-  },
-  watch: {
-    "$route.query": {
-      // async handler(to, from) {
-      //   if (to.handle) this.handle = to.handle;
-      //   else this.handle = null;
-      //   await this.fetchStoreCategories();
-      //   await this.handleProductsListing();
-      // },
-    },
   },
   computed: {
     ...mapState("store", ["categories"]),
@@ -405,8 +375,6 @@ export default {
         this.products = Array.isArray(res.data?.results)
           ? res.data.results
           : [];
-
-          console.log("pro:", this.products)
       } catch (error) {
         console.log("products:", error);
         this.products = [];
@@ -416,7 +384,7 @@ export default {
   async mounted() {
     // await this.fetchStoreCategories();
     // await this.handleProductsListing();
-    await this.fetchCategories()
+    await this.fetchCategories();
     await this.fetchProducts();
   },
 };

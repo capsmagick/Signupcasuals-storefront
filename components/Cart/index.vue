@@ -1,5 +1,5 @@
 <template>
-  <div class="checkout_cart_parent lg:grid flex flex-col gap-[60px] lg">
+  <div v-if="cartProducts && cartProducts.length" class="checkout_cart_parent lg:grid flex flex-col gap-[60px] lg">
     <div class="flex flex-col">
       <div
         class="grid text-sm text-head font-medium uppercase border-b border-footer py-3"
@@ -77,7 +77,9 @@
             class="flex py-4 gap-4 items-center text-xs font-medium text-head"
           >
             <div class="w-1/2">SUBTOTAL</div>
-            <div class="w-1/2">{{ cartDetails.total_amount | priceAmount }}</div>
+            <div class="w-1/2">
+              {{ cartDetails.total_amount | priceAmount }}
+            </div>
           </div>
           <div class="flex py-4 gap-4 text-xs font-medium text-head">
             <div class="w-1/2">SHIPPING</div>
@@ -99,7 +101,9 @@
             class="flex py-4 gap-4 items-center text-xs font-medium text-head"
           >
             <div class="w-1/2">TOTAL</div>
-            <div class="w-1/2">{{ cartDetails.total_amount | priceAmount }}</div>
+            <div class="w-1/2">
+              {{ cartDetails.total_amount | priceAmount }}
+            </div>
           </div>
         </div>
       </div>
@@ -111,6 +115,9 @@
         />
       </div>
     </div>
+  </div>
+  <div v-else class="flex h-20 items-center justify-center">
+    Oops, Your cart is empty.
   </div>
 </template>
 
@@ -134,12 +141,15 @@ export default {
   },
   methods: {
     async getCartProductList() {
-      const { data } = await this.$api.get("/customer/cart/user-cart/");
-      this.cartDetails = data;
-      this.cartProducts = data.items;
+      try {
+        const { data } = await this.$api.get("/customer/cart/user-cart/");
+        this.cartDetails = data;
+        this.cartProducts = data.items;
+      } catch (error) {
+        console.log("fetch-cart:", error);
+      }
     },
     async updateLineItem(lineItem, action) {
-      console.log("Lineitem:", lineItem)
       try {
         let qty;
         if (action == "add") qty = 1;

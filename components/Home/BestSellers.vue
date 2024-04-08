@@ -6,7 +6,7 @@
         <!-- prev button -->
         <div class="grid md:grid-cols-4 grid-cols-2 gap-6">
           <div v-for="lookBook in 4" class="relative" :key="lookBook">
-            <ProductCard />
+            <ProductCard :product="{}" :variant="{}"/>
           </div>
         </div>
       </div>

@@ -1,8 +1,11 @@
 <template>
   <div>
-    <p class="text-sm text-head">
-      The following addresses will be used on the checkout page by default.
-    </p>
+    <div class="flex items-center justify-between">
+      <p class="text-sm text-head">
+        The following addresses will be used on the checkout page by default.
+      </p>
+      <button class="text-sm">+ Add address</button>
+    </div>
     <div class="flex gap-8 pt-10 pr-32">
       <div class="w-1/2">
         <div class="flex items-center">

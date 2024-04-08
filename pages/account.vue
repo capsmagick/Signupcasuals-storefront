@@ -29,7 +29,7 @@
         <div v-if="currentNav == 'dashboard'">
           <p class="text-head text-sm">
             Hello
-            <span class="font-medium">{{ user?.first_name ?? "Guest" }}</span
+            <span class="font-medium capitalize">{{ userData.username ?? "Guest" }}</span
             >( not <span class="font-medium">user</span>? Log Out )
           </p>
           <p class="text-head text-sm pt-10">
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "AccountPage",
   layout: "main",
@@ -102,11 +103,12 @@ export default {
     };
   },
   computed: {
+    ...mapState(["user"]),
     currentNavDetails() {
       return this.accountNav.find((e) => e.value == this.currentNav);
     },
-    user() {
-      return this.$auth.user;
+    userData() {
+      return this.user;
     },
   },
   watch: {

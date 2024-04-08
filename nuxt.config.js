@@ -65,29 +65,12 @@ export default {
 
   publicRuntimeConfig: {
     API_KEY: process.env.API_KEY,
+    API_URL: process.env.API_URL,
   },
   server: {
     port: process.env.PORT ?? 8000, // default: 3000
   },
-  // auth: {
-  //   fetchUser: true,
-  //   strategies: {
-  //     local: {
-  //       token: {
-  //         property: "access_token",
-  //       },
-  //       user: {
-  //         property: "customer",
-  //       },
-  //       endpoints: {
-  //         login: { url: "/account/token/user/login/", method: "post" },
-  //         logout: { url: "/auth", method: "delete" },
-  //         user: { url: "/api/customers/me", method: "get" },
-  //       },
-  //     },
-  //   },
-  //   redirect:{
-  //     home: false
-  //   }
-  // },
+  router:{
+    middleware:['common']
+  }
 };
