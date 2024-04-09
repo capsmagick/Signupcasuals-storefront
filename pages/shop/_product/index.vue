@@ -14,8 +14,8 @@
         </div>
         <div class="selected-image flex-1">
           <img
-            v-if="previewImage?.url"
-            :src="previewImage.url"
+            v-if="previewImage"
+            :src="previewImage"
             alt=""
             class="w-full object-cover"
           />
@@ -36,7 +36,7 @@
               >/ {{ product.name }}</span
             >
           </div>
-          <div
+          <!-- <div
             v-if="filteredRelatedProducts && filteredRelatedProducts.length"
             class="flex items-center gap-4 text-xs text-head"
           >
@@ -52,49 +52,43 @@
             >
               NEXT<span><mdi-chevron-right :size="18" /></span>
             </button>
-          </div>
+          </div> -->
         </div>
 
         <!-- Details -->
         <div class="pt-10 text-head flex flex-col gap-8">
           <div>
-            <h4 class="text-2xl">{{ product.title }}</h4>
+            <h4 class="text-2xl capitalize">{{ product.name }}</h4>
             <h3 class="text-[22px] font-medium">
-              {{ product.selling_price | variantPrice }}
+              {{ variant.selling_price | variantPrice }}
             </h3>
           </div>
-
-          <div class="flex items-center justify-between text-sm">
-            <div class="flex items-center font-medium gap-2">
-              <div class="w-20">SIZES</div>
-
-              <div class="flex items-center gap-2 flex-wrap">
-                <button
-                  v-for="variant in variants"
-                  :key="variant.id"
-                  :class="[
-                    variant.id == selectedVariant.id
-                      ? 'bg-head text-white border-head'
-                      : 'border-footer text-head',
-                    'border px-4 py-1.5 font-normal uppercase',
-                  ]"
-                  @click="onSelectVariant(variant)"
-                >
-                  {{ variant.title }}
-                </button>
-              </div>
-            </div>
-            <div
-              class="font-medium text-xs text-head border-b-2 h-full border-head"
-            >
-              SIZE GUIDE
-            </div>
+          <div class="flex">
+            <div></div>
           </div>
           <!-- product colors -->
-          <div class="hidden text-sm items-center font-medium">
-            <div class="w-20">COLOR</div>
+          <div class="flex text-sm items-center font-medium">
+            <div class="w-20 flex-shrink-0">COLOR</div>
+            <div class="grid grid-cols-6 gap-2 w-full">
+              <div
+                v-for="item in variants"
+                :key="item.id"
+                :class="[
+                  item.id == variant.id ? 'border-head' : 'border-white',
+                  'w-full h-20 border-2 cursor-pointer',
+                ]"
 
-            <div class="flex items-center gap-2">
+                @click="onSelectVariant(item)"
+              >
+                <img
+                  v-if="item.images && item.images.length"
+                  :src="`${apiUrl}${item.images[0].thumbnail}`"
+                  class="h-full w-full object-cover"
+                  alt=""
+                />
+              </div>
+            </div>
+            <div class="hidden items-center gap-2">
               <div
                 v-for="color in colors"
                 :key="color"
@@ -111,15 +105,42 @@
               </div>
             </div>
           </div>
+          <div class="flex items-center justify-between text-sm">
+            <div class="flex items-center font-medium gap-2">
+              <div class="w-20">SIZES</div>
+
+              <div
+                v-if="variantSize && variantSize.value"
+                class="flex items-center gap-2 flex-wrap"
+              >
+                <button
+                  class="bg-head text-white border-head border px-4 py-1.5 font-normal uppercase"
+                  @click="onSelectVariant(variant)"
+                >
+                  {{ variantSize.value }}
+                </button>
+              </div>
+            </div>
+            <div
+              class="font-medium text-xs text-head border-b-2 h-full border-head"
+            >
+              SIZE GUIDE
+            </div>
+          </div>
+
           <!--  -->
           <!-- options -->
           <div class="flex items-center gap-4">
             <div
               class="px-6 py-4 border border-footer text-sm flex items-center gap-4"
             >
-              <button @click="onClickQty('sub')"><Minus :size="16" /></button>
+              <button @click="onClickQty('sub')">
+                <Minus :size="16" />
+              </button>
               {{ itemQty }}
-              <button @click="onClickQty('add')"><Plus :size="16" /></button>
+              <button @click="onClickQty('add')">
+                <Plus :size="16" />
+              </button>
             </div>
             <ReusableLoaderButton
               label="ADD TO CART"
@@ -146,9 +167,12 @@
             </div>
             <div class="text-sm mb-2">
               <span class="text-second uppercase">Categories:</span>
-              <span v-for="category in product.categories" :key="category.id">{{
-                category.name
-              }}</span>
+              <span
+                class="uppercase"
+                v-for="category in product.categories"
+                :key="category.id"
+                >{{ category.name }}</span
+              >
             </div>
             <div class="flex items-center gap-2 text-sm mb-2">
               <span class="text-second uppercase">Tags:</span>
@@ -217,7 +241,8 @@ export default {
       selectedColor: null,
       imageIdx: 0,
       product: {},
-      previewImage: {},
+      variant: {},
+      previewImage: null,
       itemQty: 1,
       variants: [],
       selectedVariant: {},
@@ -228,21 +253,36 @@ export default {
       loading: false,
     };
   },
-  filters: {
-    priceAmount(price) {
-      return Math.round(price / 100);
-    },
+  watch:{
+    variant(val){
+      this.onSelectImage()
+    }
   },
   computed: {
+    apiUrl() {
+      return this.$config.API_URL;
+    },
     filteredRelatedProducts() {
       if (this.relatedProducts.length) {
         return this.relatedProducts.filter((p) => p.id != this.product.id);
       }
     },
+    variantSize() {
+      if (
+        Object.keys(this.variant).length &&
+        this.variant.attributes &&
+        this.variant.attributes.length
+      ) {
+        const size = this.variant.attributes.find(
+          (v) => v.attributes.name == "size"
+        );
+
+        return size;
+      }
+    },
   },
   filters: {
     variantPrice(price) {
-      console.log("price", price);
       let amount;
       if (price) {
         amount = Math.round(price / 100);
@@ -258,16 +298,19 @@ export default {
     async fetchProductsList() {
       const { product: productId } = this.$route.params;
       const { data } = await this.$api.get(`/customer/product/${productId}/`);
-      this.product = data;
-      this.previewImage = product.images[0];
-      this.variants = product.variants;
-
+      const { data: productVariants } = await this.$api.get(
+        `/customer/product/${productId}/other-variants/`
+      );
+      this.product = data.product;
+      this.variant = data;
+      this.variants = productVariants;
+      this.onSelectImage();
       // Default
-      this.selectedVariant = this.variants[0];
-      this.options = product.options;
-      this.optionColor = this.options.find((o) => o.title == "Color");
+      // this.selectedVariant = this.variants[0];
+      // this.options = product.options;
+      // this.optionColor = this.options.find((o) => o.title == "Color");
 
-      await this.getRelatedProducts();
+      // await this.getRelatedProducts();
     },
     async getRelatedProducts() {
       try {
@@ -284,12 +327,14 @@ export default {
       }
     },
     onSelectImage(index = null) {
-      console.log(index);
-      // if (!index) return;
-      this.previewImage = this.product.images[index];
+      if (!index && this.variant.images && this.variant.images.length) {
+        this.previewImage = `${this.$config.API_URL}${this.variant.images[0].image}`;
+        return;
+      }
+      this.previewImage = this.variant.images[index];
     },
     onSelectVariant(variant) {
-      this.selectedVariant = variant;
+      this.variant = variant;
     },
     onClickQty(val) {
       if (val == "add") this.itemQty++;

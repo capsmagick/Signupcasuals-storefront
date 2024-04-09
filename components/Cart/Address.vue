@@ -190,12 +190,7 @@ export default {
       cart: [],
     };
   },
-  computed: {
-    // ...mapState("customer", ["customerProductsCart"]),
-    // cart() {
-    //   return this.customerProductsCart;
-    // },
-  },
+  computed: {},
   filters: {
     priceAmount(price) {
       const amount = Math.round(price / 100);
@@ -212,10 +207,21 @@ export default {
           "/account/user-address/create_record/",
           this.shipping_address
         );
-        await this.$api.post("/orders/placeorder/place-order/", {
-          address: data.id,
+
+        const { data: order } = await this.$api.post(
+          "/orders/placeorder/place-order/",
+          {
+            address: data.data.id,
+          }
+        );
+
+        this.$router.push({
+          path: this.$route.path,
+          query: { step: "confirmation", order: order.data.id },
         });
-      } catch (error) {}
+      } catch (error) {
+        console.log();
+      }
     },
   },
 };

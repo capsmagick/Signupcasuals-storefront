@@ -23,7 +23,12 @@ export default {
   css: ["@/assets/css/main.css"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [ "~/plugins/global", "~/plugins/alert","~/plugins/vee-validate.js","~/plugins/axios.js"],
+  plugins: [
+    "~/plugins/global",
+    "~/plugins/alert",
+    "~/plugins/vee-validate.js",
+    "~/plugins/axios.js",
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -39,12 +44,20 @@ export default {
     "@nuxtjs/pwa",
     "@nuxtjs/auth-next",
     "~/modules/material-design-icons.js",
+    "@nuxtjs/proxy"
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
     proxy: true,
+  },
+
+  proxy: {
+    "/api/": {
+      target: "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay",
+      pathRewrite: { "^/api/": "" },
+    },
   },
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
@@ -70,7 +83,4 @@ export default {
   server: {
     port: process.env.PORT ?? 8000, // default: 3000
   },
-  router:{
-    middleware:['common']
-  }
 };

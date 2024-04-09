@@ -1,5 +1,8 @@
 <template>
-  <div v-if="cartProducts && cartProducts.length" class="checkout_cart_parent lg:grid flex flex-col gap-[60px] lg">
+  <div
+    v-if="cartProducts && cartProducts.length"
+    class="checkout_cart_parent lg:grid flex flex-col gap-[60px] lg"
+  >
     <div class="flex flex-col">
       <div
         class="grid text-sm text-head font-medium uppercase border-b border-footer py-3"
@@ -19,8 +22,16 @@
         style="grid-template-columns: 4fr 1fr 1fr 1fr 40px"
       >
         <div class="flex gap-7">
-          <div class="w-20 h-full">
-            <img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
+          <div class="w-20 h-[100px]">
+            <img
+              v-if="
+                item.product_variant.images &&
+                item.product_variant.images.length
+              "
+              :src="`${apiUrl}${item.product_variant.images[0].thumbnail}`"
+              class="w-full h-full object-cover"
+              alt=""
+            />
             <img
               v-else
               src="~/assets/images/product.png"
@@ -137,6 +148,11 @@ export default {
         style: "currency",
         currency: "inr",
       }).format(amount);
+    },
+  },
+  computed: {
+    apiUrl() {
+      return this.$config.API_URL;
     },
   },
   methods: {

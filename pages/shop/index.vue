@@ -79,7 +79,7 @@
               v-for="item in products"
               :product="item.product"
               :variant="item"
-              :key="item"
+              :key="item.id"
               @refresh-products="fetchProducts"
             />
           </div>

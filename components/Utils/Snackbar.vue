@@ -34,6 +34,7 @@
               <div class="ml-4 flex flex-shrink-0">
                 <button
                   type="button"
+                  @click="close"
                   class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                   <span class="sr-only">Close</span>
@@ -74,13 +75,11 @@ export default {
   computed: {
     ...mapState(["alert"]),
   },
-  watch: {
-    alert(v) {
-      console.log("alert", v);
-    },
-  },
   methods: {
     ...mapMutations(["setAlert", "closeAlert"]),
+    close(){
+      this.closeAlert()
+    }
   },
 };
 </script>

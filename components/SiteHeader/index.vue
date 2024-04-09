@@ -16,8 +16,8 @@
             class="flex items-center xl:gap-6 lg:gap-4 md:gap-2 text-sm uppercase text-head font-medium"
           >
             <li
-              v-for="(link, idx) in navLinks"
-              :key="idx"
+              v-for="link in navLinks"
+              :key="link.title"
               class="cursor-pointer relative group"
             >
               <a @click="goToPage(link)" class="px-4">{{ link.title }}</a>
@@ -28,8 +28,8 @@
             <!-- Dynamic Menu's -->
             <template v-if="dynamicMainMenu && dynamicMainMenu.length">
               <li
-                v-for="(link, idx) in dynamicMainMenu"
-                :key="idx"
+                v-for="link in dynamicMainMenu"
+                :key="link.handle"
                 class="cursor-pointer relative group"
               >
                 <a @click="gotToUrl(link)" class="px-4">{{ link.name }}</a>
@@ -76,7 +76,10 @@
             </button>
           </template>
           <template #modal-content="{ toggleModal }">
-            <LoginRegisterForm @loggedIn="toggleModal" />
+            <LoginRegisterForm
+              @loggedIn="toggleModal"
+              @logout="onLogout(toggleModal)"
+            />
           </template>
         </ReusableRightOpenNav>
       </div>
@@ -293,16 +296,22 @@ export default {
       return 0;
     },
   },
-  watch: {
-    dynamicMenu(newVal) {
-      this.dynamicMainMenu = JSON.parse(JSON.stringify(newVal));
-    },
-  },
   methods: {
     ...mapActions("customer", ["getCustomerProductCart", "getRegions"]),
     ...mapMutations("customer", ["setCustomerCartItems"]),
-    async getProductCategories() {
+    async getDynamicNavLinks() {
       try {
+        try {
+          const { data } = await this.$api.get(
+            "customer/category?is_main_menu=true"
+          );
+          if (Array.isArray(data?.results) && data.results.length) {
+            this.dynamicMainMenu = data.results;
+          }
+        } catch (error) {
+          console.log("get-main-menu:", error);
+          this.dynamicMainMenu = [];
+        }
       } catch (error) {}
     },
     goToPage(link) {
@@ -314,7 +323,7 @@ export default {
     },
     gotToUrl(link) {
       if (Object.keys(link).length && link.handle) {
-        this.$router.push(`shop?handle=${link.handle}`);
+        this.$router.push({ path: `shop?handle=${link.handle}` });
       }
     },
     resetTab() {
@@ -350,6 +359,10 @@ export default {
         }
       } catch (error) {}
     },
+    onLogout(toggleFn) {
+      toggleFn();
+      this.$router.push({ path: "/" });
+    },
   },
   async mounted() {
     // this.fetchUserProfile();
@@ -359,7 +372,7 @@ export default {
     // this.customerCart = JSON.parse(
     //   JSON.stringify(this.getCustomerCart)
     // );
-    this.dynamicMainMenu = JSON.parse(JSON.stringify(this.dynamicMenu));
+    await this.getDynamicNavLinks();
     this.fetchCustomerCart();
     this.getWishList();
   },

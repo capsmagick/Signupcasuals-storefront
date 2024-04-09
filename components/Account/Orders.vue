@@ -40,6 +40,19 @@ export default {
             { orderId:"#38125", date: new Date(), status: "On Hold", total:"$1200 for 3 items"}
         ]
     }
+  },
+  methods:{
+    async getUserOrders(){
+      try {
+        const { data } = await this.$api.get("customer/orders/")
+        console.log("data:", data)
+      } catch (error) {
+        console.log("user-orders:", error)
+      }
+    },
+  },
+  async mounted(){
+    await this.getUserOrders()
   }
 };
 </script>

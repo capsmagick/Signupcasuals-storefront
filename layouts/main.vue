@@ -23,7 +23,7 @@ import SiteFooter from "~/components/SiteFooter.vue";
 import MobileSiteFooter from "~/components/Mobile/SiteFooter.vue";
 import Snackbar from "~/components/Utils/Snackbar.vue";
 export default {
-  middleware: "verify-auth",
+  middleware: ["verify-auth"],
   components: {
     SiteHeader,
     SiteFooter,
@@ -37,7 +37,6 @@ export default {
     ...mapActions("store", ["fetchStoreCategories"]),
   },
   async mounted() {
-    await this.fetchStoreCategories();
         }
 };
 </script>

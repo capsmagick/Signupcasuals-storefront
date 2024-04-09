@@ -122,8 +122,8 @@ export default {
       isShowLogin: true,
       customerRegister: {},
       login: {
-        username: "",
-        password: "",
+        username: "pachalam",
+        password: "1234567",
       },
       confirmPassword: null,
       loading: false,
@@ -195,6 +195,7 @@ export default {
         localStorage.removeItem("refresh");
         this.setLoggedIn(false);
         this.setAccess("");
+        this.$emit("logout")
       } catch (error) {
         console.log(error);
       }
