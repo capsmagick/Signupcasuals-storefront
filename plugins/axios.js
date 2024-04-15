@@ -7,7 +7,7 @@ export default function ({ store }, inject) {
     xsrfHeaderName: "X-CSRFToken",
     xsrfCookieName: "csrftoken",
     withCredentials: true,
-    baseURL: "http://localhost:8000",
+    baseURL: "https://manage.signupcasuals.com:8443/api",
   });
 
   // Adding request interceptor to attach CSRF token to outgoing requests
