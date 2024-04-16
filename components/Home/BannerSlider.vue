@@ -27,10 +27,10 @@
     </div>
     <div class="sm:block hidden absolute right-16 top-[50%] transform -translate-y-[50%]">
       <ul class="flex flex-col gap-4 md:gap-6 items-center">
-        <li><img src="~/assets/images/icons/facebook.svg" alt="" srcset=""></li>
-        <li><img src="~/assets/images/icons/twitter.svg" alt="" srcset=""></li>
-        <li><img src="~/assets/images/icons/instagram.svg" alt="" srcset=""></li>
-        <li><img src="~/assets/images/icons/pinterest.svg" alt="" srcset=""></li>
+        <li style="cursor: pointer"><img src="~/assets/images/icons/facebook.svg" alt="" srcset="" @click="followUs('facebook')"></li>
+        <!--        <li><img src="~/assets/images/icons/twitter.svg" alt="" srcset=""></li>-->
+        <li style="cursor: pointer"><img src="~/assets/images/icons/instagram.svg" alt="" srcset="" @click="followUs('instagram')"></li>
+        <!--        <li><img src="~/assets/images/icons/pinterest.svg" alt="" srcset=""></li>-->
         <li><span class="text-second text-sm font-medium" style="writing-mode: tb-rl;">FOLLOW US</span></li>
       </ul>
     </div>
@@ -61,11 +61,21 @@ export default {
     },
   },
   methods: {
+    followUs(socialMedia) {
+      if (socialMedia === 'instagram') {
+        const externalUrl = 'https://www.instagram.com/signup_casual/?hl=en';
+        window.open(externalUrl, '_blank');
+      }
+      if (socialMedia === 'facebook') {
+        const externalUrl = 'https://www.facebook.com/signupcasualsthrissur/';
+        window.open(externalUrl, '_blank');
+      }
+
+    },
     async getBanners() {
       try {
         const {data} = await this.$api.get("/cms/customer/hero-section/")
         this.banners = data.results
-        console.log('Banners:', this.banners)
       } catch (error) {
         const errorText = error.response.status + ' ' + error.response.statusText
         this.$alert.show({
