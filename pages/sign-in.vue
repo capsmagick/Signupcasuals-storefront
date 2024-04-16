@@ -62,17 +62,17 @@ methods:{
     ...mapMutations(["setLoggedIn","setAccess","setUser"]),
     async customerLogin() {
       try {
-        const { data } = await this.$api.post("/account/token/user/login/", {
+        const { data } = await this.$api.post("/account/session/user/login/", {
           ...this.login,
         });
 
-        const tokensString = data.tokens;
-        const validJsonString = tokensString.replace(/'/g, '"');
-        const tokenObj = JSON.parse(validJsonString);
-        const { refresh, access } = tokenObj;
+        // const tokensString = data.tokens;
+        // const validJsonString = tokensString.replace(/'/g, '"');
+        // const tokenObj = JSON.parse(validJsonString);
+        // const { refresh, access } = tokenObj;
 
-        localStorage.setItem("refresh", refresh);
-        this.setAccess(access);
+        // localStorage.setItem("refresh", refresh);
+        // this.setAccess(access);
         this.setLoggedIn(true);
         this.$alert.show({
           title: "Logged in Successfully",

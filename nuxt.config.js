@@ -82,6 +82,6 @@ export default {
     MEDIA_URL: process.env.MEDIA_URL
   },
   server: {
-    port: 8000, // default: 3000
+    port: 5173, // default: 3000
   },
 };

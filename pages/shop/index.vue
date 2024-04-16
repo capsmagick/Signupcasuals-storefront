@@ -220,7 +220,7 @@ export default {
     async fetchProductsList(offset = 0) {
       try {
         this.loading = true;
-        let url = `/api/products?limit=${this.limit}&offset=${offset}`;
+        let url = `/customer/product/`;
 
         if (this.filterQuery) url = url.concat("&", this.filterQuery);
         const {

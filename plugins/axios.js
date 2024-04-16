@@ -1,14 +1,29 @@
 // Api.js
 import axios from "axios";
-// console.log("context", context)
+import Cookies from "js-cookie";
+
+let csrfToken;
 
 export default function ({ store }, inject) {
   const axiosAPI = axios.create({
     xsrfHeaderName: "X-CSRFToken",
     xsrfCookieName: "csrftoken",
     withCredentials: true,
-    baseURL: "https://manage.signupcasuals.com:8443/api",
+    baseURL: "http://127.0.0.1:8000/api",
+    headers:{
+      Accept:"application/json"
+    }
   });
+
+  const setTokenToHeaders = function (request) {
+    if (csrfToken) {
+      request.headers["X-CSRFToken"] = csrfToken;
+    }
+  };
+
+  const getTokenFromResponse = function () {
+    csrfToken = Cookies.get("csrftoken");
+  };
 
   // Adding request interceptor to attach CSRF token to outgoing requests
   axiosAPI.interceptors.request.use(
@@ -22,14 +37,11 @@ export default function ({ store }, inject) {
           config.headers["Content-Type"] = "multipart/form-data";
         }
       }
-      const csrftoken = getCookie("csrftoken");
-      if (csrftoken) {
-        config.headers["X-CSRFToken"] = csrftoken;
-      }
-      
-      if(store.state.access){
-        config.headers['Authorization'] = `Bearer ${store.state.access}`;
-      }
+      setTokenToHeaders(config);
+
+      // if (store.state.access) {
+      //   config.headers["Authorization"] = `Bearer ${store.state.access}`;
+      // }
       return config;
     },
     (error) => Promise.reject(error)
@@ -37,27 +49,13 @@ export default function ({ store }, inject) {
 
   axiosAPI.interceptors.response.use(
     function (response) {
+      getTokenFromResponse();
       return response;
     },
     function (error) {
       return Promise.reject(error);
     }
   );
-
-  function getCookie(name) {
-    if (typeof window === "undefined") {
-      return null;
-    }
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-      const possibleValue = parts.pop();
-      if (possibleValue) {
-        return possibleValue.split(";").shift() || null; // Fix applied here
-      }
-    }
-    return null;
-  }
 
   inject("api", axiosAPI);
 }

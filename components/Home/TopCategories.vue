@@ -46,14 +46,14 @@ export default {
   methods: {
     async getProductCategories() {
       try {
-        const { data } = await this.$api.get("/customer/category/")
+        const { data } = await this.$api.get("/customer/category?is_top_category=true")
         this.categories = Array.isArray(data?.results) ? data.results : this.dummyCat
       } catch (error) {
         console.log("top-categories:fetch-cat:", error)
       }
     },
     onSelectCategory(category){
-      this.$router.push(`/shop?category=${category.handle}`)
+      this.$router.push(`/shop?handle=${category.handle}`)
     }
   },
   async mounted() {
