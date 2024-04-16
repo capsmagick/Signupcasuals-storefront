@@ -85,8 +85,8 @@ export default {
   methods:{
     async getCollections(){
       try {
-        const { collections } = await this.$axios.$get(
-          "/api/collections"
+        const { collections } = await this.$api.get(
+          "/customer/collections"
         );
         this.collectionsTabs = collections
         this.selectedTab = this.collectionsTabs[0]
@@ -100,7 +100,7 @@ export default {
         this.loading = true
         const url =
           "/api/products?" +
-          `collection_id[]=${collectionId}`
+          `collection_id=${collectionId}`
         const { products } = await this.$axios.$get(url);
         this.collectionProducts = products
       } catch (error) {
@@ -115,13 +115,13 @@ export default {
       await this.getSelectedCollectionProducts(this.selectedTab.id)
     },
     onClickPrev(){
-      if(this.paginateStart == 0) return;
+      if(this.paginateStart === 0) return;
       this.paginateStart = this.paginateStart - 1;
       this.paginateEnd = this.paginateEnd - 1;
     },
     onClickNext(){
       console.log("On fn")
-      if(this.paginateEnd == this.collectionProducts.length) return;
+      if(this.paginateEnd === this.collectionProducts.length) return;
       this.paginateStart = this.paginateStart + 1;
       this.paginateEnd = this.paginateEnd + 1;
     }
