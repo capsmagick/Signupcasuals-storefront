@@ -10,9 +10,10 @@ export default async function ({ store, redirect, app }) {
           refresh: refresh,
         }
       );
+      console.log("refresh:", data)
       store.commit("setAccess", data.access);
       store.commit("setLoggedIn", true);
-      const { data: userData } = await app.$api.get("/account/user/me/");
+      const { data: userData } = await app.$api.get("/account/token/user/status/");
       store.commit("setUser", userData.user);
     } catch (error) {
       console.log("Middleware error>>", error);

@@ -53,7 +53,7 @@ export default {
       }
     },
     onSelectCategory(category){
-      this.$router.push(`/shop?category=${category.id}`)
+      this.$router.push(`/shop?category=${category.handle}`)
     }
   },
   async mounted() {

@@ -105,6 +105,7 @@ export default {
         this.collectionProducts = products
       } catch (error) {
         console.log(error)
+        this.collectionProducts = []
       }finally{
         this.loading = false
       }

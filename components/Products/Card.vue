@@ -1,9 +1,17 @@
 <template>
-  <div class="relative flex flex-col group cursor-pointer" @click="goToProductDetails">
+  <div
+    class="relative flex flex-col group cursor-pointer"
+    @click="goToProductDetails"
+  >
     <div
-      class="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80 h-72">
-      <img v-if="thumbImage" :src="thumbImage" @error="imageError"
-        class="h-full w-full object-cover object-center" />
+      class="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80 h-72"
+    >
+      <img
+        v-if="thumbImage"
+        :src="thumbImage"
+        @error="imageError"
+        class="h-full w-full object-cover object-center"
+      />
       <img v-else src="~/assets/images/product.png" alt="" srcset="" />
     </div>
     <div class="flex justify-between pt-4">
@@ -18,25 +26,33 @@
       </div>
       <div>
         <button type="button" @click.stop="addTowishList">
-          <MdiHeartOutline v-if="!variant.wish_listed" :size="20" class="text-second" />
+          <MdiHeartOutline
+            v-if="!variant.wish_listed"
+            :size="20"
+            class="text-second"
+          />
           <Heart v-else :size="20" class="text-red-500" />
         </button>
       </div>
     </div>
-    <button v-if="isWislist" class="invisible group-hover:visible absolute top-4 left-4 p-2 bg-white text-head rounded"
-      @click.stop="removeFromWishlist">
+    <button
+      v-if="isWislist"
+      class="invisible group-hover:visible absolute top-4 left-4 p-2 bg-white text-head rounded"
+      @click.stop="removeFromWishlist"
+    >
       <MdiWindowClose :size="18" />
     </button>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "ProductCard",
   props: {
     variant: {
       type: Object,
-      default: () => { },
+      default: () => {},
     },
     product: {
       type: Object,
@@ -52,7 +68,7 @@ export default {
   },
   data() {
     return {
-      apiUrl: this.$config.API_URL
+      apiUrl: this.$config.API_URL,
     };
   },
   filters: {
@@ -65,13 +81,14 @@ export default {
     },
   },
   computed: {
-    thumbImage(){
-      if(this.variant.images && this.variant.images.length){
-        const image = this.variant.images[0].image
-        const thumbImage = `${this.apiUrl}${image}`
-        return thumbImage
+    ...mapState(["isLoggedIn"]),
+    thumbImage() {
+      if (this.variant.images && this.variant.images.length) {
+        const image = this.variant.images[0].image;
+        const thumbImage = `${this.apiUrl}${image}`;
+        return thumbImage;
       }
-    }
+    },
   },
   methods: {
     goToProductDetails() {
@@ -82,6 +99,14 @@ export default {
     },
     async addTowishList() {
       try {
+        if (!this.isLoggedIn) {
+          this.$alert.show({
+            isError: true,
+            title: "Oops, cannot add to wishlist.",
+            description:
+              "Please login to add product to your wishlist.",
+          });
+        }
         if (!this.variant.wish_listed) {
           await this.$api.post(`/customer/wishlist/add-to-wishlist/`, {
             product_variant: this.variant.id,
@@ -90,9 +115,8 @@ export default {
           await this.$api.delete(
             `/customer/wishlist/${this.variant.id}/remove-wishlist/`
           );
-          
         }
-        this.$emit("refresh-products")
+        this.$emit("refresh-products");
       } catch (error) {
         console.log("card-wishlist:", error);
       }
@@ -103,11 +127,11 @@ export default {
           `/customer/wishlist/${this.variant.id}/remove-wishlist/`
         );
 
-        this.$emit("refresh-products")
+        this.$emit("refresh-products");
       } catch (error) {
-        console.log("remove:", error)
+        console.log("remove:", error);
       }
-    }
+    },
   },
 };
 </script>

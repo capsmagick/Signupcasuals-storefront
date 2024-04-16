@@ -61,12 +61,12 @@
               </template>
             </ReusableDropdown>
 
-            <div class="md:flex hidden items-center gap-2 pl-4">
+            <!-- <div class="md:flex hidden items-center gap-2 pl-4">
               VIEW
               <span>2</span>
               <span>3</span>
               <span>4</span>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -97,7 +97,7 @@
         </div>
       </div>
       <!-- Observer -->
-     
+      <div id="observer" class="observer h-[1px] w-[1px]"></div>
     </div>
     <!-- Side Filter Mobile view -->
     <div
@@ -205,8 +205,18 @@ export default {
   computed: {
     ...mapState("store", ["categories"]),
   },
+  watch: {
+    "$route.query": {
+      async handler(to, from) {
+        if (to.handle) this.handle = to.handle;
+        else this.handle = null;
+        await this.fetchStoreCategories();
+        await this.handleProductsListing();
+      },
+    },
+  },
   methods: {
-    ...mapActions("store", ["fetchStoreCategories"]),
+    // ...mapActions("store", ["fetchStoreCategories"]),
     async fetchProductsList(offset = 0) {
       try {
         this.loading = true;
@@ -260,14 +270,10 @@ export default {
           this.createCategoryQuery(e)
         );
     },
-    checkPage(page) {
-      const currentPage = this.paginate.offset / this.limit;
-      if (currentPage == page) return true;
-    },
     async handleProductsListing() {
       const query = this.$route.query;
       if (query && Object.keys(query).length) this.handleFilters();
-      else await this.fetchProductsList();
+      else await this.fetchProducts();
     },
     async handleFilters() {
       const query = this.$route.query;
@@ -279,7 +285,7 @@ export default {
         this.parentCategory = this.storeCategories.find(
           (c) => c.handle == this.handle
         );
-        this.childCategories = this.parentCategory.category_children;
+        this.childCategories = this.parentCategory.sub_category;
       }
       if (this.handle && !this.category) this.fetchMainHandle();
       else if (this.handle && this.category) this.fetchHandleAndCategories();
@@ -334,8 +340,9 @@ export default {
       }
     },
     async fetchCategories() {
-      // const queryCat = this.category.split("_");
-      // const categoriesId = [];
+      const queryCat = this.category.split("_");
+      console.log;
+      const categoriesId = [];
 
       // const handleSubCat = (cat) => {
       //   if (cat && cat.length) {
@@ -357,14 +364,13 @@ export default {
       // });
 
       // await this.fetchProductsList();
-      const { data } = await this.$api.get("/customer/category/");
+      // const { data } = await this.$api.get("/customer/category/");
     },
     async fetchStoreCategories() {
       try {
-        const { product_categories } = await this.$axios.$get(
-          "/api/product-categories?parent_category_id=null&include_descendants_tree=true"
-        );
-        this.storeCategories = product_categories;
+        const { data } = await this.$api.get("/customer/category");
+        if (Array.isArray(data?.results) && data.results)
+          this.storeCategories = data.results;
       } catch (error) {
         console.log("shop:", error);
       }
@@ -382,10 +388,24 @@ export default {
     },
   },
   async mounted() {
-    // await this.fetchStoreCategories();
-    // await this.handleProductsListing();
-    await this.fetchCategories();
-    await this.fetchProducts();
+    await this.fetchStoreCategories();
+    await this.handleProductsListing();
+
+    // const observer = document.getElementById("observer");
+
+    // const intersection = new IntersectionObserver((entries) => {
+    //   if(entries[0].intersectionRatio <= 0){
+    //     console.log("Not here");
+    //     return
+    //   }
+
+    //   console.log(entries)
+    // })
+
+    // intersection.observe(observer)
+
+    // await this.fetchCategories();
+    // await this.fetchProducts();
   },
 };
 </script>

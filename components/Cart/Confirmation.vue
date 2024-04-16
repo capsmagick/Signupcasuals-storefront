@@ -97,6 +97,7 @@
 
 <script>
 import MakePayment from './MakePayment.vue';
+import CryptoJs from "crypto-js"
 export default {
   name: "CartConfirmation",
   components: {
@@ -142,8 +143,13 @@ export default {
           }
         );
 
-        this.paymentPayload = data.payload;
-        this.showForm = true;
+        this.paymentPayload = data.payload.payload;
+        const payload = JSON.stringify(this.paymentPayload)
+        const payloadMain = Buffer.from(payload).toString("base64")
+        const key = this.paymentPayload.apiKey;
+        const keyIndex = this.paymentPayload.keyINDEX;
+        const string = payloadMain + '/pg/'
+        // this.showForm = true;
         // const form = document.getElementById("payment-form");
         // form.click()
       } catch (error) {

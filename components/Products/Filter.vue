@@ -19,7 +19,7 @@
           v-show="isShowCategories"
           class="text-sm text-head pt-6 flex flex-col gap-2"
         >
-          <li v-for="category in filteredCategories" :key="category">
+          <li v-for="category in filteredCategories" :key="category.id">
             <div
               v-if="category.isParent"
               :class="[
@@ -56,13 +56,13 @@
               <div v-show="!category.fold">
                 <ul
                   v-if="
-                    category.category_children &&
-                    category.category_children.length
+                    category.sub_category &&
+                    category.sub_category.length
                   "
                   class="pl-4 flex flex-col gap-2"
                 >
                   <li
-                    v-for="child in category.category_children"
+                    v-for="child in category.sub_category"
                     :key="child.id"
                   >
                     <div
@@ -237,6 +237,7 @@ export default {
           v["isParent"] = true;
         });
 
+        console.log("not handle")
         return categories;
       }
 

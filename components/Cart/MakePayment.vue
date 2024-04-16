@@ -75,7 +75,7 @@ export default {
     },
   },
   mounted() {
-    this.$refs.form.submit();
+    // this.$refs.form.submit();
     // const formButton = document.getElementById("payment-button");
     // formButton.click();
   },

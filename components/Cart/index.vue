@@ -133,6 +133,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "Cart",
   data() {
@@ -151,6 +152,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(["isLoggedIn"]),
     apiUrl() {
       return this.$config.API_URL;
     },
@@ -203,7 +205,7 @@ export default {
     },
   },
   async mounted() {
-    await this.getCartProductList();
+    if(this.isLoggedIn) await this.getCartProductList();
   },
 };
 </script>

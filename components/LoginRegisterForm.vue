@@ -134,7 +134,7 @@ export default {
   },
   methods: {
     // ...mapMutations("user", ["setAccess"]),
-    ...mapMutations(["setLoggedIn","setAccess"]),
+    ...mapMutations(["setLoggedIn","setAccess","setUser"]),
     async customerLogin() {
       try {
         const { data } = await this.$api.post("/account/token/user/login/", {
@@ -195,6 +195,7 @@ export default {
         localStorage.removeItem("refresh");
         this.setLoggedIn(false);
         this.setAccess("");
+        this.setUser({})
         this.$emit("logout")
       } catch (error) {
         console.log(error);

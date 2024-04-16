@@ -50,7 +50,7 @@
           </button>
         </div>
 
-        <button class="lg:flex hidden" @click="goToPage({ link: 'account' })">
+        <button class="lg:flex hidden" @click="onClickUser()">
           <img src="~/assets/images/icons/account.svg" />
         </button>
         <button
@@ -71,7 +71,7 @@
         </button>
         <ReusableRightOpenNav title="login" width="700px">
           <template #modal-activator="{ toggleModal }">
-            <button class="lg:flex hidden" @click="toggleModal">
+            <button class="hidden" @click="toggleModal">
               <img src="~/assets/images/icons/nav-icon.svg" />
             </button>
           </template>
@@ -313,6 +313,10 @@ export default {
           this.dynamicMainMenu = [];
         }
       } catch (error) {}
+    },
+    onClickUser() {
+      if (this.isLoggedIn) this.$router.push("/account");
+      else this.$router.push("/sign-in")
     },
     goToPage(link) {
       console.log("here");

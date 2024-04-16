@@ -260,7 +260,7 @@ export default {
   },
   computed: {
     apiUrl() {
-      return this.$config.API_URL;
+      return this.$config.MEDIA_URL;
     },
     filteredRelatedProducts() {
       if (this.relatedProducts.length) {
@@ -328,7 +328,7 @@ export default {
     },
     onSelectImage(index = null) {
       if (!index && this.variant.images && this.variant.images.length) {
-        this.previewImage = `${this.$config.API_URL}${this.variant.images[0].image}`;
+        this.previewImage = `${this.variant.images[0].image}`;
         return;
       }
       this.previewImage = this.variant.images[index];

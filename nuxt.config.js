@@ -79,8 +79,9 @@ export default {
   publicRuntimeConfig: {
     API_KEY: process.env.API_KEY,
     API_URL: process.env.API_URL,
+    MEDIA_URL: process.env.MEDIA_URL
   },
   server: {
-    port: process.env.PORT ?? 8000, // default: 3000
+    port: 8000, // default: 3000
   },
 };
