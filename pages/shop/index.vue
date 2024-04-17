@@ -77,7 +77,7 @@
           >
             <ProductCard
               v-for="item in products"
-              :product="item.product"
+              :product="item"
               :variant="item"
               :key="item.id"
               @refresh-products="fetchProducts"
