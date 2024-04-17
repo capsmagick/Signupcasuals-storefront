@@ -46,7 +46,8 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import {mapState} from "vuex";
+
 export default {
   name: "ProductCard",
   props: {
@@ -68,7 +69,7 @@ export default {
   },
   data() {
     return {
-      apiUrl: this.$config.API_URL,
+      apiUrl: 'https://manage.signupcasuals.com:8443',
     };
   },
   filters: {
@@ -85,8 +86,8 @@ export default {
     thumbImage() {
       if (this.variant.images && this.variant.images.length) {
         const image = this.variant.images[0].image;
-        const thumbImage = `${this.apiUrl}${image}`;
-        return thumbImage;
+        console.log('image:>>:', image)
+        return `${this.apiUrl}${image}`;
       }
     },
   },

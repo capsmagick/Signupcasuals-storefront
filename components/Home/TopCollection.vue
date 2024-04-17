@@ -5,14 +5,14 @@
       <button
         v-for="tab in collectionsTabs"
         :class="[
-          selectedTab.handle == tab.handle
+          selectedTab.handle === tab.handle
             ? 'text-head border-b-head'
             : 'text-second border-b-transparent',
           'capitalize text-sm font-medium px-2 py-2 border-b-2',
         ]"
         :key="tab.handle"
         @click="onSelectCollection(tab)"
-        >{{ tab.title }}</button
+        >{{ tab.name }}</button
       >
     </div>
     <div v-if="loading"  class="pt-8 flex justify-center  gap-6 flex-1">
@@ -85,10 +85,10 @@ export default {
   methods:{
     async getCollections(){
       try {
-        const { collections } = await this.$api.get(
+        const { data } = await this.$api.get(
           "/customer/collections"
         );
-        this.collectionsTabs = collections
+        this.collectionsTabs = data.results
         this.selectedTab = this.collectionsTabs[0]
         await this.getSelectedCollectionProducts(this.selectedTab.id)
       } catch (error) {
@@ -99,7 +99,7 @@ export default {
       try {
         this.loading = true
         const url =
-          "/api/products?" +
+          "/customer/products?" +
           `collection_id=${collectionId}`
         const { products } = await this.$axios.$get(url);
         this.collectionProducts = products
