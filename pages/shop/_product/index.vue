@@ -6,11 +6,11 @@
         <div
           class="preview-slide-images md:flex md:flex-col grid grid-cols-4 md:w-20 gap-4 flex-shrink-0"
         >
-          <div v-for="(image, idx) in product.images" :key="idx">
+          <!-- <div v-for="(image, idx) in product.images" :key="idx">
             <a class="cursor-pointer" @click="onSelectImage(idx)"
               ><img :src="image.url" alt=""
             /></a>
-          </div>
+          </div> -->
         </div>
         <div class="selected-image flex-1">
           <img
@@ -301,8 +301,9 @@ export default {
       const { data: productVariants } = await this.$api.get(
         `/customer/product/${productId}/other-variants/`
       );
-      this.product = data.product;
-      this.variant = data;
+      console.log("data:>>", data)
+      this.product = data;
+      this.variant = productVariants[0];
       this.variants = productVariants;
       this.onSelectImage();
       // Default
