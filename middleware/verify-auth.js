@@ -5,7 +5,9 @@ export default async function ({ store, redirect, app }) {
       const { data } = await app.$api.get(
         "/account/user/me"
       );
-      // console.log("refresh:", data)
+      if (data.loggedIn) {
+          store.commit("setLoggedIn", true);
+      }
       // store.commit("setAccess", data.access);
       // store.commit("setLoggedIn", true);
       // const { data: userData } = await app.$api.get("/account/token/user/status/");
