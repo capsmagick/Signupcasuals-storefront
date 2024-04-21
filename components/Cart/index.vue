@@ -170,9 +170,9 @@ export default {
     async updateLineItem(lineItem, action) {
       try {
         let qty;
-        if (action == "add") qty = 1;
-        if (action == "remove") {
-          if (lineItem.quantity - 1 == 0) {
+        if (action === "add") qty = 1;
+        if (action === "remove") {
+          if (lineItem.quantity - 1 === 0) {
             await this.deleteLineItem(lineItem);
             return;
           } else {

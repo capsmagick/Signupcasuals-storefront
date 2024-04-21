@@ -35,15 +35,15 @@
 
     <div class="py-10">
       <!-- Shopping bags -->
-      <Cart v-if="step == 'checkout'" />
+      <Cart v-if="step === 'checkout'" />
       <!-- Shopping bags -->
-      <Address v-if="step == 'address'" />
+      <Address v-if="step === 'address'" />
       <!-- Checkout form -->
-      <Confirmation v-if="step == 'confirmation'"/>
+      <Confirmation v-if="step === 'confirmation'"/>
       <!--  -->
 
       <!-- Confirmation -->
-      
+
     </div>
   </div>
 </template>
@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     proceedCheckout() {
-      if (this.step == 1) {
+      if (this.step === 1) {
         this.step = 2;
       }
     },
