@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 let csrfToken;
 
 const setTokenToHeaders = function (request) {
+    console.log('SET csrfToken : ', csrfToken)
     if (csrfToken) {
         request.headers["X-CSRFToken"] = csrfToken;
     }
@@ -12,6 +13,7 @@ const setTokenToHeaders = function (request) {
 
 const getTokenFromResponse = function () {
     csrfToken = Cookies.get("csrftoken");
+    console.log('GET csrfToken : ', csrfToken)
 };
 
 export default function ({store}, inject) {
