@@ -1,8 +1,22 @@
 // Api.js
 import axios from "axios";
-import Cookies from "js-cookie";
 
 let csrfToken;
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 const setTokenToHeaders = function (request) {
     console.log('SET csrfToken : ', csrfToken)
@@ -12,7 +26,7 @@ const setTokenToHeaders = function (request) {
 };
 
 const getTokenFromResponse = function () {
-    csrfToken = Cookies.get("csrftoken");
+    csrfToken = getCookie("csrftoken");
     console.log('GET csrfToken : ', csrfToken)
 };
 
