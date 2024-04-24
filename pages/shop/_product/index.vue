@@ -67,7 +67,7 @@
             <div></div>
           </div>
           <!-- product colors -->
-          <div class="flex text-sm items-center font-medium">
+          <div v-if="variants.length > 0" class="flex text-sm items-center font-medium">
             <div class="w-20 flex-shrink-0">COLOR</div>
             <div class="grid grid-cols-6 gap-2 w-full">
               <div
@@ -104,7 +104,7 @@
               </div>
             </div>
           </div>
-          <div class="flex items-center justify-between text-sm">
+          <div v-if="variants.length > 0" class="flex items-center justify-between text-sm">
             <div class="flex items-center font-medium gap-2">
               <div class="w-20">SIZES</div>
 
@@ -129,7 +129,7 @@
 
           <!--  -->
           <!-- options -->
-          <div class="flex items-center gap-4">
+          <div v-if="variants.length > 0" class="flex items-center gap-4">
             <div
               class="px-6 py-4 border border-footer text-sm flex items-center gap-4"
             >
@@ -143,13 +143,13 @@
             </div>
             <ReusableLoaderButton
               label="ADD TO CART"
-              @click="addToCart"
+              @click="addToCart()"
               :loading="loading"
             />
           </div>
           <!--  -->
           <!--  -->
-          <div class="flex items-center gap-6 text-head">
+          <div v-if="variants.length > 0" class="flex items-center gap-6 text-head">
             <button class="flex items-center gap-2 text-sm font-medium">
               <mdi-heart-outline :size="18" />
               ADD TO WISHLIST
@@ -271,9 +271,6 @@ export default {
     },
   },
   computed: {
-    apiUrl() {
-      return this.$config.MEDIA_URL;
-    },
     filteredRelatedProducts() {
       if (this.relatedProducts.length) {
         return this.relatedProducts.filter((p) => p.id != this.product.id);
@@ -351,13 +348,18 @@ export default {
       }
     },
     async addToCart() {
+      // console.log("carrt:>>", this.$cookies)
       try {
         this.loading = true;
-        await this.$api.post("/customer/cart/add-to-cart/", {
-          product_variant: this.product.id,
-          quantity: this.itemQty,
-          price: this.product.selling_price,
-        });
+        const url = "/customer/cart/add-to-cart/";
+        await this.$api.post(
+          url,
+          {
+            product_variant: this.variant.id,
+            quantity: this.itemQty,
+            price: this.product.selling_price,
+          },
+        );
 
         this.getCustomerProductCart();
 

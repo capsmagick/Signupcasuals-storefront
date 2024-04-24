@@ -224,11 +224,11 @@ export default {
         let url = `/customer/product/`;
 
         if (this.filterCategories.length > 0)
-          url = url.concat("&", `categories=${this.filterCategories}`);
+          url = url.concat("?", `categories=${this.filterCategories}`);
         const { data } = await this.$api.get(url);
         if (Array.isArray(data.results) && data.results.length > 0)
           this.products = data.results;
-
+        else this.products = []
         // this.paginate.count = count;
         // this.paginate.pages = Math.ceil(count / this.limit);
         // this.paginate.offset = dataOffset;

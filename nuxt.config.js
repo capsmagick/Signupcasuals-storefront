@@ -28,6 +28,10 @@ export default {
     "~/plugins/alert",
     "~/plugins/vee-validate.js",
     "~/plugins/axios.js",
+    {
+      src: "~/plugins/cookies.js",
+      ssr: false,
+    },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

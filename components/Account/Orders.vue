@@ -18,10 +18,14 @@
       class="grid text-sm text-head"
       style="grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr"
     >
-      <div class="pl-8 py-4 flex items-center">{{order.orderId}}</div>
-      <div class="py-4 flex items-center">{{ order.date }}</div>
+      <div class="pl-8 py-4 flex items-center">{{ order.order_id }}</div>
+      <div class="py-4 flex items-center">
+        {{ order.created_at | formatDate }}
+      </div>
       <div class="py-4 flex items-center">{{ order.status }}</div>
-      <div class="py-4 flex items-center">{{ order.total }}</div>
+      <div class="py-4 flex items-center">
+        {{ order.total_amount | totalAmount }}
+      </div>
       <div class="pr-8 py-4 flex items-center">
         <button class="px-8 py-4 bg-head text-white text-sm">VIEW</button>
       </div>
@@ -30,30 +34,39 @@
 </template>
 
 <script>
+import moment from "moment";
 export default {
   name: "AccountOrders",
-  data(){
-    return{
-        orders:[
-            { orderId:"#68787", date: new Date(), status: "On Hold", total:"$1200 for 3 items"},
-            { orderId:"#25787", date: new Date(), status: "On Hold", total:"$1200 for 3 items"},
-            { orderId:"#38125", date: new Date(), status: "On Hold", total:"$1200 for 3 items"}
-        ]
-    }
+  data() {
+    return {
+      orders: [],
+    };
   },
-  methods:{
-    async getUserOrders(){
+  filters: {
+    formatDate(date) {
+      return moment(date).format("MMMM Do YYYY, h:mm:ss a");
+    },
+    totalAmount(price) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "inr",
+      }).format(price);
+    },
+  },
+  methods: {
+    async getUserOrders() {
       try {
-        const { data } = await this.$api.get("customer/orders/")
-        console.log("data:", data)
+        const { data } = await this.$api.get("/customer/orders/");
+        if (Array.isArray(data.results) && data.results.length > 0)
+          this.orders = data.results;
       } catch (error) {
-        console.log("user-orders:", error)
+        console.log("user-orders:", error);
       }
     },
   },
-  async mounted(){
-    await this.getUserOrders()
-  }
+  async mounted() {
+    await this.getUserOrders();
+  },
 };
 </script>
 
