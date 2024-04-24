@@ -2,7 +2,7 @@
   <div class="w-full h-screen">
     <SiteHeader />
     <div class="pt-[72px]">
-      <main>
+      <main class="main-layout">
         <nuxt />
       </main>
     </div>

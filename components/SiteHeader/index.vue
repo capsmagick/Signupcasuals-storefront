@@ -302,9 +302,9 @@ export default {
     async getDynamicNavLinks() {
       try {
         try {
-          const { data } = await this.$api.get(
-            "customer/category?is_main_menu=true"
-          );
+          // ?is_main_menu=true
+          const url = "/customer/category?is_main_menu=true"
+          const { data } = await this.$api.get(url);
           if (Array.isArray(data?.results) && data.results.length) {
             this.dynamicMainMenu = data.results;
           }

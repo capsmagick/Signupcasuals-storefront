@@ -1,6 +1,6 @@
 <template>
   <div
-    class="xl:max-w-7xl lg:max-w-4xl md:max-w-3xl mx-auto md:pt-20 pt-10 pb-6 md:px-0 px-4"
+    class="xl:max-w-7xl lg:max-w-4xl md:max-w-3xl mx-auto sm:pt-10 pb-6 md:px-0 px-4 relative"
     ref="intersection"
   >
     <h1 class="md:block hidden text-head text-3xl font-bold mb-4">SHOP</h1>
@@ -80,7 +80,7 @@
               :product="item"
               :variant="item"
               :key="item.id"
-              @refresh-products="fetchProducts"
+              @refresh-products="fetchProductsList"
             />
           </div>
           <div
@@ -200,6 +200,7 @@ export default {
       storeCategories: [],
       parentCategory: {},
       childCategories: [],
+      filterCategories: [],
     };
   },
   computed: {
@@ -210,7 +211,7 @@ export default {
       async handler(to, from) {
         if (to.handle) this.handle = to.handle;
         else this.handle = null;
-        await this.fetchStoreCategories();
+        // await this.fetchStoreCategories();
         await this.handleProductsListing();
       },
     },
@@ -222,17 +223,15 @@ export default {
         this.loading = true;
         let url = `/customer/product/`;
 
-        if (this.filterQuery) url = url.concat("&", this.filterQuery);
-        const {
-          products,
-          count,
-          offset: dataOffset,
-        } = await this.$axios.$get(url);
-        this.products = products;
+        if (this.filterCategories.length > 0)
+          url = url.concat("&", `categories=${this.filterCategories}`);
+        const { data } = await this.$api.get(url);
+        if (Array.isArray(data.results) && data.results.length > 0)
+          this.products = data.results;
 
-        this.paginate.count = count;
-        this.paginate.pages = Math.ceil(count / this.limit);
-        this.paginate.offset = dataOffset;
+        // this.paginate.count = count;
+        // this.paginate.pages = Math.ceil(count / this.limit);
+        // this.paginate.offset = dataOffset;
       } catch (error) {
         console.log(error);
       } finally {
@@ -273,7 +272,7 @@ export default {
     async handleProductsListing() {
       const query = this.$route.query;
       if (query && Object.keys(query).length) this.handleFilters();
-      else await this.fetchProducts();
+      else await this.fetchProductsList();
     },
     async handleFilters() {
       const query = this.$route.query;
@@ -281,15 +280,15 @@ export default {
       this.handle = handle;
       this.category = category;
 
-      if (this.handle) {
-        this.parentCategory = this.storeCategories.find(
-          (c) => c.handle == this.handle
-        );
-        this.childCategories = this.parentCategory.sub_category;
-      }
-      if (this.handle && !this.category) this.fetchMainHandle();
-      else if (this.handle && this.category) this.fetchHandleAndCategories();
-      else if (!this.handle && this.category) this.fetchCategories();
+      // if (this.handle) {
+      //   this.parentCategory = this.storeCategories.find(
+      //     (c) => c.handle == this.handle
+      //   );
+      //   this.childCategories = this.parentCategory.sub_category;
+      // }
+      // if (this.handle && !this.category) this.fetchMainHandle();
+      // else if (this.handle && this.category) this.fetchHandleAndCategories();
+      if (this.category) this.fetchCategories();
     },
     fetchMainHandle() {
       let handle = {};
@@ -341,9 +340,6 @@ export default {
     },
     async fetchCategories() {
       const queryCat = this.category.split("_");
-      console.log;
-      const categoriesId = [];
-
       // const handleSubCat = (cat) => {
       //   if (cat && cat.length) {
       //     cat.forEach((c) => {
@@ -353,56 +349,48 @@ export default {
       //     });
       //   }
       // };
+      let categoryIds = [];
+      this.storeCategories.forEach((p) => {
+        if (p.sub_category && p.sub_category.length > 0) {
+          p.sub_category.forEach((c) => {
+            if (queryCat.includes(c.handle)) categoryIds.push(c.id);
+          });
+        }
+      });
 
-      // this.storeCategories.forEach((p) => {
-      //   if (queryCat.includes(p.handle)) {
-      //     categoriesId.push(p.id);
+      this.filterQuery = "";
+      if (categoryIds.length > 0) this.filterCategories = categoryIds;
+      else this.filterCategories = [];
 
-      //     if (p.category_children && p.category_children.length)
-      //       handleSubCat(p.category_children);
-      //   }
-      // });
-
-      // await this.fetchProductsList();
+      await this.fetchProductsList();
       // const { data } = await this.$api.get("/customer/category/");
     },
     async fetchStoreCategories() {
       try {
-        const { data } = await this.$api.get("/customer/category");
-        if (Array.isArray(data?.results) && data.results)
+        const url = "/customer/category/";
+        const { data } = await this.$api.get(url);
+        if (Array.isArray(data?.results) && data.results) {
           this.storeCategories = data.results;
+          this.storeCategories = this.storeCategories.map((v, idx) => {
+            let cat = { ...v };
+            if (cat.sub_category) {
+              cat = {
+                ...cat,
+                isParent: true,
+                fold: idx == 0 ? false : true,
+              };
+            }
+            return cat;
+          });
+        }
       } catch (error) {
         console.log("shop:", error);
-      }
-    },
-    async fetchProducts() {
-      try {
-        const res = await this.$api.get("/customer/product/");
-        this.products = Array.isArray(res.data?.results)
-          ? res.data.results
-          : [];
-      } catch (error) {
-        console.log("products:", error);
-        this.products = [];
       }
     },
   },
   async mounted() {
     await this.fetchStoreCategories();
     await this.handleProductsListing();
-
-    // const observer = document.getElementById("observer");
-
-    // const intersection = new IntersectionObserver((entries) => {
-    //   if(entries[0].intersectionRatio <= 0){
-    //     console.log("Not here");
-    //     return
-    //   }
-
-    //   console.log(entries)
-    // })
-
-    // intersection.observe(observer)
 
     // await this.fetchCategories();
     // await this.fetchProducts();

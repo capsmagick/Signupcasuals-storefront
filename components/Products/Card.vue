@@ -74,11 +74,10 @@ export default {
   },
   filters: {
     priceAmount(price) {
-      const amount = Math.round(price / 100);
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "inr",
-      }).format(amount);
+      }).format(price);
     },
   },
   computed: {

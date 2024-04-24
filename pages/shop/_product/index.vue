@@ -60,7 +60,7 @@
           <div>
             <h4 class="text-2xl capitalize">{{ product.name }}</h4>
             <h3 class="text-[22px] font-medium">
-              {{ variant.selling_price | variantPrice }}
+              {{ sellingPrice }}
             </h3>
           </div>
           <div class="flex">
@@ -77,7 +77,6 @@
                   item.id == variant.id ? 'border-head' : 'border-white',
                   'w-full h-20 border-2 cursor-pointer',
                 ]"
-
                 @click="onSelectVariant(item)"
               >
                 <img
@@ -251,12 +250,25 @@ export default {
       optionColor: {},
       optionSize: {},
       loading: false,
+      apiUrl: "https://manage.signupcasuals.com:8443",
+      sellingPrice: 0,
     };
   },
-  watch:{
-    variant(val){
-      this.onSelectImage()
-    }
+  watch: {
+    product(val) {
+      this.calculatePrice();
+    },
+    variant(val) {
+      this.calculatePrice();
+    },
+  },
+  filters: {
+    variantPrize() {
+      if (this.variant && this.variant.selling_price) {
+        return this.variant.selling_price;
+      }
+      return 0;
+    },
   },
   computed: {
     apiUrl() {
@@ -269,7 +281,7 @@ export default {
     },
     variantSize() {
       if (
-        Object.keys(this.variant).length &&
+        this.variant &&
         this.variant.attributes &&
         this.variant.attributes.length
       ) {
@@ -281,18 +293,6 @@ export default {
       }
     },
   },
-  filters: {
-    variantPrice(price) {
-      let amount;
-      if (price) {
-        amount = Math.round(price / 100);
-      } else amount = 0;
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "inr",
-      }).format(amount);
-    },
-  },
   methods: {
     ...mapActions("customer", ["getCustomerProductCart"]),
     async fetchProductsList() {
@@ -301,10 +301,12 @@ export default {
       const { data: productVariants } = await this.$api.get(
         `/customer/product/${productId}/other-variants/`
       );
-      console.log("data:>>", data)
+      console.log("data:>>", data);
       this.product = data;
-      this.variant = productVariants[0];
+      if (productVariants.length > 0) this.variant = productVariants[0];
+      else this.variant = this.product;
       this.variants = productVariants;
+      this.calculatePrice();
       this.onSelectImage();
       // Default
       // this.selectedVariant = this.variants[0];
@@ -328,11 +330,15 @@ export default {
       }
     },
     onSelectImage(index = null) {
-      if (!index && this.variant.images && this.variant.images.length) {
-        this.previewImage = `${this.variant.images[0].image}`;
-        return;
+      try {
+        if (!index && this.variant.images && this.variant.images.length) {
+          this.previewImage = `${this.apiUrl}${this.variant.images[0].image}`;
+          return;
+        }
+        this.previewImage = this.variant.images[index];
+      } catch (error) {
+        console.log("image:error");
       }
-      this.previewImage = this.variant.images[index];
     },
     onSelectVariant(variant) {
       this.variant = variant;
@@ -343,34 +349,6 @@ export default {
         if (this.itemQty == 1) return;
         this.itemQty--;
       }
-    },
-    async selectNextOrPrev(action) {
-      let idxOfCurrentProduct = this.relatedProducts.findIndex(
-        (p) => p.id == this.product.id
-      );
-      console.log("productId", idxOfCurrentProduct);
-      let newProduct;
-      if (action == "next") {
-        console.log("next");
-        if (idxOfCurrentProduct == this.relatedProducts.length - 1) {
-          newProduct = this.relatedProducts[0];
-        } else {
-          idxOfCurrentProduct = idxOfCurrentProduct + 1;
-          newProduct = this.relatedProducts[idxOfCurrentProduct];
-        }
-      }
-      if (action == "prev") {
-        if (idxOfCurrentProduct == 0) {
-          const newLen = this.relatedProducts.length - 1;
-          newProduct = this.relatedProducts[newLen];
-        } else {
-          idxOfCurrentProduct = idxOfCurrentProduct - 1;
-          console.log("nn", idxOfCurrentProduct);
-          newProduct = this.relatedProducts[idxOfCurrentProduct];
-        }
-      }
-      // this.$router.replace({ path: `/shop/${newProduct.id}` })
-      this.$router.push({ path: `/shop/${newProduct.id}` });
     },
     async addToCart() {
       try {
@@ -390,6 +368,25 @@ export default {
       } catch (error) {
       } finally {
         this.loading = false;
+      }
+    },
+    calculatePrice() {
+      try {
+        let amount = 0;
+        if (this.variant && this.variant.selling_price) {
+          console.log("variant:>>");
+          amount = this.variant.selling_price;
+        } else if (this.product && this.product.sellingPrice) {
+          console.log("product:>>");
+          amount = this.product.selling_price;
+        } else amount = 0;
+        console.log("amount:>>", amount);
+        this.sellingPrice = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "inr",
+        }).format(amount);
+      } catch (error) {
+        console.log("price");
       }
     },
   },

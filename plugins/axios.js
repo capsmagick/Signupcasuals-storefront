@@ -21,7 +21,7 @@ export default function ({store}, inject) {
         xsrfHeaderName: "X-CSRFToken",
         xsrfCookieName: "csrftoken",
         withCredentials: true,
-        baseURL: "https://manage.signupcasuals.com:8443/api",
+        baseURL: "/api",
         // baseURL: "http://localhost:8000/api",
         headers: {
             Accept: "application/json"
