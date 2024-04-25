@@ -70,7 +70,6 @@ export default {
     },
   },
   mounted() {
-    console.log("user", this.$auth.user)
   },
 };
 </script>

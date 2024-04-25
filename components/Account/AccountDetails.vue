@@ -57,7 +57,7 @@ export default {
     }
   },
   mounted(){
-    this.user = JSON.parse(JSON.stringify(this.$auth.user))
+    
   }
 };
 </script>
