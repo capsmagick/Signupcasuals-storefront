@@ -1,12 +1,14 @@
 <template>
   <div class="group">
     <div class="relative">
+<!--      <div>
+        {{product.product}}
+      </div>-->
       <div
-        class="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80"
-      >
+        class="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
         <img
-          v-if="product.thumbnail"
-          :src="product.thumbnail"
+          v-if="product.product && product.product.images.length !==0"
+          :src="product.product.images[0]"
           @error="imageError"
           class="h-full w-full object-cover object-center lg:h-full lg:w-full"
         />
@@ -37,10 +39,14 @@
     </div>
     <div class="flex justify-between pt-4">
       <div>
-        <div class="text-xs text-second leading-5">Dresses</div>
-        <div class="text-sm text-head leading-5">{{ product.title }}</div>
-        <div v-if="getProductPrice" class="text-sm text-head leading-5">
-          {{ getProductPrice.amount | priceAmount }}
+<!--        <div class="text-xs text-second leading-5">Dresses</div>-->
+        <div class="text-sm text-head leading-5">{{ product.product.name }}</div>
+<!--        <div class="text-sm text-head leading-5">-->
+<!--&lt;!&ndash;          {{ getProductPrice.price | priceAmount }}&ndash;&gt;-->
+<!--          {{ product.price }}-->
+<!--        </div>-->
+        <div class="text-sm text-head leading-5">
+          ₹{{ product.product.price }}
         </div>
       </div>
     </div>
@@ -72,16 +78,16 @@ export default {
     },
   },
   computed: {
-    getProductPrice() {
-      if (
-        this.product &&
-        this.product.variants &&
-        this.product.variants.length
-      ) {
-        const variant = this.product.variants[0];
-        return variant.prices[0];
-      }
-    },
+    // getProductPrice() {
+    //   if (
+    //     this.product &&
+    //     this.product.variants &&
+    //     this.product.variants.length
+    //   ) {
+    //     const variant = this.product.variants[0];
+    //     return variant.prices[0];
+    //   }
+    // },
   },
   methods: {
     imageError(e) {
