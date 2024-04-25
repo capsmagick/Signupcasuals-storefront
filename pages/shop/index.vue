@@ -259,16 +259,6 @@ export default {
         console.log(error);
       }
     },
-    createCategoryQuery(parent_category) {
-      if (parent_category.id) this.filters.category.push(parent_category.id);
-      if (
-        parent_category.category_children &&
-        parent_category.category_children.length
-      )
-        parent_category.category_children.forEach((e) =>
-          this.createCategoryQuery(e)
-        );
-    },
     async handleProductsListing() {
       const query = this.$route.query;
       if (query && Object.keys(query).length) this.handleFilters();
@@ -290,65 +280,8 @@ export default {
       // else if (this.handle && this.category) this.fetchHandleAndCategories();
       if (this.category) this.fetchCategories();
     },
-    fetchMainHandle() {
-      let handle = {};
-      let url = "";
-      if (this.handle) {
-        url = url.concat(`category_id[]=${this.parentCategory.id}`);
-
-        // Handle Sub cat Ids
-        const handleChildCat = (cat) => {
-          url = url.concat(`&category_id[]=${cat.id}`);
-          if (cat.category_children && cat.category_children)
-            cat.category_children.forEach((c) => handleChildCat(c));
-        };
-
-        if (
-          this.parentCategory.category_children &&
-          this.parentCategory.category_children.length
-        )
-          this.parentCategory.category_children.forEach((c) =>
-            handleChildCat(c)
-          );
-        // url = url.concat(`&category_id[]=${handle.id}`);
-      }
-
-      this.filterQuery = url;
-
-      this.fetchProductsList();
-    },
-    async fetchHandleAndCategories() {
-      let queryCats = this.category.split("_");
-      console.log(this.childCategories);
-
-      const childCategoriesId = [];
-
-      if (this.childCategories && this.childCategories.length) {
-        this.childCategories.forEach((c) => {
-          if (c.category_children && c.category_children.length) {
-            c.category_children.forEach((v) => {
-              if (queryCats.includes(v.handle)) childCategoriesId.push(v.id);
-            });
-          }
-        });
-
-        this.filterQuery =
-          "category_id[]=" + childCategoriesId.join("&category_id[]=");
-
-        await this.fetchProductsList();
-      }
-    },
     async fetchCategories() {
       const queryCat = this.category.split("_");
-      // const handleSubCat = (cat) => {
-      //   if (cat && cat.length) {
-      //     cat.forEach((c) => {
-      //       categoriesId.push(c.id);
-      //       if (c.category_children && c.category_children.length)
-      //         handleSubCat(c.category_children);
-      //     });
-      //   }
-      // };
       let categoryIds = [];
       this.storeCategories.forEach((p) => {
         if (p.sub_category && p.sub_category.length > 0) {
