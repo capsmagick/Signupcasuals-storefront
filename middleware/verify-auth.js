@@ -7,6 +7,7 @@ export default async function ({ store, redirect, app }) {
       );
       if (data.loggedIn) {
           store.commit("setLoggedIn", true);
+          store.commit("setUser", data.user);
       }
       // store.commit("setAccess", data.access);
       // store.commit("setLoggedIn", true);

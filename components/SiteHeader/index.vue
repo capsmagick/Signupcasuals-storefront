@@ -327,7 +327,7 @@ export default {
     },
     gotToUrl(link) {
       if (Object.keys(link).length && link.handle) {
-        this.$router.push({ path: `shop?handle=${link.handle}` });
+        this.$router.push(`/${link.handle}`);
       }
     },
     resetTab() {

@@ -1,7 +1,7 @@
 <template>
   <div class="home-banner relative">
     <div class="banner-images h-full">
-      <img :src="selectedBanner.image" class="h-full md:object-none object-cover" alt="" srcset=""/>
+      <img :src="`${mediaUrl}${selectedBanner.image}`" class="h-full md:object-none object-cover" alt="" srcset=""/>
     </div>
     <!-- Banner text -->
     <div
@@ -44,6 +44,7 @@ export default {
     return {
       imgIndex: 1,
       banners: [],
+      mediaUrl: "https://manage.signupcasuals.com:8443",
     };
   },
   watch: {

@@ -3,23 +3,16 @@
     class="xl:max-w-7xl lg:max-w-4xl md:max-w-3xl mx-auto sm:pt-10 pb-6 md:px-0 px-4 relative"
     ref="intersection"
   >
-    <h1 class="md:block hidden text-head text-3xl font-bold mb-4">SHOP</h1>
-    <!-- Shop cat tab -->
-    <div
-      class="md:flex hidden items-center gap-6 uppercase text-sm text-head font-medium"
-    >
-      <div>#stayhome</div>
-      <div class="" v-for="(tab, idx) in categoryTabs" :key="idx">
-        {{ tab.title }}
-      </div>
-    </div>
+    <h1 class="md:block hidden text-head text-3xl font-bold mb-4">
+      {{ category?.name }}
+    </h1>
+
     <!-- Shop items section -->
     <div class="flex gap-14 md:mt-16">
       <aside class="md:block hidden w-[300px] flex-shrink-0">
         <ProductsFilter
-          :storeCategories="storeCategories"
-          :childCategories="childCategories"
-          @onUpdateFilter="onUpdateFilter"
+          :storeCategories="subCategories"
+          :childCategories="[]"
         />
       </aside>
       <div class="flex-1">
@@ -59,11 +52,11 @@
             </v-popover>
 
             <!-- <div class="md:flex hidden items-center gap-2 pl-4">
-              VIEW
-              <span>2</span>
-              <span>3</span>
-              <span>4</span>
-            </div> -->
+                VIEW
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+              </div> -->
           </div>
         </div>
 
@@ -119,12 +112,10 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
 import ProductCard from "~/components/Products/Card.vue";
 import SkeletonCardLoader from "~/components/Loader/SkeletonCardLoader.vue";
-import axios from "~/plugins/axios";
 export default {
-  name: "shop-list",
+  name: "dynamic-menu",
   layout: "main",
   components: {
     ChevronDown: () => import("vue-material-design-icons/ChevronDown.vue"),
@@ -138,54 +129,9 @@ export default {
   },
   data() {
     return {
-      categoryTabs: [
-        {
-          title: "new in",
-          value: "new-in",
-        },
-        {
-          title: "Jackets",
-          value: "jackets",
-        },
-        {
-          title: "hoodies",
-          value: "hoodies",
-        },
-        {
-          title: "men",
-          value: "men",
-        },
-        {
-          title: "women",
-          value: "women",
-        },
-        {
-          title: "TROUSERS",
-          value: "trousers",
-        },
-        {
-          title: "ACCESSORIES",
-          value: "accessories",
-        },
-        {
-          title: "shoes",
-          value: "shoes",
-        },
-      ],
-      products: [],
-      limit: 6,
-      paginate: {
-        offset: 0,
-        count: 0,
-        pages: 0,
-      },
-      openSideFilter: false,
-      filters: {
-        category: [],
-        sort: "",
-      },
-      filterQuery: "",
-      loading: false,
+      handle: "",
+      category: {},
+      subCategories: [],
       sorts: [
         {
           name: "Name",
@@ -204,134 +150,106 @@ export default {
           value: "created_at",
         },
       ],
-      handle: null,
-      category: null,
-      storeCategories: [],
-      parentCategory: {},
-      childCategories: [],
-      filterCategories: [],
+      products: [],
+      filters: {
+        category: [],
+        sort: "",
+      },
       filterSort: {},
+      filterCategories: [],
     };
-  },
-  computed: {
-    ...mapState("store", ["categories"]),
   },
   watch: {
     "$route.query": {
+      deep: true,
       async handler(to, from) {
-        if (to.handle) this.handle = to.handle;
-        else this.handle = null;
-        // await this.fetchStoreCategories();
         await this.handleProductsListing();
       },
     },
   },
   methods: {
-    // ...mapActions("store", ["fetchStoreCategories"]),
-    async fetchProductsList(offset = 0) {
+    async fetchCategory() {
       try {
-        this.loading = true;
-        let url = `/customer/product/`;
-
-        if (this.filterCategories.length > 0) {
-          url = url.concat("?", `categories=${this.filterCategories}`);
-          if (this.filterSort.value)
-            url = url.concat(`&ordering=${this.filterSort.value}`);
-        } else if (this.filterSort.value) {
-          url = url.concat(`?ordering=${this.filterSort.value}`);
+        const { data } = await this.$api.get(
+          `customer/category/?handle=${this.handle}`
+        );
+        if (Array.isArray(data.results) && data.results.length > 0) {
+          this.category = data.results[0];
+          if (this.category.sub_category.length > 0) {
+            this.subCategories = this.category.sub_category;
+            this.subCategories = this.subCategories.map((v, idx) => {
+              let cat = { ...v };
+              if (cat.sub_category) {
+                console.log("here in sub");
+                cat = {
+                  ...cat,
+                  isParent: true,
+                  fold: idx == 0 ? false : true,
+                };
+              }
+              return cat;
+            });
+          }
         }
-        const { data } = await this.$api.get(url);
-        if (Array.isArray(data.results) && data.results.length > 0)
-          this.products = data.results;
-        else this.products = [];
-        // this.paginate.count = count;
-        // this.paginate.pages = Math.ceil(count / this.limit);
-        // this.paginate.offset = dataOffset;
       } catch (error) {
-        console.log(error);
-      } finally {
-        setTimeout(() => {
-          this.loading = false;
-        }, 2000);
+        console.log("menu:category:>>", error);
       }
-    },
-    async onSelectPage(page) {
-      const offset = this.limit * page;
-      await this.fetchProductsList(offset);
     },
     async handleProductsListing() {
       const query = this.$route.query;
-      if (query && Object.keys(query).length) this.handleFilters();
-      else await this.fetchProductsList();
+      if (query.category) this.handleCategoryFilter();
+      else {
+        this.filterCategories = [];
+        await this.fetchProducts();
+      }
     },
-    async handleFilters() {
-      const query = this.$route.query;
-      const { handle, category } = query;
-      this.handle = handle;
-      this.category = category;
+    async handleCategoryFilter() {
+      const { category: categories } = this.$route.query;
 
-      // if (this.handle) {
-      //   this.parentCategory = this.storeCategories.find(
-      //     (c) => c.handle == this.handle
-      //   );
-      //   this.childCategories = this.parentCategory.sub_category;
-      // }
-      // if (this.handle && !this.category) this.fetchMainHandle();
-      // else if (this.handle && this.category) this.fetchHandleAndCategories();
-      if (this.category) this.fetchCategories();
-    },
-    async fetchCategories() {
-      const queryCat = this.category.split("_");
+      const queryCat = categories.split("_");
+      console.log("inside cat");
       let categoryIds = [];
-      this.storeCategories.forEach((p) => {
-        if (p.sub_category && p.sub_category.length > 0) {
-          p.sub_category.forEach((c) => {
+      this.subCategories.forEach((parent) => {
+        if (parent.sub_category.length > 0) {
+          parent.sub_category.forEach((c) => {
             if (queryCat.includes(c.handle)) categoryIds.push(c.id);
           });
         }
       });
-
-      this.filterQuery = "";
-      if (categoryIds.length > 0) this.filterCategories = categoryIds;
-      else this.filterCategories = [];
-
-      await this.fetchProductsList();
-      // const { data } = await this.$api.get("/customer/category/");
+      this.filterCategories = categoryIds;
+      await this.fetchProducts();
     },
-    async fetchStoreCategories() {
+    async fetchProducts() {
       try {
-        const url = "/customer/category/";
-        const { data } = await this.$api.get(url);
-        if (Array.isArray(data?.results) && data.results) {
-          this.storeCategories = data.results;
-          this.storeCategories = this.storeCategories.map((v, idx) => {
-            let cat = { ...v };
-            if (cat.sub_category) {
-              cat = {
-                ...cat,
-                isParent: true,
-                fold: idx == 0 ? false : true,
-              };
-            }
-            return cat;
-          });
+        let url = `/customer/product/`;
+
+        if (this.filterCategories.length > 0) {
+          url = url.concat("?", `categories=${this.filterCategories}`);
+        } else {
+          const catIds = this.category.sub_category.map((v) => v.id);
+          url = url.concat("?", `categories=${catIds}`);
         }
+
+        if (this.filterSort && this.filterSort.value)
+          url = url.concat(`&ordering=${this.filterSort.value}`);
+        const { data } = await this.$api.get(url);
+        if (Array.isArray(data.results) && data.results.length > 0)
+          this.products = data.results;
       } catch (error) {
-        console.log("shop:", error);
+        console.log("products:>>", error);
       }
     },
     onUpdateFilter(sort) {
       this.$refs["sort-btn"].click();
       this.filterSort = sort;
-      this.fetchProductsList();
+      this.fetchProducts();
     },
   },
   async mounted() {
-    await this.fetchStoreCategories();
+    const { menu } = this.$route.params;
+    this.handle = menu;
+    await this.fetchCategory();
     await this.handleProductsListing();
-
-    // await this.fetchCategories();
-    // await this.fetchProducts();
   },
 };
 </script>

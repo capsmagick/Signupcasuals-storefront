@@ -85,7 +85,6 @@ export default {
     thumbImage() {
       if (this.variant.images && this.variant.images.length) {
         const image = this.variant.images[0].image;
-        console.log('image:>>:', image)
         return `${this.apiUrl}${image}`;
       }
     },
